@@ -1,2 +1,2 @@
 # BitService
-## gra
+## OPis gry
