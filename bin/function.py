@@ -7,7 +7,7 @@ ENCODING_MODE : str = "UTF-8"
 
 # Funkcja, która umożliwia odczytywanie danych z struktury json 
 # Funkcja zwraca dane json w postaci słownika [ dict ]
-def readJSON(localizationPath: str) -> tuple[dict, bool]:
+def readJSON(localizationPath: str) -> dict:
     try:
         # Jeżeli ścieżka pliku nie kończy się na .json, zwróć błąd
         if not localizationPath.endswith(".json"):
@@ -17,10 +17,8 @@ def readJSON(localizationPath: str) -> tuple[dict, bool]:
         with open(os.getcwd() + localizationPath, mode='r', encoding=ENCODING_MODE) as file:
             # Jeżeli plik jest odczytywalny, zwróć dane z pliku json
             if file.readable():
-                # Zwróć dane z pliku json jako słownik oraz wynik odczytania plik
-                # True  - Plik został poprawnie odczytany
-                # False - Plik nie został poprawne odczytany
-                return json.load(file), True
+                # Zwróć dane z pliku json jako słownik
+                return json.load(file)
             
     except json.JSONDecodeError:
         # Zwróć poprawny komunikat jeśli nastąpił błąd z dekodowaniem znaków
@@ -28,8 +26,8 @@ def readJSON(localizationPath: str) -> tuple[dict, bool]:
     except OSError:
         # Zwróć poprawny komunikat jeśli nastąpił błąd z otwarciem pliku
         messagebox.showerror('Dostępność', 'Plik nie mógł być otworzony')
-    # Fabrycznie zwróć pusty słownik oraz wynik odczytania pliku na False
-    return {}, False
+    # Fabrycznie zwróć pusty słownik
+    return {}
 
 # Funkcja, która umożliwia aktualizowanie danych do pliku json
 # Funkcja zwraca wynik wykonania aktualizacji
