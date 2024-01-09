@@ -3,8 +3,11 @@ import pygame, json
 import asyncio, os
 import random as rand
 from tkinter import messagebox, Button, Tk, Label
+
+
 # Zaimportuj lokalne moduły
 from bin.function import readJSON, updateJSON
+from bin.pausescreen import pauseScreen
 
 # Game Setting
 GS: dict
@@ -98,8 +101,15 @@ async def main(gameSettings: dict):
         # Zegar gry
         GameClock = pygame.time.Clock()
         
+        # Obiekt pauseScreen służący do stopowania gry
+        pauseScreenOb = pauseScreen(display)
+        
+        # bo muszę
+        pygame.font.init()
+        
 
         while GameOn:
+            # obsługa eventów 
             for e in pygame.event.get():
                 match e.type:
                     case pygame.QUIT:
@@ -107,25 +117,39 @@ async def main(gameSettings: dict):
                     case pygame.KEYDOWN:
                         match e.key:
                             case key if key in [pygame.K_ESCAPE, pygame.K_q]:
-                                GameOn = False
+                                pauseScreenOb.toggle()
+                                
+                                
+            # obliczanie elementów gry
+            
+            if not pauseScreenOb.getState():
+                
+                # chmurki
+                if CloudRect0.x < -Cloud0.get_width():
+                    CloudRect0.x = GS['ApplicationSize'][0] + 100
+                    CloudRect0.y = rand.randint(100, GS['ApplicationSize'][1] - 300)
+
+                if CloudRect1.x < -Cloud1.get_width():
+                    CloudRect1.x = GS['ApplicationSize'][0] + 100
+                    CloudRect1.y = rand.randint(100, GS['ApplicationSize'][1] - 300) 
+                    
+                CloudRect0.x -= 1
+                CloudRect1.x -= 3                  
+                
+
+            # renderowanie gry
 
             display.fill((98, 125, 206))
 
-            if CloudRect0.x < -Cloud0.get_width():
-                CloudRect0.x = GS['ApplicationSize'][0] + 100
-                CloudRect0.y = rand.randint(100, GS['ApplicationSize'][1] - 300)
-
-            if CloudRect1.x < -Cloud1.get_width():
-                CloudRect1.x = GS['ApplicationSize'][0] + 100
-                CloudRect1.y = rand.randint(100, GS['ApplicationSize'][1] - 300)
-
-            CloudRect0.x -= 1
-            CloudRect1.x -= 3
 
             display.blit(Cloud0, (CloudRect0.x, CloudRect0.y))
             display.blit(Cloud1, (CloudRect1.x, CloudRect1.y))
 
             display.blit(Background, (0, 0))
+            
+            
+            # renderowanie okna pauzy
+            pauseScreenOb.draw(display)
 
 
             pygame.display.update()
