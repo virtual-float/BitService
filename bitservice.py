@@ -81,7 +81,14 @@ async def main(gameSettings: dict):
             break
 
         # Stwórz display gry
-        display = pygame.display.set_mode((GS['ApplicationSize'][0], GS['ApplicationSize'][1]))
+        pygame.display.init()
+        if GS['fullscreen']:
+             displayFinal = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+        else:
+            displayFinal = pygame.display.set_mode((GS['renderSize'][0], GS['renderSize'][1]))
+        
+        display = pygame.surface.Surface((GS['ApplicationSize'][0], GS['ApplicationSize'][1]))
+        
         # Ustaw nazwę gry
         pygame.display.set_caption(GS['ApplicationName'])
 
@@ -104,8 +111,7 @@ async def main(gameSettings: dict):
         # Obiekt pauseScreen służący do stopowania gry
         pauseScreenOb = pauseScreen(display)
         
-        # bo muszę
-        pygame.font.init()
+
         
 
         while GameOn:
@@ -150,6 +156,13 @@ async def main(gameSettings: dict):
             
             # renderowanie okna pauzy
             pauseScreenOb.draw(display)
+            
+            
+            # upscalowanie
+            pygame.transform.scale(
+                surface=display, 
+                size=pygame.display.get_surface().get_size(), 
+                dest_surface=displayFinal)
 
 
             pygame.display.update()
@@ -160,6 +173,8 @@ async def main(gameSettings: dict):
 
 
 if __name__ == "__main__":
+    pygame.font.init()
+    
     # Odczytaj dane
     data = readJSON('./bin/settings.json')
     

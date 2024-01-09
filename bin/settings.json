@@ -4,5 +4,10 @@
     "ApplicationSize": [
         1024,
         600
-    ]
+    ],
+    "renderSize": [
+        1024,
+        600
+    ],
+    "fullscreen": false
 }

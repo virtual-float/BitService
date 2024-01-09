@@ -33,7 +33,7 @@ class pauseScreen():
         return self.__state
             
             
-    def draw(self, screen: pygame.display = pygame.display.get_surface()) -> None:
+    def draw(self, screen: pygame.surface.Surface = pygame.display.get_surface()) -> None:
         '''Służy do rysowania stanu zastopowania gry\n
         Argumenty:\n
             Screen (pygame.display), gdzie będzie to rysowane\n
@@ -50,7 +50,7 @@ class pauseScreen():
 
         
         
-    def __init__(self, screen: pygame.display = pygame.display.get_surface()) -> None:
+    def __init__(self, screen: pygame.surface.Surface = pygame.display.get_surface()) -> None:
         '''Służy do rysowania stanu zastopowania gry\n
         Argumenty:\n
             Screen (pygame.display), pobierze z tego rozmiar okna\n
