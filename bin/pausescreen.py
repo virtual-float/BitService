@@ -3,8 +3,7 @@
 
 # importy
 import pygame
-
-from bin.fonts import VERYSMALL_COMICSANS, BIG_COMICSANS, SMALL_COMICSANS
+import bin.fonts as fn
 
 # klasa główna
 class pauseScreen():
@@ -44,41 +43,40 @@ class pauseScreen():
         '''  
         if not self.__state: return
         
-        global fonts
-
         screen.blit(self.__image, (0,0))
         screen.blit(
-            BIG_COMICSANS.render("Gra zatrzymana", False, (255,255,255,77)),
+            self.__fonts['BIG_COMICSANS'].render("Gra zatrzymana", False, (255,255,255,77)),
             (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.07)
         )        
         screen.blit(
-            VERYSMALL_COMICSANS.render("użyj strzałek/wsadu i enteru; q/esc by powrócić do gry", False, (255,255,255,77)),
+            self.__fonts['VERYSMALL_COMICSANS'].render("użyj strzałek/wsadu i enteru; q/esc by powrócić do gry", False, (255,255,255,77)),
             (20, pygame.display.get_window_size()[1] - 35)
         )
         
         screen.blit(
-            SMALL_COMICSANS.render(f"Powróć do gry {'<-- ' if self.__cursorPosition == 0 else ''}", False, (255,255,255,77)),
+            self.__fonts['SMALL_COMICSANS'].render(f"Powróć do gry {'<-- ' if self.__cursorPosition == 0 else ''}", False, (255,255,255,77)),
             (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30)
         )
         
         screen.blit(
-            SMALL_COMICSANS.render(f"Wyjdź do menu {'<-- ' if self.__cursorPosition == 1 else ''}", False, (255,255,255,77)),
+            self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź do menu {'<-- ' if self.__cursorPosition == 1 else ''}", False, (255,255,255,77)),
             (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 40)
         )
        
         screen.blit(
-            SMALL_COMICSANS.render(f"Wyjdź z gry {'<-- ' if self.__cursorPosition == 2 else ''}", False, (255,255,255,77)),
+            self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź z gry {'<-- ' if self.__cursorPosition == 2 else ''}", False, (255,255,255,77)),
             (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 80)
         )
         
         if DEVMODE:
             screen.blit(
-                SMALL_COMICSANS.render(f"Tryb dewelopera {'<-- ' if self.__cursorPosition == 3 else ''}", False, (255,255,255,77)),
+                self.__fonts['SMALL_COMICSANS'].render(f"Tryb dewelopera {'<-- ' if self.__cursorPosition == 3 else ''}", False, (255,255,255,77)),
                 (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 120)
             )
          
 
     def eventHandler(self, DEVMODE: bool, EVENTS: list) -> bool:
+        print(EVENTS)
         for E in EVENTS:
             if not (E.type == pygame.KEYDOWN): continue
             
@@ -135,3 +133,4 @@ class pauseScreen():
         
         self.__cursorPosition = 0
         
+        self.__fonts = fn.getfonts()
