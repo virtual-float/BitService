@@ -76,7 +76,6 @@ class pauseScreen():
          
 
     def eventHandler(self, DEVMODE: bool, EVENTS: list) -> bool:
-        print(EVENTS)
         for E in EVENTS:
             if not (E.type == pygame.KEYDOWN): continue
             
