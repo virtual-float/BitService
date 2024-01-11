@@ -1,8 +1,10 @@
 # PAUSESCREEN
+# Tak, jest to klasa która musi mieć obiekt, ale mi sie wydaje to najłatwiejszy pomysł
 
 # importy
 import pygame
 
+from bin.fonts import VERYSMALL_COMICSANS, BIG_COMICSANS, SMALL_COMICSANS
 
 # klasa główna
 class pauseScreen():
@@ -33,7 +35,7 @@ class pauseScreen():
         return self.__state
             
             
-    def draw(self, screen: pygame.surface.Surface = pygame.display.get_surface()) -> None:
+    def draw(self, screen: pygame.surface.Surface, DEVMODE: bool) -> None:
         '''Służy do rysowania stanu zastopowania gry\n
         Argumenty:\n
             Screen (pygame.display), gdzie będzie to rysowane\n
@@ -41,14 +43,82 @@ class pauseScreen():
             - None\n
         '''  
         if not self.__state: return
+        
+        global fonts
 
         screen.blit(self.__image, (0,0))
         screen.blit(
-            self.__mainText.render("Gra zatrzymana", False, (255,255,255,77)),
+            BIG_COMICSANS.render("Gra zatrzymana", False, (255,255,255,77)),
             (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.07)
+        )        
+        screen.blit(
+            VERYSMALL_COMICSANS.render("użyj strzałek/wsadu i enteru; q/esc by powrócić do gry", False, (255,255,255,77)),
+            (20, pygame.display.get_window_size()[1] - 35)
         )
-
         
+        screen.blit(
+            SMALL_COMICSANS.render(f"Powróć do gry {'<-- ' if self.__cursorPosition == 0 else ''}", False, (255,255,255,77)),
+            (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30)
+        )
+        
+        screen.blit(
+            SMALL_COMICSANS.render(f"Wyjdź do menu {'<-- ' if self.__cursorPosition == 1 else ''}", False, (255,255,255,77)),
+            (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 40)
+        )
+       
+        screen.blit(
+            SMALL_COMICSANS.render(f"Wyjdź z gry {'<-- ' if self.__cursorPosition == 2 else ''}", False, (255,255,255,77)),
+            (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 80)
+        )
+        
+        if DEVMODE:
+            screen.blit(
+                SMALL_COMICSANS.render(f"Tryb dewelopera {'<-- ' if self.__cursorPosition == 3 else ''}", False, (255,255,255,77)),
+                (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 120)
+            )
+         
+
+    def eventHandler(self, DEVMODE: bool, EVENTS: list) -> bool:
+        for E in EVENTS:
+            if not (E.type == pygame.KEYDOWN): continue
+            
+            match E.key:
+                # góra
+                case pygame.K_w | pygame.K_UP:
+                    self.__cursorPosition -= 1
+                    
+                    if DEVMODE and self.__cursorPosition < 0:
+                        self.__cursorPosition = 3
+                    elif self.__cursorPosition < 0:
+                        self.__cursorPosition = 2    
+                        
+                # dół     
+                case pygame.K_s | pygame.K_DOWN:
+                    self.__cursorPosition += 1
+                    
+                    if not DEVMODE and self.__cursorPosition > 2:
+                        self.__cursorPosition = 0
+                    elif DEVMODE and self.__cursorPosition > 3:
+                        self.__cursorPosition = 0
+                        
+                # zatwierdzanie enterem 
+                case pygame.K_RETURN:
+                    match self.__cursorPosition:
+                        # wyjście z menu pauzy
+                        case 0:
+                            self.__state = False
+                        
+                        # wyjście do menu gry
+                        case 1: return 1
+                        # wyjście z gry
+                        case 2: return 2
+                        
+                        case _: 
+                            return 0
+
+                    
+                case _: 
+                    return 0
         
     def __init__(self, screen: pygame.surface.Surface = pygame.display.get_surface()) -> None:
         '''Służy do rysowania stanu zastopowania gry\n
@@ -62,7 +132,6 @@ class pauseScreen():
         self.__image = pygame.Surface(screen.get_size()).convert_alpha()
         self.__image.fill((0,0,0,77))
         
-        self.__mainText = pygame.font.SysFont('Comic Sans MS', 70)
         
-        
+        self.__cursorPosition = 0
         

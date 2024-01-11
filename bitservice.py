@@ -64,9 +64,9 @@ async def main(gameSettings: dict):
     # Przypisanie ustawień do GS
     GS = gameSettings
 
-    pygame.init()
 
-    while True:
+    beRunned = True
+    while beRunned:
         # Tworzenie root dla tkinter menu
         root = Tk(GS['ApplicationName'], GS['ApplicationName'])
         # Utwarzanie tytułu dla roota
@@ -81,7 +81,8 @@ async def main(gameSettings: dict):
             break
 
         # Stwórz display gry
-        pygame.display.init()
+        pygame.init()
+        pygame.font.init()
         if GS['fullscreen']:
              displayFinal = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
         else:
@@ -116,19 +117,35 @@ async def main(gameSettings: dict):
 
         while GameOn:
             # obsługa eventów 
-            for e in pygame.event.get():
+            EVENTS = pygame.event.get()
+            for e in EVENTS:
                 match e.type:
                     case pygame.QUIT:
                         GameOn = False
                     case pygame.KEYDOWN:
                         match e.key:
-                            case key if key in [pygame.K_ESCAPE, pygame.K_q]:
+                            case pygame.K_ESCAPE | pygame.K_q:
                                 pauseScreenOb.toggle()
+                                
                                 
                                 
             # obliczanie elementów gry
             
-            if not pauseScreenOb.getState():
+            if pauseScreenOb.getState(): 
+                # obsługa zdarzeń z eventHandlera z menu pauzy
+                _temp = pauseScreenOb.eventHandler(GS['devmode'], EVENTS)
+                # obsługa opcji
+                if _temp == 1:
+                    # wyjście do menu
+                    GameOn = False
+                    continue
+                elif _temp == 2:
+                    # całkowite wyjście z gry
+                    GameOn = False
+                    beRunned = False
+                    continue
+            else:
+                # obsługa obliczeń w grze
                 
                 # chmurki
                 if CloudRect0.x < -Cloud0.get_width():
@@ -155,7 +172,7 @@ async def main(gameSettings: dict):
             
             
             # renderowanie okna pauzy
-            pauseScreenOb.draw(display)
+            pauseScreenOb.draw(display, GS['devmode'])
             
             
             # upscalowanie
@@ -173,7 +190,6 @@ async def main(gameSettings: dict):
 
 
 if __name__ == "__main__":
-    pygame.font.init()
     
     # Odczytaj dane
     data = readJSON('./bin/settings.json')
