@@ -127,7 +127,7 @@ class pauseScreen():
         self.__state = False
         
         self.__image = pygame.Surface(screen.get_size()).convert_alpha()
-        self.__image.fill((0,0,0,77))
+        self.__image.fill((0,0,0, 120))
         
         
         self.__cursorPosition = 0
