@@ -8,6 +8,7 @@ from tkinter import messagebox, Button, Tk, Label
 # Zaimportuj lokalne moduły
 from bin.function import readJSON, updateJSON
 from bin.pausescreen import pauseScreen
+from bin.achievements import achievement
 
 # Game Setting
 GS: dict
@@ -113,7 +114,8 @@ async def main(gameSettings: dict):
         pauseScreenOb = pauseScreen(display)
         
 
-        
+        achievement.configure(display)
+        achievement("uruchomienie")
 
         while GameOn:
             # obsługa eventów 
@@ -173,6 +175,9 @@ async def main(gameSettings: dict):
             
             # renderowanie okna pauzy
             pauseScreenOb.draw(display, GS['devmode'])
+            
+            
+            achievement.loop()
             
             
             # upscalowanie
