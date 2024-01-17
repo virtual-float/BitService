@@ -9,6 +9,7 @@ from tkinter import messagebox, Button, Tk, Label
 from bin.function import readJSON, updateJSON
 from bin.pausescreen import pauseScreen
 from bin.achievements import achievement
+import bin.savemanager as saveManager
 
 # Game Setting
 GS: dict
@@ -113,13 +114,16 @@ async def main(gameSettings: dict):
         # Obiekt pauseScreen służący do stopowania gry
         pauseScreenOb = pauseScreen(display)
         
-
+        # Inicjalizacja menadżera savów
+        save = saveManager.get()
+        
+        # System osiągnieć (Inicjalizacja)
         achievement.configure(display)
         achievement("uruchomienie")
 
-        # testy savów        
-        import bin.savemanager as sm
-        save = sm.get()
+
+        # testy savów      
+          
         # print(save.get('player.nickname'))
         # save.set("player.nickname", "ika")
         # print(save.get('player.nickname'))
