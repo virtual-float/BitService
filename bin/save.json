@@ -1,9 +1,9 @@
 {
-    "checksum": 0,
-    "firstrun": 0,
-    "lastgame": 0,
-    "totalSec": 0,
-    "difficulty": "easy",
+    "checkSum": 3340468219945108,
+    "firstRun": 1705507553259190400,
+    "lastGame": 1705507821259120600,
+    "totalSec": 17550,
+    "difficulty": "eadssy",
     "time": {
         "totalSecIngame": 0,
         "hour": 8,
@@ -13,8 +13,8 @@
     "characters": {
         "0": {
             "type": "npc",
-            "nickname": "kera",
-            "xp": -1,
+            "nickname": "di",
+            "xp": 0,
             "level": -1,
             "voiceactor": 0,
             "apperance": {}

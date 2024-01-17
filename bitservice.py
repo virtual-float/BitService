@@ -134,10 +134,16 @@ async def main(gameSettings: dict):
         # print(save.get("characters"))
         # print(save.get("test.test", {"test":"test"}))
         # save.save()
+        
+        save.get("characters")['0']['nickname'] = "di"
+        print(save.get("characters"))
+        
+        save.get()
     
         # próby zrobienia autosava ale te asyncio coś nie asyncionuje, mimo że powinno
         # asyncio.get_event_loop().create_task(save.autoSave())
-        
+    
+            
         while GameOn:
             # obsługa eventów 
             EVENTS = pygame.event.get()
@@ -210,6 +216,7 @@ async def main(gameSettings: dict):
 
 
             pygame.display.update()
+            save.set('totalSec', save.get('totalSec')+15)
             GameClock.tick(15)
         pygame.quit()
     exit()

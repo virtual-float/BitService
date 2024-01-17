@@ -1,12 +1,16 @@
+# importy
 from tkinter import messagebox
 import json
 import asyncio
+import time
+import pygame
 
 import bin.function as fc
 
 
 
 class save:
+    '''Save gry'''
     def save(self) -> bool:
         '''Ręczne zapisywanie stanu gry\n
             --------------\n
@@ -19,13 +23,28 @@ class save:
         import bin.achievements as ach
         if ach.achievement.screen != None: _zapAch = ach.achievement("Zapisuję grę...")
         
+        self.set("lastGame", time.time_ns())
+        self.set("checkSum", 0)
+         
+        # checksum
+        _check = 0
+        for _value in fc.NestedDictValues(self.__save):
+            _check += int.from_bytes(str(_value).encode('utf-8'), 'little')
+            
+        _check = ((_check % 10000000000000000) + (_check % 2856 * 4) + _check) % 10000000000000000
+        
+            
+        self.set("checkSum", _check)
+            
+        
         # sam zapis gry
         _info = fc.updateJSON(self.__fileSave, self.__save)
         
         # informacja o końcu zapisu gry (i usunięcie jakby co informacji o zapisywaniu)
-        ach.achievement.achievementShown.remove(_zapAch)
-        del(_zapAch)
-        if ach.achievement.screen != None: ach.achievement("Gra zapisana!")
+        if ach.achievement.screen != None:
+            ach.achievement.achievementShown.remove(_zapAch)
+            del(_zapAch)
+            if ach.achievement.screen != None: ach.achievement("Gra zapisana!")
         
         # zwrócenie stanu czy się udało
         return _info
@@ -114,7 +133,7 @@ class save:
         return True
     
              
-    def get(self, loc:str, default = {"error":True, "errorMessage": "pathError"}) -> dict:
+    def get(self, loc:str = "", default = {"error":True, "errorMessage": "pathError"}) -> dict:
         '''Pozwala uzyskać daną wartość w save\n
             Przykład użycia dla uzyskania imienia gracza:\n
             get("player.nickname")\n
@@ -149,6 +168,9 @@ class save:
                 * None\n
         '''
         self.__save = self.__pattern.copy()
+        print(time.time_ns())
+        self.set('firstRun', time.time_ns())
+        
         
     async def autoSave(self):
         await asyncio.sleep(1)
@@ -165,6 +187,36 @@ class save:
         self.__save = fc.readJSON(self.__fileSave)
         if self.__save == {}:
             self.erase()
+        else:
+            # checksum
+            _previousCheck = self.get('checkSum')
+            self.set("checkSum", 0)
+         
+            _check = 0
+            for _value in fc.NestedDictValues(self.__save):
+                _check += int.from_bytes(str(_value).encode('utf-8'), 'little')
+                
+            _check = ((_check % 10000000000000000) + (_check % 2856 * 4) + _check) % 10000000000000000
+            
+            self.set("checkSum", _previousCheck)
+            
+            if _previousCheck != _check:
+                messagebox.showwarning('Suma kontrolna', "Istneje podejrzenie że save został uszkodzony!")
+                _choice = messagebox.askyesnocancel("Suma kontrolna", "Czy spróbować przywrócic sava? (Nie = Utworzenie nowego, anulowanie = wyjście z gry, miej pod uwagą to że przywrócony save może nie być stabilny i powodować crashe)")
+                
+                match _choice:
+                    case None:
+                        pygame.quit()
+                    case False:
+                        self.erase()
+                    case True:
+                        pass
+                        # TODO: funkcja naprawiająca i sprawdzająca poprawność danych może kiedyś
+                        
+                
+            self.save()
+                
+        
             
             
         # autozapis

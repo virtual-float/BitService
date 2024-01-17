@@ -1,7 +1,7 @@
 {
-    "checksum": 0,
-    "firstrun": 0,
-    "lastgame": 0,
+    "checkSum": 0,
+    "firstRun": 0,
+    "lastGame": 0,
     "totalSec": 0,
     "difficulty": "easy",
     "time":{
