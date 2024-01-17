@@ -172,13 +172,18 @@ class save:
         self.set('firstRun', time.time_ns())
         
         
-    async def autoSave(self):
-        await asyncio.sleep(1)
-        self.save()
-        print("save")
+    async def __autoSave(self):
+        while True:
+            await asyncio.sleep(self.__saveTime)
+            self.save()
+            
+    async def __addSec(self):
+        while True:
+            await asyncio.sleep(1)
+            self.set('totalSec', self.get('totalSec')+1)
         
-    def __init__(self, file="./bin/save.json", pattern="./bin/savePattern.json"):
-        self.__fileSave, self.__patternSave = file, pattern
+    def __init__(self, file:str="./bin/save.json", pattern:str="./bin/savePattern.json", saveTime:int=10):
+        self.__fileSave, self.__patternSave, self.__saveTime = file, pattern, saveTime
 
         self.__pattern = fc.readJSON(self.__patternSave)
         if self.__pattern == {}:
@@ -217,6 +222,10 @@ class save:
             self.save()
                 
         
+        # autozapis
+        loop = asyncio.get_event_loop()
+        loop.create_task(self.__autoSave(), name="saveManager")
+        loop.create_task(self.__addSec(), name="saveManagerSec")
             
             
         # autozapis

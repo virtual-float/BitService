@@ -66,9 +66,22 @@ async def main(gameSettings: dict):
     # Przypisanie ustawień do GS
     GS = gameSettings
 
+    # by nie było błędu
+    class __Tsave:
+        def kill(self): pass
+    save = __Tsave()
 
     beRunned = True
     while beRunned:
+        # usuwanie starych tasków z gry
+        # save.kill()
+        # achievement.kill()
+        
+        for task in asyncio.all_tasks():
+            if task.get_name() in ['saveManager', 'saveManagerSec', 'achievementManager']: task.cancel()
+    
+        
+        
         # Tworzenie root dla tkinter menu
         root = Tk(GS['ApplicationName'], GS['ApplicationName'])
         # Utwarzanie tytułu dla roota
@@ -121,30 +134,12 @@ async def main(gameSettings: dict):
         achievement.configure(display)
         achievement("uruchomienie")
 
-
-        # testy savów      
-          
-        # print(save.get('player.nickname'))
-        # save.set("player.nickname", "ika")
-        # print(save.get('player.nickname'))
-        # print(save.get("player"))
-        # save.set("d.character.5", {"type":False})
-        # print(save.get(""))
-        # print("\n\n")
-        # print(save.get("characters"))
-        # print(save.get("test.test", {"test":"test"}))
-        # save.save()
-        
-        save.get("characters")['0']['nickname'] = "di"
-        print(save.get("characters"))
-        
-        save.get()
-    
-        # próby zrobienia autosava ale te asyncio coś nie asyncionuje, mimo że powinno
-        # asyncio.get_event_loop().create_task(save.autoSave())
-    
-            
+        # funkcja ułatwiająca
+        async def waitForOther():
+            await asyncio.sleep(0.02)  
+               
         while GameOn:
+            await waitForOther()
             # obsługa eventów 
             EVENTS = pygame.event.get()
             for e in EVENTS:
@@ -176,6 +171,7 @@ async def main(gameSettings: dict):
             else:
                 # obsługa obliczeń w grze
                 
+                
                 # chmurki
                 if CloudRect0.x < -Cloud0.get_width():
                     CloudRect0.x = GS['ApplicationSize'][0] + 100
@@ -205,7 +201,7 @@ async def main(gameSettings: dict):
             pauseScreenOb.draw(display, GS['devmode'])
             
             
-            achievement.loop()
+            achievement.loopDraw()
             
             
             # upscalowanie
@@ -216,10 +212,11 @@ async def main(gameSettings: dict):
 
 
             pygame.display.update()
-            save.set('totalSec', save.get('totalSec')+15)
             GameClock.tick(15)
+            
         pygame.quit()
-    exit()
+    asyncio.get_event_loop().stop()
+
 
 
 
@@ -229,7 +226,9 @@ if __name__ == "__main__":
     data = readJSON('./bin/settings.json')
     
     if data != {}:
-        asyncio.run(main(data))
+        loop = asyncio.get_event_loop()    
+        loop.create_task(main(data), name="main")
+        loop.run_forever()
     else:
         messagebox.showerror('Błąd', 'Wykryto puste dane ustawień. Nie można uruchomić gry!')
         exit()
