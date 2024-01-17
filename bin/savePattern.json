@@ -2,12 +2,13 @@
     "checkSum": 0,
     "firstRun": 0,
     "lastGame": 0,
-    "totalSec": 0,
     "difficulty": "easy",
     "time":{
-        "totalSecIngame": 0,
+        "totalSec": 0,
+
         "hour": 8,
         "minute": 0,
+        "second": 0,
         "day": 1
 
     },
