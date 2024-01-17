@@ -4,6 +4,7 @@
 # importy
 import pygame
 import bin.fonts as fn
+import bin.savemanager as sm
 
 # klasa główna
 class pauseScreen():
@@ -59,23 +60,29 @@ class pauseScreen():
         )
         
         screen.blit(
-            self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź do menu {'<-- ' if self.__cursorPosition == 1 else ''}", False, (255,255,255,77)),
+            self.__fonts['SMALL_COMICSANS'].render(f"Zapisz grę {'<-- ' if self.__cursorPosition == 1 else ''}", False, (255,255,255,77)),
             (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 40)
         )
-       
+        
         screen.blit(
-            self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź z gry {'<-- ' if self.__cursorPosition == 2 else ''}", False, (255,255,255,77)),
+            self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź do menu {'<-- ' if self.__cursorPosition == 2 else ''}", False, (255,255,255,77)),
             (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 80)
         )
         
+        screen.blit(
+            self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź z gry {'<-- ' if self.__cursorPosition == 3 else ''}", False, (255,255,255,77)),
+            (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 120)
+        )
+        
+        
         if DEVMODE:
             screen.blit(
-                self.__fonts['SMALL_COMICSANS'].render(f"Tryb dewelopera {'<-- ' if self.__cursorPosition == 3 else ''}", False, (255,255,255,77)),
-                (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 120)
+                self.__fonts['SMALL_COMICSANS'].render(f"Tryb dewelopera {'<-- ' if self.__cursorPosition == 4 else ''}", False, (255,255,255,77)),
+                (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 160)
             )
          
 
-    def eventHandler(self, DEVMODE: bool, EVENTS: list) -> bool:
+    def eventHandler(self, DEVMODE: bool, EVENTS: list, save: dict) -> bool:
         for E in EVENTS:
             if not (E.type == pygame.KEYDOWN): continue
             
@@ -85,17 +92,17 @@ class pauseScreen():
                     self.__cursorPosition -= 1
                     
                     if DEVMODE and self.__cursorPosition < 0:
-                        self.__cursorPosition = 3
+                        self.__cursorPosition = 4
                     elif self.__cursorPosition < 0:
-                        self.__cursorPosition = 2    
+                        self.__cursorPosition = 3   
                         
                 # dół     
                 case pygame.K_s | pygame.K_DOWN:
                     self.__cursorPosition += 1
                     
-                    if not DEVMODE and self.__cursorPosition > 2:
+                    if not DEVMODE and self.__cursorPosition > 3:
                         self.__cursorPosition = 0
-                    elif DEVMODE and self.__cursorPosition > 3:
+                    elif DEVMODE and self.__cursorPosition > 4:
                         self.__cursorPosition = 0
                         
                 # zatwierdzanie enterem 
@@ -105,10 +112,12 @@ class pauseScreen():
                         case 0:
                             self.__state = False
                         
+                        # zapis gry
+                        case 1: save.save()
                         # wyjście do menu gry
-                        case 1: return 1
+                        case 2: return 1
                         # wyjście z gry
-                        case 2: return 2
+                        case 3: return 2
                         
                         case _: 
                             return 0

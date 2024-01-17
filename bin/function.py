@@ -11,7 +11,7 @@ def readJSON(localizationPath: str) -> dict:
     try:
         # Jeżeli ścieżka pliku nie kończy się na .json, zwróć błąd
         if not localizationPath.endswith(".json"):
-            messagebox.showerror('Rozszerzenie', 'Rozszerzenie pliku nie jest typu json!')
+            messagebox.showerror('Rozszerzenie', f'Rozszerzenie pliku {localizationPath} nie jest typu json!')
 
         # Otwórz plik json 
         with open(os.getcwd() + localizationPath, mode='r', encoding=ENCODING_MODE) as file:
@@ -22,10 +22,10 @@ def readJSON(localizationPath: str) -> dict:
             
     except json.JSONDecodeError:
         # Zwróć poprawny komunikat jeśli nastąpił błąd z dekodowaniem znaków
-        messagebox.showerror('Dekodowanie', 'Plik nie mógł zostać zdekodowany na UTF-8')
+        messagebox.showerror('Dekodowanie', f'Plik {localizationPath} nie mógł zostać zdekodowany na UTF-8')
     except OSError:
         # Zwróć poprawny komunikat jeśli nastąpił błąd z otwarciem pliku
-        messagebox.showerror('Dostępność', 'Plik nie mógł być otworzony')
+        messagebox.showerror('Dostępność', f'Plik {localizationPath} nie mógł być otworzony ')
     # Fabrycznie zwróć pusty słownik
     return {}
 
@@ -35,7 +35,7 @@ def updateJSON(localizationPath: str, newData: dict) -> bool:
     try:
         # Jeżeli ścieżka pliku nie kończy się na .json, zwróć błąd
         if not localizationPath.endswith(".json"):
-            messagebox.showerror('Rozszerzenie', 'Rozszerzenie pliku nie jest typu json!')
+            messagebox.showerror('Rozszerzenie', f'Rozszerzenie {localizationPath} pliku nie jest typu json!')
 
         # Otwórz plik json
         with open(os.getcwd() + localizationPath, mode='w', encoding=ENCODING_MODE) as file:
@@ -48,7 +48,7 @@ def updateJSON(localizationPath: str, newData: dict) -> bool:
             return True
     except OSError:
         # Zwróć poprawny komunikat jeśli nastąpił błąd z otwarciem pliku
-        messagebox.showerror('Dostępność', 'Plik nie mógł być otworzony')
+        messagebox.showerror('Dostępność', f'Plik {localizationPath} nie mógł być otworzony')
     # Fabrycznie zwróć wynik aktualizacji danych json
     return False
 

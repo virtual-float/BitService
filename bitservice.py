@@ -117,6 +117,23 @@ async def main(gameSettings: dict):
         achievement.configure(display)
         achievement("uruchomienie")
 
+        # testy savów        
+        import bin.savemanager as sm
+        save = sm.get()
+        # print(save.get('player.nickname'))
+        # save.set("player.nickname", "ika")
+        # print(save.get('player.nickname'))
+        # print(save.get("player"))
+        # save.set("d.character.5", {"type":False})
+        # print(save.get(""))
+        # print("\n\n")
+        # print(save.get("characters"))
+        # print(save.get("test.test", {"test":"test"}))
+        # save.save()
+    
+        # próby zrobienia autosava ale te asyncio coś nie asyncionuje, mimo że powinno
+        # asyncio.get_event_loop().create_task(save.autoSave())
+        
         while GameOn:
             # obsługa eventów 
             EVENTS = pygame.event.get()
@@ -135,7 +152,7 @@ async def main(gameSettings: dict):
             
             if pauseScreenOb.getState(): 
                 # obsługa zdarzeń z eventHandlera z menu pauzy
-                _temp = pauseScreenOb.eventHandler(GS['devmode'], EVENTS)
+                _temp = pauseScreenOb.eventHandler(GS['devmode'], EVENTS, save)
                 # obsługa opcji
                 if _temp == 1:
                     # wyjście do menu
@@ -159,7 +176,8 @@ async def main(gameSettings: dict):
                     CloudRect1.y = rand.randint(100, GS['ApplicationSize'][1] - 300) 
                     
                 CloudRect0.x -= 1
-                CloudRect1.x -= 3                  
+                CloudRect1.x -= 3     
+                
                 
 
             # renderowanie gry

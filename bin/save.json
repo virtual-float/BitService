@@ -1,0 +1,45 @@
+{
+    "checksum": 0,
+    "firstrun": 0,
+    "lastgame": 0,
+    "totalSec": 0,
+    "difficulty": "easy",
+    "time": {
+        "totalSecIngame": 0,
+        "hour": 8,
+        "minute": 0,
+        "day": 1
+    },
+    "characters": {
+        "0": {
+            "type": "npc",
+            "nickname": "kera",
+            "xp": -1,
+            "level": -1,
+            "voiceactor": 0,
+            "apperance": {}
+        }
+    },
+    "clientQueue": [
+        0,
+        5,
+        2
+    ],
+    "player": {
+        "type": "player",
+        "nickname": "kera",
+        "xp": 0,
+        "level": 1,
+        "voiceactor": -1,
+        "apperance": {}
+    },
+    "gamestate": {
+        "_COMMENT": "TUTAJ OPCJONALNIE BEDZIE MOZNA ZROBIC BY PRZYWRACALO STAN TEGO CO SIE robilo 1:1"
+    },
+    "achievements": {
+        "rungame": {
+            "gain": false,
+            "dategain": 0
+        }
+    }
+}
