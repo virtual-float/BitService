@@ -172,13 +172,42 @@ class save:
         self.set('firstRun', time.time_ns())
         
         
-    async def autoSave(self):
-        await asyncio.sleep(1)
-        self.save()
-        print("save")
+    async def __autoSave(self):
+        while True:
+            await asyncio.sleep(self.__saveTime)
+            self.save()
+            
+    async def __addSec(self):
+        while True:
+            await asyncio.sleep(1)
+            
+            # totalSec
+            self.set('time.totalSec', self.get('time.totalSec')+1)
+            
+
+    async def __gameClock(self):
+        while True:
+            await asyncio.sleep(0.1)
+            # second
+            self.set('time.second', self.get('time.second')+1)
+            if self.get('time.second') > 60:
+                self.set('time.second', 0)
+                self.set('time.minute', self.get('time.minute')+1)
+                
+            # minutes
+            if self.get('time.minute') > 60:
+                self.set('time.minute', 0)
+                self.set('time.hour', self.get('time.hour')+1)
+
+            # hour
+            if self.get('time.hour') > 24:
+                self.set('time.hour', 0)
+                self.set('time.day', self.get('time.day')+1)
+                        
+            
         
-    def __init__(self, file="./bin/save.json", pattern="./bin/savePattern.json"):
-        self.__fileSave, self.__patternSave = file, pattern
+    def __init__(self, file:str="./bin/save.json", pattern:str="./bin/savePattern.json", saveTime:int=10):
+        self.__fileSave, self.__patternSave, self.__saveTime = file, pattern, saveTime
 
         self.__pattern = fc.readJSON(self.__patternSave)
         if self.__pattern == {}:
@@ -217,6 +246,11 @@ class save:
             self.save()
                 
         
+        # autozapis
+        loop = asyncio.get_event_loop()
+        loop.create_task(self.__autoSave(), name="saveManager")
+        loop.create_task(self.__addSec(), name="saveManagerSec")
+        loop.create_task(self.__gameClock(), name="gameClock")
             
             
         # autozapis

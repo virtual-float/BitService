@@ -2,12 +2,13 @@
     "checkSum": 0,
     "firstRun": 0,
     "lastGame": 0,
-    "totalSec": 0,
     "difficulty": "easy",
     "time":{
-        "totalSecIngame": 0,
+        "totalSec": 0,
+
         "hour": 8,
         "minute": 0,
+        "second": 0,
         "day": 1
 
     },
@@ -18,7 +19,7 @@
             "xp": -1,
             "level": -1,
             "voiceactor": 0,
-            "apperance": {
+            "appearance": {
 
             }
 
@@ -31,7 +32,7 @@
         "xp": 0,
         "level": 1,
         "voiceactor": -1,
-        "apperance":{
+        "appearance":{
 
         }
     },

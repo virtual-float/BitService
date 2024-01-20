@@ -1,11 +1,13 @@
 import pygame
 import json
+import asyncio
 
 import bin.fonts as fn
 class achievement:
     
     screen = None
     achievementShown = []
+    __doExist = False
     
     @classmethod
     def configure(cls, screen: pygame.surface.Surface) -> None:
@@ -18,32 +20,48 @@ class achievement:
                 Brak        
         '''
         cls.screen = screen
+        cls.achievementShown = []
         
-        
+        loop = asyncio.get_event_loop()
+        loop.create_task(achievement.__loop(), name="achievementManager")
         
     @classmethod
-    def loop(cls) -> None:
+    def loopDraw(cls) -> None:
         '''
-            renderuj oraz obliczaj osiągniecia\n
+            renderuj\n
             ----------------------------\n
             Argumenty:\n
-                Bra\n
+                Brak\n
             zwraca:\n
                 Brak        
         '''
         for element in cls.achievementShown:
-            if element.deleted:
-                cls.achievementShown.remove(element)
-            else:
-                element.selfLoop()
-                element.selfDraw()
+            if not element.deleted: element.selfDraw()  
+        
+    @classmethod
+    async def __loop(cls) -> None:
+        '''
+            obliczaj osiągniecia\n
+            ----------------------------\n
+            Argumenty:\n
+                Brak\n
+            zwraca:\n
+                Brak        
+        '''
+        while True:
+            for element in cls.achievementShown:
+                if element.deleted:
+                    cls.achievementShown.remove(element)
+                else:
+                    element.selfLoop()
+            await asyncio.sleep(0.02)
         
           
     def selfLoop(self) -> None:
         '''
             Self loop poprostu
         '''
-        self.__cords[0] += 10
+        self.__cords[0] += 7
         if self.__cords[0] > achievement.screen.get_size()[0] + 105:
             self.deleted = True
 
