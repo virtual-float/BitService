@@ -2,7 +2,7 @@
 import pygame, json
 import asyncio, os
 import random as rand
-from tkinter import messagebox, Button, Tk, Label
+from tkinter import messagebox, Button, Tk, Label, PhotoImage
 
 
 # Zaimportuj lokalne moduły
@@ -26,6 +26,7 @@ class Menu:
         self.status = 0
 
         PlayButton = Button(
+            handle=self.handle,
             text='Graj',
             width=20,
             height=2,
@@ -33,6 +34,7 @@ class Menu:
         ).place(x=15, y=150)
 
         ExitButton = Button(
+            handle=self.handle,
             text='Wyjdź',
             width=20,
             height=2,
@@ -40,15 +42,14 @@ class Menu:
         ).place(x=15, y=200)
 
         VersionLabel = Label(
+            handle=self.handle,
             text=GS['ApplicationVersion']
-        ).place(x=500, y=250)
+        ).place(x=GS['ApplicationSize'][0] - 125, y=GS['ApplicationSize'][1] - 50)
 
         self.handle.mainloop()
     
     def statusType(self, type: str):
-        if type == 'exit':
-            self.status = 0
-        else:
+        if type == 'play':
             self.status = 1
         self.handle.destroy()
 
@@ -65,6 +66,8 @@ async def main(gameSettings: dict):
 
     # Przypisanie ustawień do GS
     GS = gameSettings
+
+    
 
     # by nie było błędu
     class __Tsave:
