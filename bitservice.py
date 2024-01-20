@@ -226,7 +226,7 @@ if __name__ == "__main__":
     data = readJSON('./bin/settings.json')
     
     if data != {}:
-        loop = asyncio.get_event_loop()    
+        loop = asyncio.new_event_loop()
         loop.create_task(main(data), name="main")
         loop.run_forever()
     else:
