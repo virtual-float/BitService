@@ -4,10 +4,27 @@ import json
 import asyncio
 import time
 import pygame
+import os
+from dataclasses import dataclass
+import functools
 
 import bin.function as fc
 
+@dataclass
+class eventTimeStamp:
+    hour: int
+    minute: int
+    second: int
 
+@dataclass
+class gameEvent:
+    name: str
+    time: eventTimeStamp
+    useNumber: int
+    callback: object
+
+
+    
 
 class save:
     '''Save gry'''
@@ -79,7 +96,7 @@ class save:
         return True
     
     
-    def getSafe(self, loc:str, default = {"error":True, "errorMessage": "pathError"}) -> bool | dict:
+    def getSafe(self, loc:str, default = {"error":True, "errorMessage": "pathError"}) -> any:
         '''Nie wyświetla komunikatu błądu\n
             Użyj jeśli nie masz pewności że coś istnieje w save\n
             ---------------------------\n
@@ -133,7 +150,7 @@ class save:
         return True
     
              
-    def get(self, loc:str = "", default = {"error":True, "errorMessage": "pathError"}) -> dict:
+    def get(self, loc:str = "", default = {"error":True, "errorMessage": "pathError"}) -> any:
         '''Pozwala uzyskać daną wartość w save\n
             Przykład użycia dla uzyskania imienia gracza:\n
             get("player.nickname")\n
@@ -172,6 +189,59 @@ class save:
         self.set('firstRun', time.time_ns())
         
         
+    def getGameTime(self) -> dict:
+        '''
+            Pozyskuje czas sava\n
+            Argumenty:\n
+                * Brak\n
+            Zwraca:\n
+                * Dict\n
+        '''
+        return self.get("time")
+    
+    def resetGameTime(self, notTotalSeconds:bool=False) -> None:
+        '''
+            Czyści czas save'a do stanu początkowego\n
+            Argumenty:\n
+                * notTotalSeconds (bool) -> Ustala czy zresertować też łaczną liczbę sekund\n
+            Zwraca:\n
+                * None\n
+        '''
+        if notTotalSeconds: _ts = self.get("time.totalSec")
+        
+        self.set("time",
+                 self.__pattern['time'])
+        
+        if notTotalSeconds: self.set("time.totalSec", _ts)
+        
+    def getGameEvents(self):
+        return self.__events
+    
+    def newEvent(self, time: eventTimeStamp, name:str, useNumber: int):
+        def _newEvent(func):
+            self.addGameEvent(gameEvent(name, time, useNumber, func))
+            
+        return _newEvent
+
+    def addGameEvent(self, event: gameEvent):
+        self.__events.append(event)
+        self.get('gameState.lastEvents').append(
+            {
+                'name': event.name,
+                'time': {
+                    'hour': event.time.hour,
+                    'minute': event.time.minute,
+                    'second': event.time.second
+                    },
+                'useNumber': event.useNumber
+            }
+        )
+        
+        
+    async def __eventManager(self):
+        while True:
+            await asyncio.sleep(0.1) 
+        
     async def __autoSave(self):
         while True:
             await asyncio.sleep(self.__saveTime)
@@ -208,12 +278,20 @@ class save:
         
     def __init__(self, file:str="./bin/save.json", pattern:str="./bin/savePattern.json", saveTime:int=10):
         self.__fileSave, self.__patternSave, self.__saveTime = file, pattern, saveTime
+        
+        self.__events = []
+
 
         self.__pattern = fc.readJSON(self.__patternSave)
         if self.__pattern == {}:
             raise Exception("Błąd wczytywania wzóru zapisu")
         
-        self.__save = fc.readJSON(self.__fileSave)
+        
+        if os.path.isfile(os.getcwd() + self.__fileSave):
+            self.__save = fc.readJSON(self.__fileSave)
+        else: self.__save = {}
+        
+        
         if self.__save == {}:
             self.erase()
         else:
@@ -245,12 +323,21 @@ class save:
                 
             self.save()
                 
+                
+                
+        # wyczyść aktualny stan gry
+        self.set('gameState', {
+            'lastEvents': []
+        })
         
         # autozapis
         loop = asyncio.get_event_loop()
         loop.create_task(self.__autoSave(), name="saveManager")
+        
+        # zegar gry
         loop.create_task(self.__addSec(), name="saveManagerSec")
         loop.create_task(self.__gameClock(), name="gameClock")
+        loop.create_task(self.__eventManager(), name="eventManager")
             
             
         # autozapis
