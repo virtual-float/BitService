@@ -78,7 +78,7 @@ async def main(gameSettings: dict):
         # achievement.kill()
         
         for task in asyncio.all_tasks():
-            if task.get_name() in ['saveManager', 'saveManagerSec', 'achievementManager', 'gameClock']: task.cancel()
+            if task.get_name() in ['saveManager', 'saveManagerSec', 'achievementManager', 'gameClock', 'eventManager']: task.cancel()
     
         
         
