@@ -1,7 +1,7 @@
 # Importowanie modułow niezbędnych do uruchomienia gry
 import pygame, asyncio
 import random as rand
-from tkinter import messagebox, Button, Tk, Label
+import tkinter
 
 
 # Zaimportuj lokalne moduły
@@ -19,32 +19,29 @@ RENDER_SCALE : int = 4
 # Interfejs z oknem menu
 class Menu:
     # Konstruktor
-    def __init__(self, handle: Tk):
-        self.handle = handle
+    def __init__(self, rootHandle: tkinter.Tk) -> None:
+        self.handle = rootHandle
 
         # Status
         # 0 = exit
         # 1 = play
         self.status = 0
 
-        PlayButton = Button(
-            handle=self.handle,
+        PlayButton = tkinter.Button(
             text='Graj',
             width=20,
             height=2,
             command=lambda: self.statusType('play')
         ).place(x=15, y=150)
 
-        ExitButton = Button(
-            handle=self.handle,
+        ExitButton = tkinter.Button(
             text='Wyjdź',
             width=20,
             height=2,
             command=lambda: self.statusType('exit')
         ).place(x=15, y=200)
 
-        VersionLabel = Label(
-            handle=self.handle,
+        VersionLabel = tkinter.Label(
             text=GS['ApplicationVersion']
         ).place(x=GS['ApplicationSize'][0] - 125, y=GS['ApplicationSize'][1] - 50)
 
@@ -88,14 +85,13 @@ async def main(gameSettings: dict):
         
         
         # Tworzenie root dla tkinter menu
-        root = Tk(GS['ApplicationName'], GS['ApplicationName'])
-        # Utwarzanie tytułu dla roota
-        root.title(GS['ApplicationName'])
-        # Ustawianie rozmiaru okna roota
-        root.geometry('{}x{}'.format(GS['ApplicationSize'][0], GS['ApplicationSize'][1]))
+        root = tkinter.Tk()
+        root.title("dwd")
+        root.geometry("500x500")
         
         # Wywołaj klasę Menu o handle root
         menu = Menu(root)
+
         # jeżeli status wyjściowy wynosi 0 (exit) to niech wyjdzie z gry
         if menu.status == 0:
             break
@@ -104,7 +100,7 @@ async def main(gameSettings: dict):
         pygame.init()
         pygame.font.init()
         if GS['fullscreen']:
-             displayFinal = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+            displayFinal = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
         else:
             displayFinal = pygame.display.set_mode((GS['renderSize'][0], GS['renderSize'][1]))
         
@@ -208,7 +204,6 @@ async def main(gameSettings: dict):
             
             achievement.loopDraw()
             
-            
             # upscalowanie
             pygame.transform.scale(
                 surface=display, 
@@ -220,7 +215,6 @@ async def main(gameSettings: dict):
             GameClock.tick(15)
             
         pygame.quit()
-    asyncio.get_event_loop().stop()
 
 
 
@@ -231,9 +225,7 @@ if __name__ == "__main__":
     data = readJSON('./bin/settings.json')
     
     if data != {}:
-        loop = asyncio.new_event_loop()
-        loop.create_task(main(data), name="main")
-        loop.run_forever()
+        asyncio.run(main(data))
     else:
-        messagebox.showerror('Błąd', 'Wykryto puste dane ustawień. Nie można uruchomić gry!')
+        tkinter.messagebox.showerror('Błąd', 'Wykryto puste dane ustawień. Nie można uruchomić gry!')
         exit()
