@@ -133,6 +133,7 @@ async def main(gameSettings: dict):
         # Tworzenie root dla tkinter menu
         root = tkinter.Tk()
         root.title(GS['ApplicationName'])
+        root.iconbitmap('./' + GS['ApplicationIcon'])
         root.geometry("{}x{}".format(GS['ApplicationSize'][0], GS['ApplicationSize'][1]))
         
         # Wywołaj klasę Menu o handle root
@@ -154,6 +155,7 @@ async def main(gameSettings: dict):
         
         # Ustaw nazwę gry
         pygame.display.set_caption(GS['ApplicationName'])
+        pygame.display.set_icon(pygame.image.load(GS['ApplicationIcon']))
 
         # Tło gry
         Background = scaleImage('bin/images/background.png', RENDER_SCALE).convert_alpha()
@@ -165,6 +167,30 @@ async def main(gameSettings: dict):
         pb_y = GS['ApplicationSize'][1] // 2 + (8 * ProgressBar.get_height())
         ProgressBarRect.x = pb_x
         ProgressBarRect.y = pb_y
+
+        # Objekty
+        # Biurko
+        Table = scaleImage("bin/images/table.png", RENDER_SCALE).convert_alpha()
+        TableRect = Table.get_rect()
+        TableRect.x = GS['ApplicationSize'][0] // 2 + (Table.get_width() - 50)
+        TableRect.y = GS['ApplicationSize'][1] // 2 + (Table.get_height() // 3) + 10
+
+        # Monitor
+        Screen = scaleImage("bin/images/monitor.png", RENDER_SCALE).convert_alpha()
+        ScreenRect = Screen.get_rect()
+        ScreenRect.x = GS['ApplicationSize'][0] // 2 + (Screen.get_width() + 50)
+        ScreenRect.y = GS['ApplicationSize'][1] // 2 + (Screen.get_height() // 3) - 50
+
+        # Klawiatura
+        Keyboard = scaleImage("bin/images/keyboard.png", RENDER_SCALE).convert_alpha()
+        KeyboardRect = Keyboard.get_rect()
+
+        # Kubek
+        Cup = scaleImage("bin/images/cup.png", RENDER_SCALE).convert_alpha()
+        CupRect = Cup.get_rect()
+
+        # Komputer
+        # ...
 
         # Chmury
         Cloud0 = scaleImage('bin/images/cloud.png', RENDER_SCALE // RENDER_SCALE).convert_alpha()
@@ -245,11 +271,22 @@ async def main(gameSettings: dict):
 
             display.fill((98, 125, 206))
 
-
+            # Chmury
             display.blit(Cloud0, (CloudRect0.x, CloudRect0.y))
             display.blit(Cloud1, (CloudRect1.x, CloudRect1.y))
 
+            # Budynek
             display.blit(Background, (0, 0))
+
+            # Renderowanie gracza
+            # ...
+
+            # Renderowanie objektów
+            display.blit(Table, (TableRect.x, TableRect.y))
+            display.blit(Screen, (ScreenRect.x, ScreenRect.y))
+
+            # Renderowanie klientów 
+            # ...
 
             # Progress bar
             display.blit(ProgressBar, (ProgressBarRect.x, ProgressBarRect.y))
@@ -264,6 +301,7 @@ async def main(gameSettings: dict):
             # temp
             temp_x = 0
 
+            # Render barów dla progress bar
             for bar in bars_t:
                 bar[1].x, bar[1].y = (pb_x + 2) + temp_x, (pb_y + 2)
 
@@ -296,9 +334,8 @@ if __name__ == "__main__":
     
     # Odczytaj dane
     data = readJSON('./bin/settings.json')
-    
-    if data != {}:
-        asyncio.run(main(data))
-    else:
+
+    if data == {}:
         tkinter.messagebox.showerror('Błąd', 'Wykryto puste dane ustawień. Nie można uruchomić gry!')
         exit()
+    asyncio.run(main(data))    

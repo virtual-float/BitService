@@ -5,6 +5,7 @@
         1024,
         600
     ],
+    "ApplicationIcon": "bin/images/logo.png",
     "renderSize": [
         1024,
         600

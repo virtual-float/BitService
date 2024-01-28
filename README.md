@@ -2,7 +2,7 @@
 ## O grze
 Gra jest w typie kategorii: Informatyka, Symulacja, 2D, PixelArt
 
-__BitService__ Jest grą, w której wcielasz się w rolę pracownika o imieniu _Mike_ w firmie __Bits & Services__ i masz za 
+__BitService__ Jest grą, w której wcielasz się w rolę pracownika o imieniu _Kera_ w firmie __Bits & Services__ i masz za 
 zadanie rozwiązać zadania przydzielonych tobie przez innych pracowników oraz szefa firmy.
 
 Musisz stanąć w czoło wyzwaniom takimi jak: 
