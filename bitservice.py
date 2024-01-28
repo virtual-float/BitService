@@ -60,7 +60,7 @@ def scaleImage(imgSource: str, scaleBy: int) -> pygame.Surface:
 
 
 # Funkcja, która zwróci ilość barów dla progress baru
-def calculateBars(repStatus: int):
+def generateBars(repStatus: int):
     if repStatus <= 0:
         yield []
 
@@ -233,12 +233,12 @@ async def main(gameSettings: dict):
             display.blit(ProgressBar, (ProgressBarRect.x, ProgressBarRect.y))
 
             # Layout
-            bars_t = list(calculateBars(to_iterate))
+            bars_t = list(generateBars(to_iterate))
             
             if bars_t == []:
                 # TODO: Wyświetl gameover screen
                 pass
-            
+
             # temp
             temp_x = 0
 
