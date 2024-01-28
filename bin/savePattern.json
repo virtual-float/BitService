@@ -12,21 +12,25 @@
         "day": 1
 
     },
-    "characters": [
-        {
+    "characters":{
+        "0":{
             "type": "npc",
             "nickname": "kera",
+            "xp": -1,
+            "level": -1,
             "voiceactor": 0,
             "appearance": {
 
             }
+
         }
-    ],
+    },
     "clientQueue":[0,5,2],
     "player":{
         "type": "player",
         "nickname": "kera",
-        "ratio": 0,
+        "xp": 0,
+        "level": 1,
         "voiceactor": -1,
         "appearance":{
 
