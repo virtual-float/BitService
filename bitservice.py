@@ -65,9 +65,9 @@ def calculateBars(repStatus: int):
         yield []
 
     for i in range(0, repStatus, 1):
-        yield pygame.image.load('bin/images/bar_body.png')
+        yield pygame.image.load('bin/images/bar_body.png'), pygame.image.load('bin/images/bar_body.png').get_rect()
         if i == repStatus - 1:
-            yield pygame.image.load('bin/images/bar_head.png')
+            yield pygame.image.load('bin/images/bar_head.png'), pygame.image.load('bin/images/bar_head.png').get_rect()
 
 
 # Klasa gracza
@@ -95,7 +95,7 @@ async def main(gameSettings: dict):
     save = __Tsave()
 
     # Dla testu
-    to_iterate = 5
+    to_iterate = 10
 
     beRunned = True
     while beRunned:
@@ -139,8 +139,10 @@ async def main(gameSettings: dict):
         # Dla gry
         ProgressBar = pygame.image.load('bin/images/progress_bar.png').convert_alpha()
         ProgressBarRect = ProgressBar.get_rect()
-        ProgressBarRect.x = GS['ApplicationSize'][0] // 2 + (ProgressBar.get_width() // 2)
-        ProgressBarRect.y = GS['ApplicationSize'][1] // 2 + (8 * ProgressBar.get_height())
+        pb_x = GS['ApplicationSize'][0] // 2 + (ProgressBar.get_width() // 2)
+        pb_y = GS['ApplicationSize'][1] // 2 + (8 * ProgressBar.get_height())
+        ProgressBarRect.x = pb_x
+        ProgressBarRect.y = pb_y
 
         # Chmury
         Cloud0 = scaleImage('bin/images/cloud.png', RENDER_SCALE // RENDER_SCALE).convert_alpha()
@@ -233,8 +235,19 @@ async def main(gameSettings: dict):
             # Layout
             bars_t = list(calculateBars(to_iterate))
             
+            if bars_t == []:
+                # TODO: Wyświetl gameover screen
+                pass
             
+            # temp
+            temp_x = 0
 
+            for bar in bars_t:
+                bar[1].x, bar[1].y = (pb_x + 2) + temp_x, (pb_y + 2)
+
+                temp_x = bar[0].get_width()
+
+                display.blit(bar[0], (bar[1].x, bar[1].y))
             
             # renderowanie okna pauzy
             pauseScreenOb.draw(display, GS['devmode'])
