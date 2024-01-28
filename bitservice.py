@@ -62,8 +62,7 @@ def scaleImage(imgSource: str, scaleBy: int) -> pygame.Surface:
 # Funkcja, która zwróci ilość barów dla progress baru
 async def calculateBars(repStatus: int):
     if repStatus <= 0:
-        # TODO: Wyświetl okno z gameover
-        pass
+        yield []
 
     for i in range(0, repStatus, 1):
         yield pygame.image.load('bin/images/bar_body.png')
