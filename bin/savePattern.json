@@ -16,8 +16,6 @@
         "0":{
             "type": "npc",
             "nickname": "kera",
-            "xp": -1,
-            "level": -1,
             "voiceactor": 0,
             "appearance": {
 
@@ -29,8 +27,7 @@
     "player":{
         "type": "player",
         "nickname": "kera",
-        "xp": 0,
-        "level": 1,
+        "ratio_bar": 0,
         "voiceactor": -1,
         "appearance":{
 
