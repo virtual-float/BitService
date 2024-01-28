@@ -96,7 +96,7 @@ async def main(gameSettings: dict):
     save = __Tsave()
 
     # Dla testu
-    to_iterate = 1
+    to_iterate = 10
 
     beRunned = True
     while beRunned:
@@ -246,7 +246,7 @@ async def main(gameSettings: dict):
             for bar in bars_t:
                 bar[1].x, bar[1].y = (pb_x + 2) + temp_x, (pb_y + 2)
 
-                temp_x = bar[0].get_width()
+                temp_x += bar[0].get_width()
 
                 display.blit(bar[0], (bar[1].x, bar[1].y))
             
