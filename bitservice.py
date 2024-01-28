@@ -1,8 +1,7 @@
 # Importowanie modułow niezbędnych do uruchomienia gry
-import pygame, json
-import asyncio, os
+import pygame, asyncio
 import random as rand
-from tkinter import messagebox, Button, Tk, Label, PhotoImage
+from tkinter import messagebox, Button, Tk, Label
 
 
 # Zaimportuj lokalne moduły
@@ -13,6 +12,9 @@ import bin.savemanager as saveManager
 
 # Game Setting
 GS: dict
+
+# Constant
+RENDER_SCALE : int = 4
 
 # Interfejs z oknem menu
 class Menu:
@@ -112,11 +114,11 @@ async def main(gameSettings: dict):
         pygame.display.set_caption(GS['ApplicationName'])
 
         # Tło gry
-        Background = scaleImage('bin/images/background.png', 4).convert_alpha()
+        Background = scaleImage('bin/images/background.png', RENDER_SCALE).convert_alpha()
 
         # Chmury
-        Cloud0 = scaleImage('bin/images/cloud.png', 1).convert_alpha()
-        Cloud1 = scaleImage('bin/images/cloud.png', 2).convert_alpha()
+        Cloud0 = scaleImage('bin/images/cloud.png', RENDER_SCALE // RENDER_SCALE).convert_alpha()
+        Cloud1 = scaleImage('bin/images/cloud.png', RENDER_SCALE // 2).convert_alpha()
         CloudRect0 = Cloud0.get_rect()
         CloudRect1 = Cloud1.get_rect()
         CloudRect0.y = GS['ApplicationSize'][1] // 2 - Cloud0.get_height()
