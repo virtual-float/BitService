@@ -60,7 +60,7 @@ def scaleImage(imgSource: str, scaleBy: int) -> pygame.Surface:
 
 
 # Funkcja, która zwróci ilość barów dla progress baru
-async def calculateBars(repStatus: int):
+def calculateBars(repStatus: int):
     if repStatus <= 0:
         yield []
 
@@ -74,6 +74,10 @@ async def calculateBars(repStatus: int):
 class Player:
     def __init__(self):
         pass
+
+    def animate(self, AnimationOption):
+        pass
+
 
 
 async def main(gameSettings: dict):
@@ -89,6 +93,9 @@ async def main(gameSettings: dict):
     class __Tsave:
         def kill(self): pass
     save = __Tsave()
+
+    # Dla testu
+    to_iterate = 5
 
     beRunned = True
     while beRunned:
@@ -128,6 +135,12 @@ async def main(gameSettings: dict):
 
         # Tło gry
         Background = scaleImage('bin/images/background.png', RENDER_SCALE).convert_alpha()
+
+        # Dla gry
+        ProgressBar = pygame.image.load('bin/images/progress_bar.png').convert_alpha()
+        ProgressBarRect = ProgressBar.get_rect()
+        ProgressBarRect.x = GS['ApplicationSize'][0] // 2 + (ProgressBar.get_width() // 2)
+        ProgressBarRect.y = GS['ApplicationSize'][1] // 2 + (8 * ProgressBar.get_height())
 
         # Chmury
         Cloud0 = scaleImage('bin/images/cloud.png', RENDER_SCALE // RENDER_SCALE).convert_alpha()
@@ -214,9 +227,14 @@ async def main(gameSettings: dict):
 
             display.blit(Background, (0, 0))
 
+            # Progress bar
+            display.blit(ProgressBar, (ProgressBarRect.x, ProgressBarRect.y))
+
             # Layout
-            bars_t = await calculateBars()
+            bars_t = list(calculateBars(to_iterate))
             
+            
+
             
             # renderowanie okna pauzy
             pauseScreenOb.draw(display, GS['devmode'])
