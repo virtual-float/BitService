@@ -45,6 +45,8 @@ class Menu:
             text=GS['ApplicationVersion']
         ).place(x=GS['ApplicationSize'][0] - 125, y=GS['ApplicationSize'][1] - 50)
 
+        # TODO: Zrobić menu z tłem bin/images/menu.jpg
+
         self.handle.mainloop()
     
     def statusType(self, type: str):
@@ -73,10 +75,29 @@ def generateBars(repStatus: int):
 
 # Klasa gracza
 class Player:
-    def __init__(self):
+
+    AnimationDefault : int = -1
+    AnimationTypewrite : int = 0
+    AnimationSad : int = 1
+
+    def __init__(self, playerImage: pygame.surface.Surface):
+        self.move_step = True # True -> prawa noga/ramię, False -> Lewa noga/ramię
+        self.player_rect = playerImage.get_rect()
         pass
 
-    def animate(self, AnimationOption):
+    def animate(self, AnimationState: int):
+        match AnimationState:
+            case -1:
+                pass
+            case 0:
+                pass
+            case 1:
+                pass
+
+    def move(self, position: tuple[int, int]):
+        self.x, self.y = position[0], position[1]
+
+    def fire():
         pass
 
 
