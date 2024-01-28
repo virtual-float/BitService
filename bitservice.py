@@ -59,6 +59,19 @@ def scaleImage(imgSource: str, scaleBy: int) -> pygame.Surface:
     return pygame.transform.scale(image, (image.get_width() * scaleBy, image.get_height() * scaleBy))
 
 
+# Funkcja, która zwróci ilość barów dla progress baru
+async def calculateBars(repStatus: int):
+    if repStatus <= 0:
+        # TODO: Wyświetl okno z gameover
+        pass
+
+    for i in range(0, repStatus, 1):
+        yield pygame.image.load('bin/images/bar_body.png')
+        if i == repStatus - 1:
+            yield pygame.image.load('bin/images/bar_head.png')
+        
+
+
 async def main(gameSettings: dict):
     global GS
     # messagebox.showinfo('Informacja', 'uruchomiono pomyślnie')
@@ -86,8 +99,8 @@ async def main(gameSettings: dict):
         
         # Tworzenie root dla tkinter menu
         root = tkinter.Tk()
-        root.title("dwd")
-        root.geometry("500x500")
+        root.title(GS['ApplicationName'])
+        root.geometry("{}x{}".format(GS['ApplicationSize'][0], GS['ApplicationSize'][1]))
         
         # Wywołaj klasę Menu o handle root
         menu = Menu(root)
@@ -196,6 +209,9 @@ async def main(gameSettings: dict):
             display.blit(Cloud1, (CloudRect1.x, CloudRect1.y))
 
             display.blit(Background, (0, 0))
+
+            # Layout
+            # barsList = await calculateBars()
             
             
             # renderowanie okna pauzy
