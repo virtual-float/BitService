@@ -68,7 +68,12 @@ async def calculateBars(repStatus: int):
         yield pygame.image.load('bin/images/bar_body.png')
         if i == repStatus - 1:
             yield pygame.image.load('bin/images/bar_head.png')
-        
+
+
+# Klasa gracza
+class Player:
+    def __init__(self):
+        pass
 
 
 async def main(gameSettings: dict):
@@ -210,7 +215,7 @@ async def main(gameSettings: dict):
             display.blit(Background, (0, 0))
 
             # Layout
-            # barsList = await calculateBars()
+            bars_t = await calculateBars()
             
             
             # renderowanie okna pauzy
