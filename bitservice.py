@@ -65,9 +65,10 @@ def generateBars(repStatus: int):
         yield []
 
     for i in range(0, repStatus, 1):
-        yield pygame.image.load('bin/images/bar_body.png'), pygame.image.load('bin/images/bar_body.png').get_rect()
         if i == repStatus - 1:
             yield pygame.image.load('bin/images/bar_head.png'), pygame.image.load('bin/images/bar_head.png').get_rect()
+            break
+        yield pygame.image.load('bin/images/bar_body.png'), pygame.image.load('bin/images/bar_body.png').get_rect()
 
 
 # Klasa gracza
@@ -95,7 +96,7 @@ async def main(gameSettings: dict):
     save = __Tsave()
 
     # Dla testu
-    to_iterate = 10
+    to_iterate = 1
 
     beRunned = True
     while beRunned:
