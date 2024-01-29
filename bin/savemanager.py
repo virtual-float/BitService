@@ -47,7 +47,7 @@ class save:
          
         # checksum
         _check = 0
-        for _value in fc.NestedDictValues(self.__save):
+        for _value in fc.NestedDictValues(json.loads(json.dumps(self.__save))):
             _check += int.from_bytes(str(_value).encode('utf-8'), 'little')
             
         _check = ((_check % 10000000000000000) + (_check % 2856 * 4) + _check) % 10000000000000000

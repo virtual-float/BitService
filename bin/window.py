@@ -16,7 +16,7 @@ class windowElement(pygame.sprite.Sprite):
     
     
     def setImage(self, image: pygame.surface.Surface):
-        self.image = image
+        self.image = image.convert_alpha()
         
     def getImage(self) -> pygame.surface.SurfaceType:
         return self.image
@@ -24,7 +24,7 @@ class windowElement(pygame.sprite.Sprite):
     def __init__(self, image: pygame.surface.Surface, cords: list[int,int] | tuple[int,int] = [0,0]):
         super().__init__()
         
-        self.image = image
+        self.image = image.convert_alpha()
         self.rect = image.get_rect()
         self.rect.topleft = [cords[0], cords[1]]
     
@@ -36,11 +36,18 @@ class windowBody(pygame.sprite.Group):
         
 
 class window():
+    closeImg = pygame.image.load('bin/images/close.png')
+    
     __windowList = {
         
     }
     
-    
+    @classmethod
+    def eraseWindows(cls) -> None:
+        for name,window in cls.windowList().items():
+            cls.removeWindow(name)
+            
+            
     @classmethod
     def removeWindow(cls, name:str) -> None:
         cls.__windowList.pop(name)
@@ -111,13 +118,26 @@ class window():
         self.__body.draw(surface=self.__tempSurfaceBody)
         
         destination.blit(self.__tempSurfaceBackground, (self.__position[0],self.__position[1]))
+        destination.blit(window.closeImg, (self.__size[0] + self.__position[0] - 30,5 + self.__position[1]))
         destination.blit(self.__tempSurfaceBody, (self.__position[0],40+self.__position[1]))
         
         
     
     async def __loop(self):
-        await asyncio.sleep(0.1)
+        while True:
+            if any(pygame.mouse.get_pressed()):
+                self.__handleClick(pygame.mouse.get_pressed())
+                
+            await asyncio.sleep(0.1)
         
+        
+    def __handleClick(self, mouseStatus):
+        
+        _pos = pygame.mouse.get_pos()
+        
+        #TODO: moze kiedys
+        if _pos[0] > self.__position[0] and _pos[0] < self.__position[0] + self.__size:
+            pass
         
     def setPosition(self, position:tuple[int, int]) -> None:
         self.__position = position

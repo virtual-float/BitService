@@ -219,6 +219,8 @@ async def main(gameSettings: dict):
 
         # testy okien, możesz wyrzucić, moja "zabawa", jedynie renderują aktualnie, niewiem, bawię się ucząć
         # możesz zobaczyć, ale nie jest okomentowane mocno
+        window.window.eraseWindows()
+        
         window.window('test', (100,100), pygame.sprite.Group(
             window.windowElement(Cloud0),
             window.windowElement(Cloud1, (60,0))
