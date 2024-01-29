@@ -27,6 +27,8 @@ class gameEvent:
     
 
 class save:
+    currentSave = None
+    
     '''Save gry'''
     def save(self) -> bool:
         '''Ręczne zapisywanie stanu gry\n
@@ -276,7 +278,7 @@ class save:
                         
             
         
-    def __init__(self, file:str="./bin/save.json", pattern:str="./bin/savePattern.json", saveTime:int=10):
+    def __init__(self, file:str="./bin/save.json", pattern:str="./bin/savePattern.json", saveTime:int=10, saveToCurrent:bool=True):
         self.__fileSave, self.__patternSave, self.__saveTime = file, pattern, saveTime
         
         self.__events = []
@@ -338,6 +340,9 @@ class save:
         loop.create_task(self.__addSec(), name="saveManagerSec")
         loop.create_task(self.__gameClock(), name="gameClock")
         loop.create_task(self.__eventManager(), name="eventManager")
+        
+        if saveToCurrent:
+            save.currentSave = self
             
             
         # autozapis
@@ -364,6 +369,9 @@ class save:
         
         
         
-def get(file="./bin/save.json", pattern="./bin/savePattern.json") -> save:
-    return save(file,pattern)     
+def get(file="./bin/save.json", pattern="./bin/savePattern.json", alwaysNew:bool=True) -> save:
+    if not alwaysNew and save.currentSave != None:
+        return save.currentSave
+    else:
+        return save(file,pattern)     
     

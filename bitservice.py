@@ -8,6 +8,7 @@ import tkinter
 from bin.function import readJSON, updateJSON
 from bin.pausescreen import pauseScreen
 from bin.achievements import achievement
+import bin.window as window
 import bin.savemanager as saveManager
 
 # Game Setting
@@ -168,6 +169,17 @@ async def main(gameSettings: dict):
         achievement.configure(display)
         achievement("uruchomienie")
 
+
+        # testy okien, możesz wyrzucić, moja "zabawa", jedynie renderują aktualnie, niewiem, bawię się ucząć
+        # możesz zobaczyć, ale nie jest okomentowane mocno
+        window.window('test', (100,100), pygame.sprite.Group(
+            window.windowElement(Cloud0),
+            window.windowElement(Cloud1, (60,0))
+        ))
+        window.window.getWindow('test').setPosition((400,200))
+        window.window('test2', (200,200), pygame.sprite.Group())
+        window.window.getWindow('test2').setPosition((0,300))
+
         # funkcja ułatwiająca
         async def waitForOther():
             await asyncio.sleep(0.02)  
@@ -249,6 +261,11 @@ async def main(gameSettings: dict):
                 temp_x = bar[0].get_width()
 
                 display.blit(bar[0], (bar[1].x, bar[1].y))
+                
+                
+                
+            # renderowanie okna
+            window.window.draw(display)
             
             # renderowanie okna pauzy
             pauseScreenOb.draw(display, GS['devmode'])
