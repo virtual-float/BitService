@@ -233,12 +233,13 @@ async def main(gameSettings: dict):
         game.window.getWindow('test').setPosition((400,200))
         game.window('test2', (200,200), pygame.sprite.Group(), closable=True)
         game.window.getWindow('test2').setPosition((0,300))
-
+        
         # funkcja ułatwiająca
         async def waitForOther():
             await asyncio.sleep(0.02)  
                
         while GameOn:
+            print(chmura.focused)
             await waitForOther()
             # obsługa eventów 
             EVENTS = pygame.event.get()

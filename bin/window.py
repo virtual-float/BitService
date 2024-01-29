@@ -43,6 +43,7 @@ class windowElement(pygame.sprite.Sprite):
         self.image = image.convert_alpha()
         self.rect = image.get_rect()
         self.rect.topleft = [cords[0], cords[1]]
+        self.focused = False
 
     
 class windowText(windowElement):
@@ -71,6 +72,8 @@ class window():
     
     __windowOrder = []
     
+    __focusedElement = None
+    
     @classmethod
     def startTask(cls) -> None:
         asyncio.create_task(cls.__globalLoop(), name=f"windowManager")
@@ -84,13 +87,23 @@ class window():
                 return
             if any(_pres):
                 _pos = pygame.mouse.get_pos()
+                _foundWindow = False
                 
                 for name in cls.__windowOrder:
                     window = cls.__windowList[name]
                     
                     if window.windowRect.collidepoint(_pos):
-                        window.handleClick(_pres,_pos)
+                        cls.__focusedElement = window.handleClick(_pres,_pos, cls.__focusedElement)
+                        _foundWindow = True
+                        
+                        if cls.__focusedElement != None and not cls.__focusedElement in window.getBody().sprites():
+                            cls.__focusedElement.focused = False
+                            cls.__focusedElement = None
                         break
+                    
+                if not _foundWindow and cls.__focusedElement != None: 
+                    cls.__focusedElement.focused = False
+                    cls.__focusedElement = None
             await asyncio.sleep(0.02)
             
     
@@ -102,6 +115,10 @@ class window():
             
     @classmethod
     def removeWindow(cls, name:str) -> None:
+        if cls.__focusedElement in cls.__windowList[name].getBody().sprites():
+            cls.__focusedElement.focused = False
+            cls.__focusedElement = None
+        
         cls.__windowList.pop(name)
         
         for task in asyncio.all_tasks():
@@ -192,7 +209,10 @@ class window():
                 
             await asyncio.sleep(0.05)
         
-    def handleClick(self, pressed: tuple[bool], pos: tuple[int]) -> None:
+    def handleClick(self, pressed: tuple[bool], pos: tuple[int], previousFocused) -> None | pygame.sprite.Sprite:
+        # ta zmienna niewiem czy nie zostanie usunięta, bo jej sens jest aktualnie nie istniejący przez to że
+        # returna się używa, ale zostawiam by jakby co można było łatwo przerobić kod
+        # dodane przy okazji dodawania focusu na dany element
         _beenclicked = False
         
         for sprite in self.__body.sprites():
@@ -206,10 +226,21 @@ class window():
                 sprite.click(pressed, pos)
                 _beenclicked = True
                 
+                if previousFocused != None:
+                    previousFocused.focused = False
+                
+                sprite.focused = True
+                
+                return sprite
+
+                
         if not _beenclicked:
             # wyłączanie okna
             if self.closable and pressed[0] and self.closableRect.collidepoint(pos):
                 window.removeWindow(self.__name)
+                return None
+            
+            return previousFocused
                 
             #TODO: tu opcjonalnie można by zaimplementować poruszanie oknami
 
@@ -232,6 +263,9 @@ class window():
     
     def getSize(self) -> tuple[int,int]:
         return self.__size
+    
+    def getBody(self) -> pygame.sprite.Group | windowBody:
+        return self.__body
 
     def __init__(self, name:str, size:tuple[int,int], body:windowBody | pygame.sprite.Group, closable:bool=False):
         
