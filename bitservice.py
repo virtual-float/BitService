@@ -10,6 +10,7 @@ from bin.pausescreen import pauseScreen
 from bin.achievements import achievement
 import bin.window as window
 import bin.savemanager as saveManager
+import bin.util as game
 
 # Game Setting
 GS: dict
@@ -127,7 +128,7 @@ async def main(gameSettings: dict):
         # achievement.kill()
         
         for task in asyncio.all_tasks():
-            if task.get_name() in ['saveManager', 'saveManagerSec', 'achievementManager', 'gameClock', 'eventManager']: task.cancel()
+            if task.get_name() in ['windowManager', 'saveManager', 'saveManagerSec', 'achievementManager', 'gameClock', 'eventManager']: task.cancel()
     
         
         
@@ -219,15 +220,19 @@ async def main(gameSettings: dict):
 
         # testy okien, możesz wyrzucić, moja "zabawa", jedynie renderują aktualnie, niewiem, bawię się ucząć
         # możesz zobaczyć, ale nie jest okomentowane mocno
-        window.window.eraseWindows()
         
-        window.window('test', (100,100), pygame.sprite.Group(
-            window.windowElement(Cloud0),
-            window.windowElement(Cloud1, (60,0))
-        ))
-        window.window.getWindow('test').setPosition((400,200))
-        window.window('test2', (200,200), pygame.sprite.Group())
-        window.window.getWindow('test2').setPosition((0,300))
+        game.window.startTask()
+        game.window.eraseWindows()
+
+        chmura = game.windowElement(Cloud0)
+        chmura.addClickListener(lambda pressed, pos: print('test'))
+        game.window('test', (100,100), pygame.sprite.Group(
+            chmura,
+            game.windowText('SMALL_COMICSANS', 'Test', (5,5))
+        ), closable=True)
+        game.window.getWindow('test').setPosition((400,200))
+        game.window('test2', (200,200), pygame.sprite.Group(), closable=True)
+        game.window.getWindow('test2').setPosition((0,300))
 
         # funkcja ułatwiająca
         async def waitForOther():
@@ -288,6 +293,7 @@ async def main(gameSettings: dict):
             # Chmury
             display.blit(Cloud0, (CloudRect0.x, CloudRect0.y))
             display.blit(Cloud1, (CloudRect1.x, CloudRect1.y))
+            pygame.draw.rect(display, (0,210,0), chmura)
 
             # Budynek
             display.blit(Background, (0, 0))
