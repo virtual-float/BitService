@@ -7,6 +7,7 @@ from pygame.sprite import AbstractGroup
 
 import bin.savemanager as saveManager
 import bin.fonts as fn
+import bin.pausescreen as psc
 
 
 # helloWorld = print
@@ -17,6 +18,15 @@ import bin.fonts as fn
         
 
 class windowElement(pygame.sprite.Sprite):
+    def focusLoop(self, keys): 
+        pass
+    
+    def focusEnd(self):
+        pass
+    
+    def focusStart(self):
+        pass
+    
     def setPosition(self, cords: list[int,int] | tuple[int,int] = [0,0]) -> None:
         self.rect.topleft = [cords[0], cords[1]]
         
@@ -44,6 +54,7 @@ class windowElement(pygame.sprite.Sprite):
         self.rect = image.get_rect()
         self.rect.topleft = [cords[0], cords[1]]
         self.focused = False
+        self.autoListen = False
 
     
 class windowText(windowElement):
@@ -51,9 +62,55 @@ class windowText(windowElement):
         self.__fontName, self.__color = fontName, color
         _fn = fn.getfonts()
         self.__font = _fn[fontName]
-        _img = self.__font.render(text, False, color)
+        _img = self.__font.render(text, False, color).convert_alpha()
         super().__init__(_img, cords)    
 
+
+class windowTextBox(windowElement):
+    def focusLoop(self, events):
+        if len(self.__displayText) == len(self.text):
+            self.__displayText = self.text + "|"
+        else:
+            self.__displayText = self.text
+        
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                elif event.key == pygame.K_RETURN:
+                    self.__returnText(self.text)
+                    self.text = ""
+                elif event.key != pygame.K_ESCAPE:
+                    self.text += event.unicode
+        
+        self.__renderText()
+    
+    def focusEnd(self):
+        self.__displayText = self.text
+        self.__renderText()
+        
+    def setReturnListener(self, function: object = lambda text: 0):
+        self.__returnText = function
+        return self
+        
+    def __returnText(self, text:str): 
+        self.text = text
+    
+    def __renderText(self):
+        self.__textImg = self.__font.render(self.__displayText, False, self.__color).convert_alpha()
+        self.image = self.__textImg
+        
+    def __init__(self, cords: list[int] | tuple[int, int] = [0, 0], startingText:str="", xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0)):
+        self.__fontName, self.__color = fontName, color
+        self.__xsize, self.text = xsize, startingText
+        self.__displayText = startingText
+        
+        _fn = fn.getfonts()
+        self.__font = _fn[fontName]
+        
+        self.__renderText()
+        
+        super().__init__(self.__textImg, cords)
 
 # Tylko po to by mieć fajną nazwę, nie trzeba tego używać, działa identycznie jak Groupa z pygama
 class windowBody(pygame.sprite.Group):
@@ -74,6 +131,21 @@ class window():
     
     __focusedElement = None
     
+    events = None
+    
+    
+    @classmethod
+    def removeFocus(cls):
+        if cls.__focusedElement != None:
+            cls.__focusedElement.focused = None
+            cls.__focusedElement.focusEnd()
+        cls.__focusedElement = None
+    
+    @classmethod
+    def sendEvents(cls, events):
+        cls.events = events
+        
+    
     @classmethod
     def startTask(cls) -> None:
         asyncio.create_task(cls.__globalLoop(), name=f"windowManager")
@@ -81,6 +153,10 @@ class window():
     @classmethod
     async def __globalLoop(cls) -> None:
         while True:
+            if psc.pauseScreen.object.getState(): 
+                await asyncio.sleep(0.02)
+                continue
+            
             try:
                 _pres = pygame.mouse.get_pressed()
             except: 
@@ -93,16 +169,19 @@ class window():
                     window = cls.__windowList[name]
                     
                     if window.windowRect.collidepoint(_pos):
-                        cls.__focusedElement = window.handleClick(_pres,_pos, cls.__focusedElement)
-                        _foundWindow = True
-                        
                         if cls.__focusedElement != None and not cls.__focusedElement in window.getBody().sprites():
                             cls.__focusedElement.focused = False
+                            cls.__focusedElement.focusEnd()
                             cls.__focusedElement = None
-                        break
+                   
+                        
+                        cls.__focusedElement = window.handleClick(_pres,_pos, cls.__focusedElement)
+                        _foundWindow = True
+                        break     
                     
                 if not _foundWindow and cls.__focusedElement != None: 
                     cls.__focusedElement.focused = False
+                    cls.__focusedElement.focusEnd()
                     cls.__focusedElement = None
             await asyncio.sleep(0.02)
             
@@ -204,8 +283,16 @@ class window():
     
     async def __loop(self):
         while True:
-            # if any(pygame.mouse.get_pressed()):
-            #     self.__handleClick(pygame.mouse.get_pressed())
+            if psc.pauseScreen.object.getState(): 
+                await asyncio.sleep(0.02)
+                continue
+            
+            keys = pygame.key.get_pressed()
+            
+            for element in self.__objectsToListen:
+                if element.focused:
+                    element.focusLoop(window.events)
+                    break
                 
             await asyncio.sleep(0.05)
         
@@ -228,8 +315,10 @@ class window():
                 
                 if previousFocused != None:
                     previousFocused.focused = False
+                    previousFocused.focusEnd()
                 
                 sprite.focused = True
+                sprite.focusStart()
                 
                 return sprite
 
@@ -240,7 +329,10 @@ class window():
                 window.removeWindow(self.__name)
                 return None
             
-            return previousFocused
+            if previousFocused != None:
+                    previousFocused.focused = False
+                    previousFocused.focusEnd()
+            return None
                 
             #TODO: tu opcjonalnie można by zaimplementować poruszanie oknami
 
@@ -266,6 +358,18 @@ class window():
     
     def getBody(self) -> pygame.sprite.Group | windowBody:
         return self.__body
+    
+    def addObjectToListen(self, object: windowElement):
+        if not object in self.__objectsToListen:
+            self.__objectsToListen.append(object)
+
+        return self
+
+    def removeObjectFromListening(self, object: windowElement):
+        if object in self.__objectsToListen:
+            self.__objectsToListen.remove(object)
+
+        return self
 
     def __init__(self, name:str, size:tuple[int,int], body:windowBody | pygame.sprite.Group, closable:bool=False):
         
@@ -293,6 +397,7 @@ class window():
         self.__tempSurfaceBody.set_colorkey((60,54,51))
         self.__tempSurfaceBody.fill((60,54,51))
         
+        self.__objectsToListen = []
         
         window.addWindowToList(name, self, self.__loop())
         

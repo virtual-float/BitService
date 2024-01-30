@@ -226,10 +226,12 @@ async def main(gameSettings: dict):
 
         chmura = game.windowElement(Cloud0)
         chmura.addClickListener(lambda pressed, pos: print('test'))
-        game.window('test', (100,100), pygame.sprite.Group(
-            chmura,
-            game.windowText('SMALL_COMICSANS', 'Test', (5,5))
-        ), closable=True)
+        game.window('test', (400,100), pygame.sprite.Group(
+            # chmura,
+            # game.windowText('SMALL_COMICSANS', 'Test', (5,5))
+            box := game.windowTextBox((20,20), "Wpisz tutaj coś").setReturnListener(lambda text: print(text))
+        ), closable=True).addObjectToListen(box)
+        
         game.window.getWindow('test').setPosition((400,200))
         game.window('test2', (200,200), pygame.sprite.Group(), closable=True)
         game.window.getWindow('test2').setPosition((0,300))
@@ -239,10 +241,10 @@ async def main(gameSettings: dict):
             await asyncio.sleep(0.02)  
                
         while GameOn:
-            print(chmura.focused)
             await waitForOther()
             # obsługa eventów 
             EVENTS = pygame.event.get()
+            game.window.sendEvents(EVENTS)
             for e in EVENTS:
                 match e.type:
                     case pygame.QUIT:
