@@ -339,6 +339,7 @@ class windowTextBox(windowElement):
     textboxLeftImg = pygame.image.load("bin/images/textbox_left.png")
     textboxMidImg = pygame.image.load("bin/images/textbox_mid.png")
     textboxRightImg = pygame.image.load("bin/images/textbox_right.png")
+    textboxOneImg = pygame.image.load("bin/images/textbox_one.png")
     
     
     def focusLoop(self, me, events, window):
@@ -369,7 +370,7 @@ class windowTextBox(windowElement):
         self.image = self.__imageTemplate.copy()
         self.__renderText()
         self.image.blit(self.__background, (0,0))
-        self.image.blit(self.__textImg, (5,0))
+        self.image.blit(self.__textImg, (self.__marginLeft,0))
     
     
     def focusEnd(self, me, events, window):
@@ -381,7 +382,7 @@ class windowTextBox(windowElement):
         self.image = self.__imageTemplate.copy()
         self.__renderText()
         self.image.blit(self.__background, (0,0))
-        self.image.blit(self.__textImg, (5,0))
+        self.image.blit(self.__textImg, (self.__marginLeft,0))
         
         
     def setReturnListener(self, function: object = lambda text: 0):
@@ -417,16 +418,19 @@ class windowTextBox(windowElement):
         '''Funkcja prywatna, służąca do renderingu tła'''
         
         # paleta by mieć gdzie renderować
-        _tempSurf = pygame.surface.Surface((self.__xsize * 45, 45))
+        _tempSurf = pygame.surface.Surface((self.__xsize * 10, 45))
         
         # rendering tła
-        for i in range(0,self.__xsize):
-            if i == 0:
-                _tempSurf.blit(windowTextBox.textboxLeftImg, (0,0))
-            elif i == self.__xsize -1:
-                _tempSurf.blit(windowTextBox.textboxRightImg, (i * 45,0))
-            else:
-                _tempSurf.blit(windowTextBox.textboxMidImg, (i * 45,0))
+        if self.__xsize == 1:
+             _tempSurf.blit(windowTextBox.textboxOneImg, (0,0))
+        else:    
+            for i in range(0,self.__xsize):
+                if i == 0:
+                    _tempSurf.blit(windowTextBox.textboxLeftImg, (0,0))
+                elif i == self.__xsize -1:
+                    _tempSurf.blit(windowTextBox.textboxRightImg, (i * 10,0))
+                else:
+                    _tempSurf.blit(windowTextBox.textboxMidImg, (i * 10,0))
         
         # ustawienie tła
         self.__background = _tempSurf.convert_alpha()
@@ -440,7 +444,7 @@ class windowTextBox(windowElement):
         self.__generateBackground()
         
         # wyrenderowanie wszystko do nowej palety
-        self.__imageTemplate = pygame.surface.Surface((self.__xsize * 45, 45))
+        self.__imageTemplate = pygame.surface.Surface((self.__xsize * 10, 45))
         self.image = self.__imageTemplate.copy()
         self.image.blit(self.__background, (0,0))
         self.image.blit(self.__textImg, (5,0))
@@ -450,7 +454,8 @@ class windowTextBox(windowElement):
         self.rect.topleft = [self.pos[0], self.pos[1]]
         
     
-    def __init__(self, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], startingText:str="", maxlength:int = 5, xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0), clickListener:None|object = None):
+    def __init__(self, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], startingText:str="", maxlength:int = 5, xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0),
+                 marginleft:int=5, clickListener:None|object = None):
         '''Tworzenie obiektu\n
             Argumenty:\n
                 * cords (lista dwóch intów, relatywne kordynaty do okna; opcjonalne lecz zalecane)\n
@@ -460,6 +465,7 @@ class windowTextBox(windowElement):
                 * xsize (int, opcjonalne, ilość kafelków (kwestia graficzna))\n
                 * fontName (string, opcjonalny nazwa fonta, aktualnie obiekt obsługuje tylko i wyłącznie stringi z fonts.py)\n
                 * color (tuple trzech intów, opcjonalny kolor)
+                * marginleft (int, podstawowo 5, opcjonalne, ilość marginu dla tekstu z lewej strony)\n
                 * clickListener (opcjonalny, funkcja), pozwala na łatwe ustawienie clickListenera odrazu bez wywoływania
                 dodatkowej metody\n
             Zwraca:\n
@@ -471,6 +477,7 @@ class windowTextBox(windowElement):
         self.__xsize, self.text = xsize, startingText
         self.__displayText = startingText
         self.maxlength = maxlength
+        self.__marginLeft = marginleft
         
         # stworzenie fonta
         _fn = fn.getfonts()

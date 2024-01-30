@@ -229,7 +229,7 @@ async def main(gameSettings: dict):
         game.window('test', (400,100), pygame.sprite.Group(
             # chmura,
             # game.windowText('SMALL_COMICSANS', 'Test', (5,5))
-            box := game.windowTextBox((20,20), "", xsize=5, maxlength=3).setReturnListener(lambda text: print(text))
+            box := game.windowTextBox((20,20), "", xsize=7, maxlength=3, marginleft=7).setReturnListener(lambda text: print(text))
         ), closable=True).addObjectToListen(box)
         
         game.window.getWindow('test').setPosition((400,200))
