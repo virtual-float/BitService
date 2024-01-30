@@ -47,26 +47,35 @@ class windowElement(pygame.sprite.Sprite):
         self.click = function
         return self
     
-    def __init__(self, image: pygame.surface.Surface, cords: list[int,int] | tuple[int,int] = [0,0]):
+    def __init__(self, image: pygame.surface.Surface, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], clickListener:None|object = None):
         super().__init__()
         
+        self.pos = cords
         self.image = image.convert_alpha()
         self.rect = image.get_rect()
         self.rect.topleft = [cords[0], cords[1]]
         self.focused = False
         self.autoListen = False
+        
+        if clickListener != None:
+            self.click = clickListener
 
     
 class windowText(windowElement):
-    def __init__(self, fontName:str, text:str, cords: list[int,int] | tuple[int,int], color:tuple[int] = (0,0,0)):
+    def __init__(self, fontName:str, text:str, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], color:tuple[int] = (0,0,0), clickListener:None|object = None):
         self.__fontName, self.__color = fontName, color
         _fn = fn.getfonts()
         self.__font = _fn[fontName]
         _img = self.__font.render(text, False, color).convert_alpha()
-        super().__init__(_img, cords)    
+        super().__init__(_img, cords, clickListener=clickListener)    
 
 
 class windowTextBox(windowElement):
+    textboxLeftImg = pygame.image.load("bin/images/textbox_left.png")
+    textboxMidImg = pygame.image.load("bin/images/textbox_mid.png")
+    textboxRightImg = pygame.image.load("bin/images/textbox_right.png")
+    
+    
     def focusLoop(self, events):
         if len(self.__displayText) == len(self.text):
             self.__displayText = self.text + "|"
@@ -78,16 +87,24 @@ class windowTextBox(windowElement):
                 if event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
                 elif event.key == pygame.K_RETURN:
-                    self.__returnText(self.text)
-                    self.text = ""
+                    if not self.__returnText(self.text):
+                        self.text = ''
                 elif event.key != pygame.K_ESCAPE:
-                    self.text += event.unicode
+                    if not len(self.text) >= self.maxlength:
+                        self.text += event.unicode
         
+        self.image = self.__imageTemplate.copy()
         self.__renderText()
+        self.image.blit(self.__background, (0,0))
+        self.image.blit(self.__textImg, (5,0))
     
     def focusEnd(self):
         self.__displayText = self.text
+        
+        self.image = self.__imageTemplate.copy()
         self.__renderText()
+        self.image.blit(self.__background, (0,0))
+        self.image.blit(self.__textImg, (5,0))
         
     def setReturnListener(self, function: object = lambda text: 0):
         self.__returnText = function
@@ -98,19 +115,45 @@ class windowTextBox(windowElement):
     
     def __renderText(self):
         self.__textImg = self.__font.render(self.__displayText, False, self.__color).convert_alpha()
-        self.image = self.__textImg
         
-    def __init__(self, cords: list[int] | tuple[int, int] = [0, 0], startingText:str="", xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0)):
+    def __generateBackground(self) -> None:
+        _tempSurf = pygame.surface.Surface((self.__xsize * 45, 45))
+        
+        for i in range(0,self.__xsize):
+            if i == 0:
+                _tempSurf.blit(windowTextBox.textboxLeftImg, (0,0))
+            elif i == self.__xsize -1:
+                _tempSurf.blit(windowTextBox.textboxRightImg, (i * 45,0))
+            else:
+                _tempSurf.blit(windowTextBox.textboxMidImg, (i * 45,0))
+        
+        self.__background = _tempSurf.convert_alpha()
+        
+    def __generateApperance(self) -> None:
+        self.__renderText()
+        self.__generateBackground()
+        
+        self.__imageTemplate = pygame.surface.Surface((self.__xsize * 45, 45))
+        self.image = self.__imageTemplate.copy()
+        self.image.blit(self.__background, (0,0))
+        self.image.blit(self.__textImg, (5,0))
+        
+        self.rect = self.image.get_rect()
+        self.rect.topleft = [self.pos[0], self.pos[1]]
+        
+    
+    def __init__(self, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], startingText:str="", maxlength:int = 5, xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0), clickListener:None|object = None):
         self.__fontName, self.__color = fontName, color
         self.__xsize, self.text = xsize, startingText
         self.__displayText = startingText
+        self.maxlength = maxlength
         
         _fn = fn.getfonts()
         self.__font = _fn[fontName]
         
-        self.__renderText()
+        super().__init__(windowTextBox.textboxLeftImg, cords, clickListener=clickListener)
+        self.__generateApperance()
         
-        super().__init__(self.__textImg, cords)
 
 # Tylko po to by mieć fajną nazwę, nie trzeba tego używać, działa identycznie jak Groupa z pygama
 class windowBody(pygame.sprite.Group):
@@ -142,7 +185,7 @@ class window():
         cls.__focusedElement = None
     
     @classmethod
-    def sendEvents(cls, events):
+    def sendEvents(cls, events) -> None:
         cls.events = events
         
     
@@ -271,7 +314,7 @@ class window():
                 
     
     def drawSelf(self, destination:pygame.surface.Surface) -> None:
-        self.__tempSurfaceBody.fill((60,54,51))
+        self.__tempSurfaceBody.fill(self.__backgroundColor)
         self.__body.draw(surface=self.__tempSurfaceBody)
         
         destination.blit(self.__tempSurfaceBackground, (self.__position[0],self.__position[1]))
@@ -371,7 +414,8 @@ class window():
 
         return self
 
-    def __init__(self, name:str, size:tuple[int,int], body:windowBody | pygame.sprite.Group, closable:bool=False):
+    def __init__(self, name:str, size:tuple[int,int], body:windowBody | pygame.sprite.Group, closable:bool=False,
+                 backgroundColor: tuple[int,int,int] = (195,195,195)):
         
         # sprawdzanie błędów danych
         if window.checkWindow(name):
@@ -386,16 +430,17 @@ class window():
         self.visible = True
         self.__position = [0,0]
         self.closable = closable
+        self.__backgroundColor = backgroundColor
         
         self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 40))
-        self.__tempSurfaceBackground.fill((60,54,51))
+        self.__tempSurfaceBackground.fill(self.__backgroundColor)
         self.__tempSurfaceBackground = self.__tempSurfaceBackground.convert()
         
         self.__regenerateRect()
         
         self.__tempSurfaceBody = pygame.surface.Surface(size=size)
-        self.__tempSurfaceBody.set_colorkey((60,54,51))
-        self.__tempSurfaceBody.fill((60,54,51))
+        self.__tempSurfaceBody.set_colorkey(self.__backgroundColor)
+        self.__tempSurfaceBody.fill(self.__backgroundColor)
         
         self.__objectsToListen = []
         
