@@ -510,6 +510,9 @@ class window():
     # aktualny element na którym jest focus
     __focusedElement = None
     
+    # aktualne okno
+    lastFocusedWindow = None
+    
     # eventy gracza
     events = None
     
@@ -520,7 +523,7 @@ class window():
         # usunięcie z pamięci obiektu
         if cls.__focusedElement != None:
             cls.__focusedElement.focused = None
-            cls.__focusedElement.focusEnd()
+            cls.__focusedElement.focusEnd(cls.lastFocusedWindow,cls.events,cls)
             
         # usunięcie z naszej pamięci
         cls.__focusedElement = None
@@ -772,6 +775,9 @@ class window():
         # dodane przy okazji dodawania focusu na dany element
         _beenclicked = False
         
+        # by zapamiętac jakie okno kliknęło ostatnio
+        window.lastFocusedWindow = self
+        
         # po wszystkich spritach
         for sprite in self.__body.sprites():
             # skopiuj recta i przesuń go tam gdzie powinno być okno (pozycja względna z bezwzględnej)
@@ -948,8 +954,6 @@ class window():
                 * position (tuple dwóch intów, pozycja; opcjonalne; domyślnie (0,0))
             Zwraca:\n
                 * Obiekt\n       
-
-        
         '''
         # sprawdzanie błędów danych
         if window.checkWindow(name):

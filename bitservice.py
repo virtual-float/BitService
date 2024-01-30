@@ -296,7 +296,6 @@ async def main(gameSettings: dict):
             # Chmury
             display.blit(Cloud0, (CloudRect0.x, CloudRect0.y))
             display.blit(Cloud1, (CloudRect1.x, CloudRect1.y))
-            pygame.draw.rect(display, (0,210,0), chmura)
 
             # Budynek
             display.blit(Background, (0, 0))
