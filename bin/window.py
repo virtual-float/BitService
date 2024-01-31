@@ -342,7 +342,7 @@ class windowTextBox(windowElement):
     textboxOneImg = pygame.image.load("bin/images/textbox_one.png")
     
     
-    def focusLoop(self, me, events, window):
+    def focusLoop(self, me, events, window) -> None:
         '''Funkcja zaimplementowana, nie dotykać jej, nawet jej nie wywoływać'''
         
         # miganie kursora
@@ -359,7 +359,7 @@ class windowTextBox(windowElement):
                     self.text = self.text[:-1]
                 # enter
                 elif event.key == pygame.K_RETURN:
-                    if not self.__returnText(self.text):
+                    if not self.__returnText(self, self.text):
                         self.text = ''
                 # wpisywanie znaków
                 elif event.key != pygame.K_ESCAPE:
@@ -373,7 +373,7 @@ class windowTextBox(windowElement):
         self.image.blit(self.__textImg, (self.__marginLeft,0))
     
     
-    def focusEnd(self, me, events, window):
+    def focusEnd(self, me, events, window) -> None:
         '''Funkcja zaimplementowana, nie dotykać jej, nawet jej nie wywoływać'''
         # usunięcie migania
         self.__displayText = self.text
@@ -385,7 +385,7 @@ class windowTextBox(windowElement):
         self.image.blit(self.__textImg, (self.__marginLeft,0))
         
         
-    def setReturnListener(self, function: object = lambda text: 0):
+    def setReturnListener(self, function: object = lambda text: 0) -> 'windowTextBox':
         '''
             Służy do ustawiania returna na obiekcie.\n
             --------------------------\n
@@ -403,10 +403,23 @@ class windowTextBox(windowElement):
         self.__returnText = function
         return self
         
-        
-    def __returnText(self, me: 'windowTextBox', text:str): 
+    def removeReturnListener(self) -> 'windowTextBox':
+        '''Usuwa return Listenera\n
+            ----------------\n
+            Argumenty:\n
+                * Brak\n
+            Zwraca:\n
+                * self (ten sam obiekt na którym to wywołałeś)'''
+        self.__returnText = self.__returnTextTemplate
+        return self
+    
+    def __returnTextTemplate(self, me: 'windowTextBox', text:str) -> bool: 
         '''Funcja prywatna, wypadać stąd, ustawia się ją za pomocą setReturnListener a nie tak!'''
-        self.text = text
+        return True
+        
+    def __returnText(self, me: 'windowTextBox', text:str) -> bool: 
+        '''Funcja prywatna, wypadać stąd, ustawia się ją za pomocą setReturnListener a nie tak!'''
+        return True
     
     
     def __renderText(self):
