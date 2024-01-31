@@ -8,6 +8,8 @@ ENCODING_MODE : str = "UTF-8"
 # Funkcja, która umożliwia odczytywanie danych z struktury json 
 # Funkcja zwraca dane json w postaci słownika [ dict ]
 def readJSON(localizationPath: str) -> dict:
+    '''Funkcja, która umożliwia odczytywanie danych z struktury json\n
+        Funkcja zwraca dane json w postaci słownika [ dict ]'''
     try:
         # Jeżeli ścieżka pliku nie kończy się na .json, zwróć błąd
         if not localizationPath.endswith(".json"):
@@ -29,9 +31,11 @@ def readJSON(localizationPath: str) -> dict:
     # Fabrycznie zwróć pusty słownik
     return {}
 
+
 # Funkcja, która umożliwia aktualizowanie danych do pliku json
 # oraz zwraca wynik wykonania aktualizacji
 def updateJSON(localizationPath: str, newData: dict) -> bool:
+    '''Funkcja, która umożliwia aktualizowanie danych do pliku json oraz zwraca wynik wykonania aktualizacji'''
     try:
         # Jeżeli ścieżka pliku nie kończy się na .json, zwróć błąd
         if not localizationPath.endswith(".json"):
@@ -52,18 +56,23 @@ def updateJSON(localizationPath: str, newData: dict) -> bool:
     # Fabrycznie zwróć wynik aktualizacji danych json
     return False
 
-# Funkcja, która zwróci wszelkie dane z słowników na całą jedną płaszczyzne
-def NestedDictValues(d):
-  for v in d.values():
-    if isinstance(v, dict):
-      yield from NestedDictValues(v)
-    else:
-      yield v
 
-# Funkcja, która zwróci zaszyfrowane dane w postaci szesnastkowej
+def NestedDictValues(d):
+    '''Funkcja, która zwróci wszelkie dane z słowników na całą jedną płaszczyzne\n
+    Disclaimer: to jest funkcja z stackOverFlow, nie rościmy sobie do niej prawa,\n
+    jednakże jest taka prosta że prawdopodobnie napisano ja już miliard razy\n'''
+    for v in d.values():
+        if isinstance(v, dict):
+            yield from NestedDictValues(v)
+        else:
+            yield v
+
+
 def hex_crypt(value: str | int) -> list[hex]:
+    '''Funkcja, która zwróci zaszyfrowane dane w postaci szesnastkowej'''
     return list(map(lambda letter: hex(ord(letter)), list(value)))
 
-# Funkcja, która zwraca odszyfrowane dane z postaci szesnastkowej
+
 def hex_decrypt(value: list[hex]) -> str:
+    '''Funkcja, która zwraca odszyfrowane dane z postaci szesnastkowej'''
     return ''.join(map(lambda hex_value: chr(int(hex_value, base=16)), value))
