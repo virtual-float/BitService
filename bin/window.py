@@ -205,7 +205,7 @@ class windowElement(pygame.sprite.Sprite):
             setClickListener to tracisz selfa\n
             * pressed (tuple trzech booli, jakie przyciski są naciśnięte (lewy, scroll, prawy))\n
             * pos (tuple dwóch intów, bewzględna pozycja myszki)\n
-            * pos (tuple dwóch intów, względna względem okna pozycja myszki)\n
+            * posRelative (tuple dwóch intów, względna względem okna pozycja myszki)\n
             * events <- Dostaniesz tutaj aktualne eventy\n
             * window <- dostaniesz tutaj okno\n
             \n
@@ -230,7 +230,7 @@ class windowElement(pygame.sprite.Sprite):
             setClickListener to tracisz selfa\n
             * pressed (tuple trzech booli, jakie przyciski są naciśnięte (lewy, scroll, prawy))\n
             * pos (tuple dwóch intów, bewzględna pozycja myszki)\n
-            * pos (tuple dwóch intów, względna względem okna pozycja myszki)\n
+            * posRelative (tuple dwóch intów, względna względem okna pozycja myszki)\n
             * events <- Dostaniesz tutaj aktualne eventy\n
             * window <- dostaniesz tutaj okno\n
             \n     
