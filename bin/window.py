@@ -409,7 +409,7 @@ class windowTextBox(windowElement):
                     # sprawdz czy ma sprawdzać regexa
                     if self.__regexCompiled != None:
                         # jeśli ma to sprawdź czy się zgadza z nim (dodatkowo sprawdza czy nie przekroczono limitu znaków)
-                        if self.__regexCompiled.match(self.text + event.unicode) and not len(self.text) >= self.maxlength:
+                        if self.__regexCompiled.fullmatch(self.text + event.unicode) and not len(self.text) >= self.maxlength:
                             self.text += event.unicode 
                     else:
                         # jeśli nie ma to sprawdź tylko limit znaków
