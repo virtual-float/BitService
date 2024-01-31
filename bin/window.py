@@ -17,7 +17,7 @@ class windowElement(pygame.sprite.Sprite):
     '''Podstawowy obiekt w oknie'''
     
     
-    def addMyselfToListen(self) -> 'windowElement':
+    def addMyselfToListen(self) -> 'windowElement | windowTextBox | windowText':
         '''Spróbuje dodać siebie do nasłuchiwania'''
         if isinstance(self.getBody(), windowBody):
             self.getBody().getWindow().addObjectToListen(self)
