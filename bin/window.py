@@ -17,12 +17,14 @@ class windowElement(pygame.sprite.Sprite):
     '''Podstawowy obiekt w oknie'''
     
     
-    def addMyselfToListen(self) -> None:
+    def addMyselfToListen(self) -> 'windowElement':
         '''Spróbuje dodać siebie do nasłuchiwania'''
         if isinstance(self.getBody(), windowBody):
             self.getBody().getWindow().addObjectToListen(self)
         else:
             raise Exception("Nie możesz użyć addMyselfToListen() gdy użyłeś jako body pygame.sprite.Group")
+        
+        return self
             
     
     def getBody(self) -> 'pygame.sprite.Group | windowBody | None':
