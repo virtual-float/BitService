@@ -71,7 +71,7 @@ class save:
     def set(self, loc: str, value) -> bool:  
         '''Pozwala ustawić daną wartość w save\n
             Przykład użycia dla uzyskania imienia gracza:\n
-            get("player.nickname")\n
+            set("player.nickname", 'janusz')\n
             --------------\n
             Argumenty:\n
                 * loc (typ: str) (lokalizacja)\n
