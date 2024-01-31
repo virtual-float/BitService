@@ -104,7 +104,7 @@ class save:
             ---------------------------\n
             Pozwala uzyskać daną wartość w save\n
             Przykład użycia dla uzyskania imienia gracza:\n
-            get("player.nickname")\n
+            getSafe("player.nickname", default="Nieznajomy")\n
             --------------\n
             Argumenty:\n
                 * loc (typ: str) (lokalizacja)\n
