@@ -635,7 +635,12 @@ class window():
         cls.__windowOrder.remove(name)
         
         # zapis do sava
-        cls.__save()    
+        cls.__save()   
+        
+    def kill(self) -> None:
+        '''Usuwa samego siebie'''
+        window.removeWindow(self.__name)
+         
         
         
     @classmethod
@@ -746,10 +751,10 @@ class window():
         
         # rysuje x jeżeli ma być narysowany
         if self.closable:
-            destination.blit(window.closeImg, (self.__size[0] + self.__position[0] - 30,5 + self.__position[1]))
+            destination.blit(window.closeImg, (self.__size[0] + self.__position[0] - self.closableRect.size[0] - 15, 5 + self.__position[1]))
             
         # rysuje reszte (body)
-        destination.blit(self.__tempSurfaceBody, (self.__position[0],40+self.__position[1]))
+        destination.blit(self.__tempSurfaceBody, (self.__position[0],15+self.__position[1]))
         
         
     
@@ -798,7 +803,7 @@ class window():
             _temp_rect = sprite.rect.copy()
             _temp_rect.topleft = (
                 _temp_rect.topleft[0] + self.__position[0],
-                _temp_rect.topleft[1] + self.__position[1] + 40
+                _temp_rect.topleft[1] + self.__position[1] + 15
             )
             
             # jeśli myszka jest w tym spricie
@@ -846,7 +851,7 @@ class window():
         
         # rect x
         self.closableRect = window.closeImg.get_rect()
-        self.closableRect.topleft = (self.__size[0] + self.__position[0] - self.closableRect.size[0], 
+        self.closableRect.topleft = (self.__size[0] + self.__position[0] - self.closableRect.size[0] - 15, 
                                       self.closableRect.topleft[1] + self.__position[1])
         
         
@@ -890,7 +895,7 @@ class window():
         self.__size = size
         
         # nowy background
-        self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 40))
+        self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 15))
         self.__tempSurfaceBackground.fill(self.__backgroundColor)
         self.__tempSurfaceBackground = self.__tempSurfaceBackground.convert()
         
@@ -986,7 +991,7 @@ class window():
         self.__backgroundColor = backgroundColor
         
         # tło
-        self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 40))
+        self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 15))
         self.__tempSurfaceBackground.fill(self.__backgroundColor)
         self.__tempSurfaceBackground = self.__tempSurfaceBackground.convert()
         
