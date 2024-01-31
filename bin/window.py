@@ -518,11 +518,18 @@ class window():
     __focusedElement = None
     
     # aktualne okno
+    # nie chciało mi się męczyć z prywatnymi szczerze więc to jest publiczne, jeden raz tego uzywam
+    # a by to wymagało wiele dodatkowych linijek kodu
     lastFocusedWindow = None
     
     # eventy gracza
     events = None
     
+    
+    @classmethod
+    def getFocusElement(cls) -> None | windowElement:
+        '''Pozwala uzyskać aktualny focus jeżeli istnieje, jeżeli nie, to zwraca None'''
+        return cls.__focusedElement
     
     @classmethod
     def removeFocus(cls):

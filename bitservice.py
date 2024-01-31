@@ -275,7 +275,9 @@ async def main(gameSettings: dict):
                         GameOn = False
                     case pygame.KEYDOWN:
                         match e.key:
-                            case pygame.K_ESCAPE | pygame.K_q:
+                            case pygame.K_ESCAPE:
+                                pauseScreenOb.toggle(checkFocus=False)
+                            case pygame.K_q:
                                 pauseScreenOb.toggle()
                                 
                                 
