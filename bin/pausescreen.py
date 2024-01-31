@@ -5,9 +5,12 @@
 import pygame
 import bin.fonts as fn
 import bin.savemanager as sm
+import bin.window as wn
 
 # klasa główna
 class pauseScreen():
+    object = None
+    
     '''
         Służy do utworzenia obiektu obsługującego stopowanie gry
     '''
@@ -24,6 +27,9 @@ class pauseScreen():
             self.__state = kwargs['forceState']
         else:
             self.__state = not self.__state
+            
+        if self.__state == True:
+            wn.window.removeFocus()
           
     def getState(self) -> bool:
         '''Służy do pozyskania stanu zastopowania gry\n
@@ -142,3 +148,5 @@ class pauseScreen():
         self.__cursorPosition = 0
         
         self.__fonts = fn.getfonts()
+        
+        pauseScreen.object = self
