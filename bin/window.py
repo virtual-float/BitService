@@ -70,7 +70,7 @@ class window():
         return cls.__windowList.copy()
     
     @classmethod
-    def addWindowToList(cls, name:str, window:'window', loop:asyncio.coroutine) -> None:
+    def addWindowToList(cls, name:str, window:'window', loop:asyncio.coroutines) -> None:
         '''
             To nie powinno być używane\n
             ------------\n

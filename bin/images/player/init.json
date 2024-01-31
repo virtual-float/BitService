@@ -1,0 +1,11 @@
+{
+    "STATE_IDLE": "bin/images/player/idle.png",
+    "STATE_MOVE": [
+        "bin/images/player/left_step.png",
+        "bin/images/player/right_step.png"
+    ],
+    "STATE_TYPEWRITE": [
+        "bin/images/player/left_type.png",
+        "bin/images/player/right_type.png"
+    ]
+}

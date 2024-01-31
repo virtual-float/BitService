@@ -1,7 +1,7 @@
 # Importowanie modułow niezbędnych do uruchomienia gry
 import pygame, asyncio
 import random as rand
-import tkinter
+from tkinter import Button, Label, messagebox, Tk
 
 
 # Zaimportuj lokalne moduły
@@ -20,7 +20,7 @@ RENDER_SCALE : int = 4
 # Interfejs z oknem menu
 class Menu:
     # Konstruktor
-    def __init__(self, rootHandle: tkinter.Tk) -> None:
+    def __init__(self, rootHandle: Tk) -> None:
         self.handle = rootHandle
 
         # Status
@@ -28,21 +28,21 @@ class Menu:
         # 1 = play
         self.status = 0
 
-        PlayButton = tkinter.Button(
+        PlayButton = Button(
             text='Graj',
             width=20,
             height=2,
             command=lambda: self.statusType('play')
         ).place(x=15, y=150)
 
-        ExitButton = tkinter.Button(
+        ExitButton = Button(
             text='Wyjdź',
             width=20,
             height=2,
             command=lambda: self.statusType('exit')
         ).place(x=15, y=200)
 
-        VersionLabel = tkinter.Label(
+        VersionLabel = Label(
             text=GS['ApplicationVersion']
         ).place(x=GS['ApplicationSize'][0] - 125, y=GS['ApplicationSize'][1] - 50)
 
@@ -64,8 +64,8 @@ def scaleImage(imgSource: str, scaleBy: int) -> pygame.Surface:
 
 # Funkcja, która zwróci ilość barów dla progress baru
 def generateBars(repStatus: int):
-    if repStatus <= 0:
-        yield []
+    if repStatus <= 0: yield []
+    elif repStatus > 10: repStatus = 10
 
     for i in range(0, repStatus, 1):
         if i == repStatus - 1 and repStatus != 10: # 10 - max
@@ -77,29 +77,52 @@ def generateBars(repStatus: int):
 # Klasa gracza
 class Player:
 
+    # Opcje animacji
     AnimationDefault : int = -1
     AnimationTypewrite : int = 0
-    AnimationSad : int = 1
+    AnimationMove : int = 1
 
-    def __init__(self, playerImage: pygame.surface.Surface):
-        self.move_step = True # True -> prawa noga/ramię, False -> Lewa noga/ramię
-        self.player_rect = playerImage.get_rect()
-        pass
+    def __init__(self, initPlayerFile: str, x: int, y: int) -> None:
+        self.__playerdata : dict = readJSON(initPlayerFile)
+        
+        # TODO: Zsynchronizować ilość ratio dla gracza w przypadku gdy istnieje save
+        self.ratio_level = 5 # Default
 
-    def animate(self, AnimationState: int):
-        match AnimationState:
+        if self.__playerdata == {}:
+            messagebox.showerror(__name__, 'Dane animacji gracza są puste!')
+            exit()
+
+        self.animation_idle : pygame.image = [
+            scaleImage(self.__playerdata['STATE_IDLE'], RENDER_SCALE),
+            pygame.transform.flip(scaleImage(self.__playerdata['STATE_IDLE'], RENDER_SCALE), True, False)
+        ]
+
+        self.rect : pygame.rect.Rect = self.animation_idle[0].get_rect()
+        self.rect.x, self.rect.y = x, y
+
+        self.animation_move : list = list(map(
+            lambda a_path: (scaleImage(a_path, RENDER_SCALE), pygame.transform.flip(scaleImage(a_path, RENDER_SCALE), True, False)),
+            self.__playerdata['STATE_MOVE']
+        ))
+
+        self.animation_typewrite : list = list(map(
+            lambda a_path: (scaleImage(a_path, RENDER_SCALE), pygame.transform.flip(scaleImage(a_path, RENDER_SCALE), True, False)),
+            self.__playerdata['STATE_TYPEWRITE']
+        ))
+
+    # Metoda, która zwraca aktualny tryb animacji oraz obrazy png dla tej animacji
+    def get_from_state(self) -> tuple:
+        Data = None
+
+        match self.state:
             case -1:
-                pass
+                Data = self.animation_idle
             case 0:
-                pass
+                Data = self.animation_typewrite
             case 1:
-                pass
-
-    def move(self, position: tuple[int, int]):
-        self.x, self.y = position[0], position[1]
-
-    def fire():
-        pass
+                Data = self.animation_move 
+        
+        return self.state, Data
 
 
 
@@ -110,15 +133,10 @@ async def main(gameSettings: dict):
     # Przypisanie ustawień do GS
     GS = gameSettings
 
-    
-
     # by nie było błędu
     class __Tsave:
         def kill(self): pass
     save = __Tsave()
-
-    # Dla testu
-    to_iterate = 9
 
     beRunned = True
     while beRunned:
@@ -132,7 +150,7 @@ async def main(gameSettings: dict):
         
         
         # Tworzenie root dla tkinter menu
-        root = tkinter.Tk()
+        root = Tk()
         root.title(GS['ApplicationName'])
         root.iconbitmap('./' + GS['ApplicationIcon'])
         root.geometry("{}x{}".format(GS['ApplicationSize'][0], GS['ApplicationSize'][1]))
@@ -199,12 +217,18 @@ async def main(gameSettings: dict):
         CloudRect0 = Cloud0.get_rect()
         CloudRect1 = Cloud1.get_rect()
         CloudRect0.y = GS['ApplicationSize'][1] // 2 - Cloud0.get_height()
-        CloudRect1.y = GS['ApplicationSize'][1] // 2 - Cloud1.get_height() + 50
+        CloudRect1.y = GS['ApplicationSize'][1] // 2 - Cloud1.get_height() + 48
 
         # Zmienne gry
         GameOn = True
         # Zegar gry
         GameClock = pygame.time.Clock()
+
+        # Gracz
+        kera = Player("./bin/images/player/init.json", 0, 0)
+        kera.rect.x = GS['ApplicationSize'][0] - int(kera.animation_idle[0].get_width() * 1.5) - 128 + 16
+        kera.rect.y = GS['ApplicationSize'][1] - kera.animation_idle[0].get_height() - 64
+        
         
         # Obiekt pauseScreen służący do stopowania gry
         pauseScreenOb = pauseScreen(display)
@@ -293,7 +317,7 @@ async def main(gameSettings: dict):
             display.blit(Background, (0, 0))
 
             # Renderowanie gracza
-            # ...
+            display.blit(kera.animation_idle[0], (kera.rect.x, kera.rect.y))
 
             # Renderowanie objektów
             display.blit(Table, (TableRect.x, TableRect.y))
@@ -306,7 +330,7 @@ async def main(gameSettings: dict):
             display.blit(ProgressBar, (ProgressBarRect.x, ProgressBarRect.y))
 
             # Layout
-            bars_t = list(generateBars(to_iterate))
+            bars_t = list(generateBars(kera.ratio_level))
             
             if bars_t == []:
                 # TODO: Wyświetl gameover screen
@@ -355,6 +379,6 @@ if __name__ == "__main__":
     data = readJSON('./bin/settings.json')
 
     if data == {}:
-        tkinter.messagebox.showerror('Błąd', 'Wykryto puste dane ustawień. Nie można uruchomić gry!')
+        messagebox.showerror('Błąd', 'Wykryto puste dane ustawień. Nie można uruchomić gry!')
         exit()
     asyncio.run(main(data))    
