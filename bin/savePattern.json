@@ -26,7 +26,7 @@
     "player":{
         "type": "player",
         "nickname": "kera",
-        "ratiolevel": 0,
+        "ratiolevel": 1,
         "voiceactor": -1,
         "appearance":{
 

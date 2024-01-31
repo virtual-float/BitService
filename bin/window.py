@@ -3,6 +3,7 @@ from typing import Any, Iterable, Union
 import pygame
 import asyncio
 import abc
+import re
 
 # importy pygama
 from pygame.sprite import AbstractGroup
@@ -365,6 +366,24 @@ class windowTextBox(windowElement):
     textboxRightImg = pygame.image.load("bin/images/textbox_right.png")
     textboxOneImg = pygame.image.load("bin/images/textbox_one.png")
     
+    def setRegex(self, regex: str | re.Pattern) -> 'windowTextBox':
+        ''' Pozwala na ustawienie regexa który zabrania wpisywać niezgodne z regexem rzeczy\n
+            Uwaga: nie chroni to przed ustawieniem poprzez obiekt.text!\n
+            --------------------------\n
+            Jeśli potrzebujesz regexa tylko w przypadku kliknięcia entera\n
+            to będzie to zaimplementowane może w setRegexEnter!\n
+            --------------------------\n
+            Argumenty:\n
+                * regex (re.Pattern lub string, poprostu tutaj musisz sprecyzować jak to ma działać)\n
+            Zwraca:\n
+                * self (ten sam obiekt na którym to wywołałeś)'''
+        if isinstance(regex, re.Pattern):
+            self.__regexCompiled = regex
+        else:
+            self.__regexCompiled = re.compile(regex)
+            
+        return self
+    
     
     def focusLoop(self, me, events, window) -> None:
         '''Funkcja zaimplementowana, nie dotykać jej, nawet jej nie wywoływać'''
@@ -387,8 +406,15 @@ class windowTextBox(windowElement):
                         self.text = ''
                 # wpisywanie znaków
                 elif event.key != pygame.K_ESCAPE:
-                    if not len(self.text) >= self.maxlength:
-                        self.text += event.unicode
+                    # sprawdz czy ma sprawdzać regexa
+                    if self.__regexCompiled != None:
+                        # jeśli ma to sprawdź czy się zgadza z nim (dodatkowo sprawdza czy nie przekroczono limitu znaków)
+                        if self.__regexCompiled.match(self.text + event.unicode) and not len(self.text) >= self.maxlength:
+                            self.text += event.unicode 
+                    else:
+                        # jeśli nie ma to sprawdź tylko limit znaków
+                        if not len(self.text) >= self.maxlength:
+                            self.text += event.unicode
         
         # wyrenderowanie nowego obrazu obiektu
         self.image = self.__imageTemplate.copy()
@@ -491,7 +517,7 @@ class windowTextBox(windowElement):
         self.rect.topleft = [self.pos[0], self.pos[1]]
         
     
-    def __init__(self, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], startingText:str="", maxlength:int = 5, xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0),
+    def __init__(self, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], startingText:str="", maxlength:int = 500, xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0),
                  marginleft:int=5, clickListener:None|object = None, name:str=""):
         '''Tworzenie obiektu\n
             Argumenty:\n
@@ -516,6 +542,7 @@ class windowTextBox(windowElement):
         self.__displayText = startingText
         self.maxlength = maxlength
         self.__marginLeft = marginleft
+        self.__regexCompiled = None
         
         # stworzenie fonta
         _fn = fn.getfonts()

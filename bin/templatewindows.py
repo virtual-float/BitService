@@ -5,7 +5,8 @@ def question(name: str) -> wn.window:
         wn.windowText(fontName='MEDIUM_COMICSANS', text='Zadanie', cords=(10, 0), color=(255,255,255)),
         wn.windowText(fontName='VERYSMALL_COMICSANS', text='Adres ip i jakieś coś', cords=(10, 45), color=(136,136,136)),
         wn.windowText(fontName='VERYSMALL_COMICSANS', text='Adres broadcast', cords=(10, 100)),
-        textbox1 := wn.windowTextBox(startingText="", cords=(10, 140), maxlength=20, xsize=30, marginleft=5, name="test"),
+        textbox1 := wn.windowTextBox(startingText="", cords=(10, 140), xsize=30, marginleft=5, name="test")
+        .setRegex('^[0-9.]{0,11}$'),
         wn.windowText(fontName='VERYSMALL_COMICSANS', text='ZATWIERDZ', cords=(265, 220)).addClickListener(
             lambda me, pressed, pos, posRelative, events, window: window.kill()
         )
