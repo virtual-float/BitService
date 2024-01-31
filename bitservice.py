@@ -51,7 +51,7 @@ class Menu:
 
         self.handle.mainloop()
     
-    def statusType(self, type: str):
+    def statusType(self, type: str) -> None:
         if type == 'play':
             self.status = 1
         self.handle.destroy()
@@ -83,11 +83,11 @@ class Player:
     AnimationTypewrite : int = 0
     AnimationMove : int = 1
 
-    def __init__(self, initPlayerFile: str, x: int, y: int) -> None:
+    def __init__(self, initPlayerFile: str, x: int, y: int, dataManager: saveManager) -> None:
         self.__playerdata : dict = readJSON(initPlayerFile)
         
         # TODO: Zsynchronizować ilość ratio dla gracza w przypadku gdy istnieje save
-        self.ratio_level = 5 # Default
+        self.ratio_level = dataManager.get('player.ratiolevel')
 
         if self.__playerdata == {}:
             messagebox.showerror(__name__, 'Dane animacji gracza są puste!')
@@ -112,11 +112,12 @@ class Player:
         ))
 
     # Metoda, która zwraca aktualny tryb animacji oraz obrazy png dla tej animacji
+    @classmethod
     def get_from_state(self) -> tuple:
         Data = None
 
         match self.state:
-            case -1:
+            case self.AnimationDefault:
                 Data = self.animation_idle
             case 0:
                 Data = self.animation_typewrite
@@ -224,11 +225,6 @@ async def main(gameSettings: dict):
         GameOn = True
         # Zegar gry
         GameClock = pygame.time.Clock()
-
-        # Gracz
-        kera = Player("./bin/images/player/init.json", 0, 0)
-        kera.rect.x = GS['ApplicationSize'][0] - int(kera.animation_idle[0].get_width() * 1.5) - 128 + 16
-        kera.rect.y = GS['ApplicationSize'][1] - kera.animation_idle[0].get_height() - 64
         
         
         # Obiekt pauseScreen służący do stopowania gry
@@ -236,6 +232,11 @@ async def main(gameSettings: dict):
         
         # Inicjalizacja menadżera savów
         save = saveManager.get()
+
+        # Gracz
+        kera = Player("./bin/images/player/init.json", 0, 0, save)
+        kera.rect.x = GS['ApplicationSize'][0] - int(kera.animation_idle[0].get_width() * 1.5) - 128 + 16
+        kera.rect.y = GS['ApplicationSize'][1] - kera.animation_idle[0].get_height() - 64
         
         # System osiągnieć (Inicjalizacja)
         achievement.configure(display)
