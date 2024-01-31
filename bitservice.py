@@ -87,7 +87,7 @@ class Player:
         self.__playerdata : dict = readJSON(initPlayerFile)
         
         # TODO: Zsynchronizować ilość ratio dla gracza w przypadku gdy istnieje save
-        self.ratio_level = dataManager.get('player.ratiolevel')
+        self.ratio_level = 10
 
         if self.__playerdata == {}:
             messagebox.showerror(__name__, 'Dane animacji gracza są puste!')
@@ -111,6 +111,8 @@ class Player:
             self.__playerdata['STATE_TYPEWRITE']
         ))
 
+        self.current_img = self.animation_idle[0]
+
     # Metoda, która zwraca aktualny tryb animacji oraz obrazy png dla tej animacji
     @classmethod
     def get_from_state(self) -> tuple:
@@ -119,12 +121,13 @@ class Player:
         match self.state:
             case self.AnimationDefault:
                 Data = self.animation_idle
-            case 0:
+            case self.AnimationTypewrite:
                 Data = self.animation_typewrite
-            case 1:
+            case self.AnimationMove:
                 Data = self.animation_move 
         
         return self.state, Data
+
 
 
 
@@ -282,9 +285,10 @@ async def main(gameSettings: dict):
                             case pygame.K_q:
                                 pauseScreenOb.toggle()
                                 
-                                
-                                
             # obliczanie elementów gry
+                            
+                
+
             
             if pauseScreenOb.getState(): 
                 # obsługa zdarzeń z eventHandlera z menu pauzy
@@ -329,7 +333,7 @@ async def main(gameSettings: dict):
             display.blit(Background, (0, 0))
 
             # Renderowanie gracza
-            display.blit(kera.animation_idle[0], (kera.rect.x, kera.rect.y))
+            display.blit(kera.current_img, (kera.rect.x, kera.rect.y))
 
             # Renderowanie objektów
             display.blit(Table, (TableRect.x, TableRect.y))
@@ -344,7 +348,7 @@ async def main(gameSettings: dict):
             # Layout
             bars_t = list(generateBars(kera.ratio_level))
             
-            if bars_t == []:
+            if bars_t != []:
                 # TODO: Wyświetl gameover screen
                 pass
 
