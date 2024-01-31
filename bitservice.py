@@ -248,17 +248,18 @@ async def main(gameSettings: dict):
         game.window.startTask()
         game.window.eraseWindows()
 
-        chmura = game.windowElement(Cloud0)
-        chmura.addClickListener(lambda pressed, pos: print('test'))
-        game.window('test', (400,100), pygame.sprite.Group(
-            # chmura,
-            # game.windowText('SMALL_COMICSANS', 'Test', (5,5))
-            box := game.windowTextBox((20,20), "", xsize=7, maxlength=3, marginleft=7).setReturnListener(lambda text: print(text))
-        ), closable=True).addObjectToListen(box)
+        game.question('test')
+        # chmura = game.windowElement(Cloud0)
+        # chmura.addClickListener(lambda pressed, pos: print('test'))
+        # game.window('test', (400,100), pygame.sprite.Group(
+        #     # chmura,
+        #     # game.windowText('SMALL_COMICSANS', 'Test', (5,5))
+        #     box := game.windowTextBox((20,20), "", xsize=7, maxlength=3, marginleft=7).setReturnListener(lambda text: print(text))
+        # ), closable=True).addObjectToListen(box)
         
-        game.window.getWindow('test').setPosition((400,200))
-        game.window('test2', (200,200), pygame.sprite.Group(), closable=True)
-        game.window.getWindow('test2').setPosition((0,300))
+        # game.window.getWindow('test').setPosition((400,200))
+        # game.window('test2', (200,200), pygame.sprite.Group(), closable=True)
+        # game.window.getWindow('test2').setPosition((0,300))
         
         # funkcja ułatwiająca
         async def waitForOther():
@@ -275,7 +276,9 @@ async def main(gameSettings: dict):
                         GameOn = False
                     case pygame.KEYDOWN:
                         match e.key:
-                            case pygame.K_ESCAPE | pygame.K_q:
+                            case pygame.K_ESCAPE:
+                                pauseScreenOb.toggle(checkFocus=False)
+                            case pygame.K_q:
                                 pauseScreenOb.toggle()
                                 
                                 

@@ -18,9 +18,14 @@ class pauseScreen():
         '''Służy do zmieniania stanu zastopowania gry\n
         Argumenty:\n
             - forceState (opcjonalne, służy do zmiany stanu okna)\n
+            - checkFocus (opcjonalne choć domyślnie True, wymaga by focus był wyłączony gdy próbuję się wyjść do menu)\n
         zwraca:\n
             - None\n
         '''
+        if not 'checkFocus' in kwargs or kwargs.get('checkFocus') == True:
+            if wn.window.getFocusElement() != None:
+                return
+        
         if 'forceState' in kwargs:
             if not isinstance(kwargs['forceState'], bool):
                 raise Exception("Boolean musisz podać")

@@ -342,7 +342,7 @@ class windowTextBox(windowElement):
     textboxOneImg = pygame.image.load("bin/images/textbox_one.png")
     
     
-    def focusLoop(self, me, events, window):
+    def focusLoop(self, me, events, window) -> None:
         '''Funkcja zaimplementowana, nie dotykać jej, nawet jej nie wywoływać'''
         
         # miganie kursora
@@ -359,7 +359,7 @@ class windowTextBox(windowElement):
                     self.text = self.text[:-1]
                 # enter
                 elif event.key == pygame.K_RETURN:
-                    if not self.__returnText(self.text):
+                    if not self.__returnText(self, self.text):
                         self.text = ''
                 # wpisywanie znaków
                 elif event.key != pygame.K_ESCAPE:
@@ -373,7 +373,7 @@ class windowTextBox(windowElement):
         self.image.blit(self.__textImg, (self.__marginLeft,0))
     
     
-    def focusEnd(self, me, events, window):
+    def focusEnd(self, me, events, window) -> None:
         '''Funkcja zaimplementowana, nie dotykać jej, nawet jej nie wywoływać'''
         # usunięcie migania
         self.__displayText = self.text
@@ -385,7 +385,7 @@ class windowTextBox(windowElement):
         self.image.blit(self.__textImg, (self.__marginLeft,0))
         
         
-    def setReturnListener(self, function: object = lambda text: 0):
+    def setReturnListener(self, function: object = lambda text: 0) -> 'windowTextBox':
         '''
             Służy do ustawiania returna na obiekcie.\n
             --------------------------\n
@@ -403,10 +403,23 @@ class windowTextBox(windowElement):
         self.__returnText = function
         return self
         
-        
-    def __returnText(self, me: 'windowTextBox', text:str): 
+    def removeReturnListener(self) -> 'windowTextBox':
+        '''Usuwa return Listenera\n
+            ----------------\n
+            Argumenty:\n
+                * Brak\n
+            Zwraca:\n
+                * self (ten sam obiekt na którym to wywołałeś)'''
+        self.__returnText = self.__returnTextTemplate
+        return self
+    
+    def __returnTextTemplate(self, me: 'windowTextBox', text:str) -> bool: 
         '''Funcja prywatna, wypadać stąd, ustawia się ją za pomocą setReturnListener a nie tak!'''
-        self.text = text
+        return True
+        
+    def __returnText(self, me: 'windowTextBox', text:str) -> bool: 
+        '''Funcja prywatna, wypadać stąd, ustawia się ją za pomocą setReturnListener a nie tak!'''
+        return True
     
     
     def __renderText(self):
@@ -518,11 +531,18 @@ class window():
     __focusedElement = None
     
     # aktualne okno
+    # nie chciało mi się męczyć z prywatnymi szczerze więc to jest publiczne, jeden raz tego uzywam
+    # a by to wymagało wiele dodatkowych linijek kodu
     lastFocusedWindow = None
     
     # eventy gracza
     events = None
     
+    
+    @classmethod
+    def getFocusElement(cls) -> None | windowElement:
+        '''Pozwala uzyskać aktualny focus jeżeli istnieje, jeżeli nie, to zwraca None'''
+        return cls.__focusedElement
     
     @classmethod
     def removeFocus(cls):
@@ -628,7 +648,12 @@ class window():
         cls.__windowOrder.remove(name)
         
         # zapis do sava
-        cls.__save()    
+        cls.__save()   
+        
+    def kill(self) -> None:
+        '''Usuwa samego siebie'''
+        window.removeWindow(self.__name)
+         
         
         
     @classmethod
@@ -739,10 +764,10 @@ class window():
         
         # rysuje x jeżeli ma być narysowany
         if self.closable:
-            destination.blit(window.closeImg, (self.__size[0] + self.__position[0] - 30,5 + self.__position[1]))
+            destination.blit(window.closeImg, (self.__size[0] + self.__position[0] - self.closableRect.size[0] - 15, 5 + self.__position[1]))
             
         # rysuje reszte (body)
-        destination.blit(self.__tempSurfaceBody, (self.__position[0],40+self.__position[1]))
+        destination.blit(self.__tempSurfaceBody, (self.__position[0],15+self.__position[1]))
         
         
     
@@ -791,7 +816,7 @@ class window():
             _temp_rect = sprite.rect.copy()
             _temp_rect.topleft = (
                 _temp_rect.topleft[0] + self.__position[0],
-                _temp_rect.topleft[1] + self.__position[1] + 40
+                _temp_rect.topleft[1] + self.__position[1] + 15
             )
             
             # jeśli myszka jest w tym spricie
@@ -839,7 +864,7 @@ class window():
         
         # rect x
         self.closableRect = window.closeImg.get_rect()
-        self.closableRect.topleft = (self.__size[0] + self.__position[0] - self.closableRect.size[0], 
+        self.closableRect.topleft = (self.__size[0] + self.__position[0] - self.closableRect.size[0] - 15, 
                                       self.closableRect.topleft[1] + self.__position[1])
         
         
@@ -883,7 +908,7 @@ class window():
         self.__size = size
         
         # nowy background
-        self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 40))
+        self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 15))
         self.__tempSurfaceBackground.fill(self.__backgroundColor)
         self.__tempSurfaceBackground = self.__tempSurfaceBackground.convert()
         
@@ -979,7 +1004,7 @@ class window():
         self.__backgroundColor = backgroundColor
         
         # tło
-        self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 40))
+        self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 15))
         self.__tempSurfaceBackground.fill(self.__backgroundColor)
         self.__tempSurfaceBackground = self.__tempSurfaceBackground.convert()
         
