@@ -13,9 +13,19 @@ import bin.fonts as fn
 import bin.pausescreen as psc
 
 
-
 class windowElement(pygame.sprite.Sprite):
     '''Podstawowy obiekt w oknie'''
+    
+    
+    def getBody(self) -> 'pygame.sprite.Group | windowBody | None':
+        '''Daje body jeżeli istnieje, w innym przypadku None, może nie współpracować z pygame.Sprite.Group, choć powinno\n
+         Argumenty:\n
+                * Brak\n
+            Zwraca:\n
+                * None lub windowBody
+        '''
+        return self.groups()[0]
+    
     
     def focusLoop(self, me: 'windowElement', events, window: 'window'): 
         '''
@@ -228,7 +238,7 @@ class windowElement(pygame.sprite.Sprite):
         self.click = function
         return self
     
-    def __init__(self, image: pygame.surface.Surface, cords: list[int, int] | tuple[int, int] = [0,0], clickListener:None|object = None):
+    def __init__(self, image: pygame.surface.Surface, cords: list[int, int] | tuple[int, int] = [0,0], clickListener:None|object = None, name:str=""):
         '''Tworzenie obiektu\n
             Argumenty:\n
                 * image (jak będzie wyglądać obiekt, pygame.surface.Surface)\n
@@ -236,6 +246,7 @@ class windowElement(pygame.sprite.Sprite):
                 \n
                 * clickListener (opcjonalny, funkcja), pozwala na łatwe ustawienie clickListenera odrazu bez wywoływania
                 dodatkowej metody\n
+                * Name (opcjonalne, String), nazwa obiektu, pozwala potem łatwo go uzyskać, bez konieczności przypisywania go do zmiennej, jest to dlatego że przypisywanie obiektów takich do zmiennych powinno zostać zredukowane do minimum ze względu na sposób działania pythona\n
             Zwraca:\n
                 * Obiekt
         '''
@@ -254,6 +265,8 @@ class windowElement(pygame.sprite.Sprite):
         # opcjonalny listener
         if clickListener != None:
             self.click = clickListener
+            
+        self.name = name
 
     
 class windowText(windowElement):
@@ -305,7 +318,7 @@ class windowText(windowElement):
         
         return self.__color     
     
-    def __init__(self, fontName:str, text:str, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], color:tuple[int] = (0,0,0), clickListener:None|object = None):
+    def __init__(self, fontName:str, text:str, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], color:tuple[int] = (0,0,0), clickListener:None|object = None, name:str=""):
         '''Tworzenie obiektu\n
             Argumenty:\n
                 * fontName (string, nazwa fonta, aktualnie obiekt obsługuje tylko i wyłącznie stringi z fonts.py)\n
@@ -315,6 +328,7 @@ class windowText(windowElement):
                 * color (tuple trzech intów, opcjonalny kolor)\n
                 * clickListener (opcjonalny, funkcja), pozwala na łatwe ustawienie clickListenera odrazu bez wywoływania
                 dodatkowej metody\n
+                * Name (opcjonalne, String), nazwa obiektu, pozwala potem łatwo go uzyskać, bez konieczności przypisywania go do zmiennej, jest to dlatego że przypisywanie obiektów takich do zmiennych powinno zostać zredukowane do minimum ze względu na sposób działania pythona\n
             Zwraca:\n
                 * Obiekt
         '''
@@ -329,7 +343,7 @@ class windowText(windowElement):
         _img = self.__font.render(text, False, color).convert_alpha()
         
         # inicjalizacja klasy nadrzędnej
-        super().__init__(_img, cords, clickListener=clickListener)    
+        super().__init__(_img, cords, clickListener=clickListener, name=name)    
 
 
 class windowTextBox(windowElement):
@@ -468,7 +482,7 @@ class windowTextBox(windowElement):
         
     
     def __init__(self, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], startingText:str="", maxlength:int = 5, xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0),
-                 marginleft:int=5, clickListener:None|object = None):
+                 marginleft:int=5, clickListener:None|object = None, name:str=""):
         '''Tworzenie obiektu\n
             Argumenty:\n
                 * cords (lista dwóch intów, relatywne kordynaty do okna; opcjonalne lecz zalecane)\n
@@ -481,6 +495,7 @@ class windowTextBox(windowElement):
                 * marginleft (int, podstawowo 5, opcjonalne, ilość marginu dla tekstu z lewej strony)\n
                 * clickListener (opcjonalny, funkcja), pozwala na łatwe ustawienie clickListenera odrazu bez wywoływania
                 dodatkowej metody\n
+                * Name (opcjonalne, String), nazwa obiektu, pozwala potem łatwo go uzyskać, bez konieczności przypisywania go do zmiennej, jest to dlatego że przypisywanie obiektów takich do zmiennych powinno zostać zredukowane do minimum ze względu na sposób działania pythona\n
             Zwraca:\n
                 * Obiekt
         '''
@@ -497,7 +512,7 @@ class windowTextBox(windowElement):
         self.__font = _fn[fontName]
         
         # wywołanie klasy nadrzędnej
-        super().__init__(windowTextBox.textboxLeftImg, cords, clickListener=clickListener)
+        super().__init__(windowTextBox.textboxLeftImg, cords, clickListener=clickListener, name=name)
         
         # wygenerowanie początkowego wyglądu
         self.__generateApperance()
@@ -505,9 +520,53 @@ class windowTextBox(windowElement):
 
 # Tylko po to by mieć fajną nazwę, nie trzeba tego używać, działa identycznie jak Groupa z pygama
 class windowBody(pygame.sprite.Group):
-    '''Tylko po to by mieć fajną nazwę, nie trzeba tego używać, działa identycznie jak Groupa z pygama'''
+    '''Tylko po to by mieć fajną nazwę, nie trzeba tego używać, działa identycznie jak Groupa z pygama,
+        jednakże oferuje kilka fajnych funkcji'''
+        
+    def getWindow(self) -> 'window':
+        '''Pozwala powrócić do rodzica windowBody'''
+        return self.__parent
+    
+    
+    def setWindowParent(self, window:'window'):
+        '''Funkcja nie powinna być używana, dodatkowo można ją użyć tylko raz gdy nie ma jeszcze rodzica,
+        co praktycznie nie występuje, chyba że stworzysz body bez okna, co jest poprostu niemądre'''
+        if self.__parent == None:
+            self.__parent = window
+        else:
+            raise Exception(f"Nieuprawnione użycie setwindowParent na obiekcie {self}")
+    
+    
+    def findByPrefix(self, prefix:str) -> windowElement | windowText | windowTextBox:
+        '''Przeszukuje sprity w poszukiwaniu obiektu po nazwie (atrybut Name),
+        Obiekt musi sie tylko zaczynać\n
+        --------------------------------\n
+        Argumenty:\n
+            * name (string, nazwa obiektu)\n
+        Zwraca:\n
+            * windowElement lub windowText lub windowTextbox'        
+        '''
+        yield from [i for i in self.sprites() if i.name.startswith(prefix)]
+    
+    
+    def findByName(self, name:str) -> windowElement | windowText | windowTextBox:
+        '''Przeszukuje sprity w poszukiwaniu obiektu po nazwie (atrybut Name)\n
+        --------------------------------\n
+        Argumenty:\n
+            * name (string, nazwa obiektu)\n
+        Zwraca:\n
+            * windowElement lub windowText lub windowTextbox'        
+        '''
+        yield from [i for i in self.sprites() if i.name == name]
+        # for i in self.sprites():
+        #     if i.name.startsWith(name):
+        #         yield i
+        
+    
     def __init__(self, *sprites: Any | AbstractGroup | Iterable):
         super().__init__(*sprites)
+        self.__parent = None
+        
         
 
 class window():
@@ -1018,6 +1077,10 @@ class window():
         
         # lista nasłuchiwanych obiektów
         self.__objectsToListen = []
+        
+        # ustawienie rodzica na body jeżeli to nie jest grupa z pygama
+        if isinstance(body, windowBody):
+            body.setWindowParent(self)
         
         # finalne dodanie okna do listy okien
         window.addWindowToList(name, self, self.__loop())
