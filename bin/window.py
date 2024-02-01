@@ -380,10 +380,22 @@ class windowTextBox(windowElement):
                 * self (ten sam obiekt na którym to wywołałeś)'''
         if isinstance(regex, re.Pattern):
             self.__regexCompiled = regex
+            self.__regexText = str(regex)
         else:
             self.__regexCompiled = re.compile(regex)
+            self.__regexText = regex
             
         return self
+    
+    
+    def getRegex(self) -> str:
+        '''Służy do pozyskiwania tekstu inicjalizacji regexa\n
+            Argumenty:\n
+                * Brak \n
+            Zwraca:\n
+                * regexText (string)'''        
+        
+        return self.__regexText
     
     
     def focusLoop(self, me, events, window) -> None:
@@ -895,6 +907,7 @@ class window():
                                 "ale to aktualnie nic nie zmienia więc się nie przejmuje",
                                 "cords": element.pos if isinstance(element, (windowElement, windowText, windowTextBox)) else element.rect.topleft,
                                 "imageSize": element.rect.size,
+                                "regex": element.getRegex() if isinstance(element, windowTextBox) else 0,
                                 "objectShown": str(element),
                                 "rect": {
                                     "topleft": element.rect.topleft,
