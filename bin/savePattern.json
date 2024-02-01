@@ -2,6 +2,8 @@
     "checkSum": 0,
     "firstRun": 0,
     "lastGame": 0,
+    "gameVersionfirst": 0,
+    "gameVersionLast": 0,
     "difficulty": "easy",
     "time":{
         "totalSec": 0,
@@ -16,7 +18,26 @@
         {
             "type": "npc",
             "nickname": "kera",
-            "voiceactor": 0,
+            "voiceactor": 1,
+            "_COMMENT": "voiceactora nie bedzie na 100% ale lubie myśleć że będzie",
+            "dialogueList": [
+                {
+                    "_COMMENT": "niewiem też czy to będzie ale lubie myśleć że będzie",
+                    "type": "normal",
+                    "message": "Hej, jestem debilem i potrzebuje pomocy",
+                    "play": "auto",
+                    "playTime": 2
+                }
+            ],
+            "quests":[
+                {
+                    "type": "net_question",
+                    "questionID": -1,
+                    "dialogueBefore": -1,
+                    "dialogueAfter": -1,
+                    "completed": false
+                }
+            ],
             "appearance": {
 
             }
@@ -27,7 +48,6 @@
         "type": "player",
         "nickname": "kera",
         "ratiolevel": 1,
-        "voiceactor": -1,
         "appearance":{
 
         }
