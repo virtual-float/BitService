@@ -4,6 +4,7 @@ import pygame
 import asyncio
 import abc
 import re
+import json
 
 # importy pygama
 from pygame.sprite import AbstractGroup
@@ -515,7 +516,53 @@ class windowTextBox(windowElement):
         # ustawienie recta
         self.rect = self.image.get_rect()
         self.rect.topleft = [self.pos[0], self.pos[1]]
+      
+      
+    def setText(self, text: str) -> 'windowTextBox':
+        '''Służy do ustawiania tekstu\n
+            Argumenty:\n
+                * tekst (string)\n
+            Zwraca:\n
+                * self (ten sam obiekt na którym to wywołałeś)'''
+        self.text = text
+                
+        # renderowanie fonta
+        self.__generateApperance()
+        return self
+
+
+    def getText(self) -> str:
+        '''Służy do pozyskiwania tekstu\n
+            Argumenty:\n
+                * Brak \n
+            Zwraca:\n
+                * tekst (string)'''        
         
+        return self.text
+  
+  
+    def setColor(self, color: tuple[int,int,int]) -> 'windowTextBox':
+        '''Służy do ustawiania koloru\n
+            Argumenty:\n
+                * kolor (tuple[int,int,int], kolor w RGB)\n
+            Zwraca:\n
+                * self (ten sam obiekt na którym to wywołałeś)'''
+        self.__color = color
+                
+        # renderowanie fonta
+        self.__generateApperance()
+        return self
+
+
+    def getColor(self) -> tuple[int,int,int]:
+        '''Służy do pozyskiwania tekstu\n
+            Argumenty:\n
+                * Brak \n
+            Zwraca:\n
+                * kolor (tuple[int,int,int], kolor w RGB)\n'''        
+        
+        return self.__color     
+    
     
     def __init__(self, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], startingText:str="", maxlength:int = 500, xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0),
                  marginleft:int=5, clickListener:None|object = None, name:str=""):
@@ -799,6 +846,10 @@ class window():
         
         cls.__save()
         
+    
+    @classmethod
+    def makeSureToBeUpToDate(cls):
+        cls.__save()
         
     @classmethod
     def __save(cls):
@@ -814,13 +865,64 @@ class window():
                     'size': window.getSize(),
                     'visible': window.visible,
                     'closable': window.closable,
+                    'objectsToListen': [
+                        {
+                            "name": element.name,
+                            "type": {windowElement:"windowElement",
+                                         windowText: "windowText",
+                                         windowTextBox: "windowTextBox",
+                                         pygame.sprite.Sprite: "pygameSprite"
+                                         }[type(element)],
+                            
+                        }   
+                        for element in window.getListeningObjects()
+                    ],
                     'body': {
-                        
+                        "numberOfElements": len(window.getBody().sprites()),
+                        "elements": [
+                            {
+                                "name": element.name,
+                                "type": {windowElement:"windowElement",
+                                         windowText: "windowText",
+                                         windowTextBox: "windowTextBox",
+                                         pygame.sprite.Sprite: "pygameSprite"
+                                         }[type(element)],
+                                "text": element.getText() if isinstance(element, (windowText, windowTextBox)) else 0,
+                                "color": element.getColor() if isinstance(element, (windowText, windowTextBox)) else 0,
+                                "focused": element.focused,
+                                "wasAsFocusedElement": window.getFocusElement() == element,
+                                "__COMMENT": "niewiem czemu focused i wasAFocusedElement pokazują nieprawdziwe wyniki..."
+                                "ale to aktualnie nic nie zmienia więc się nie przejmuje",
+                                "cords": element.pos if isinstance(element, (windowElement, windowText, windowTextBox)) else element.rect.topleft,
+                                "imageSize": element.rect.size,
+                                "objectShown": str(element),
+                                "rect": {
+                                    "topleft": element.rect.topleft,
+                                    "topright": element.rect.topright,
+                                    "midleft": element.rect.midleft,      
+                                    "midright": element.rect.midright,   
+                                    "midtop": element.rect.midtop,      
+                                    "midbottom": element.rect.midbottom,                           
+                                    "center": element.rect.center,
+                                    "top": element.rect.top,
+                                    "left": element.rect.left,
+                                    "right": element.rect.right,
+                                    "bottom": element.rect.bottom,
+                                    "size": element.rect.size,
+                                    "x": element.rect.x,
+                                    "y": element.rect.y,
+                                    "height": element.rect.height,
+                                    "width": element.rect.width,                                    
+                                } ,
+                            } 
+                            for element in window.getBody().sprites()
+                        ]
                     }
                 }
                 for name, window in cls.__windowList.items()
                 })
-            
+        
+                
         # pozostałe
         _s.set("gameState.windowOrder", cls.__windowOrder)
         _s.set("gameState.windowNumber", len(cls.__windowList))
@@ -1051,6 +1153,7 @@ class window():
         if not object in self.__objectsToListen:
             self.__objectsToListen.append(object)
 
+        window.makeSureToBeUpToDate()
         return self
 
     def removeObjectFromListening(self, object: windowElement):
@@ -1064,7 +1167,19 @@ class window():
         if object in self.__objectsToListen:
             self.__objectsToListen.remove(object)
 
+        window.makeSureToBeUpToDate()
         return self
+    
+    
+    def getListeningObjects(self):
+        '''Dostajesz liste obiektów które słucha dane okno\n
+            ----------------------\n
+            Argumenty:\n
+                * Brak\n
+            Zwraca:\n
+                * obiekty w postaci generatora\n    
+        '''
+        yield from self.__objectsToListen
 
     def __init__(self, name:str, size:tuple[int,int], body:windowBody | pygame.sprite.Group, closable:bool=False,
                  backgroundColor: tuple[int,int,int] = (195,195,195), cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0]):

@@ -9,6 +9,7 @@ from dataclasses import dataclass
 import functools
 
 import bin.function as fc
+import bin.window as wn
 
 @dataclass
 class eventTimeStamp:
@@ -30,7 +31,7 @@ class save:
     currentSave = None
     
     '''Save gry'''
-    def save(self) -> bool:
+    def save(self, notMakingSure:bool=False) -> bool:
         '''Ręczne zapisywanie stanu gry\n
             --------------\n
             Argumenty:\n
@@ -41,6 +42,11 @@ class save:
         # informacja o zapisywaniu gry
         import bin.achievements as ach
         if ach.achievement.screen != None: _zapAch = ach.achievement("Zapisuję grę...")
+
+        # aktualnianie informacji
+        if not notMakingSure:
+            wn.window.makeSureToBeUpToDate()
+        
         
         self.set("lastGame", time.time_ns())
         self.set("checkSum", 0)
@@ -323,7 +329,7 @@ class save:
                         # TODO: funkcja naprawiająca i sprawdzająca poprawność danych może kiedyś
                         
                 
-            self.save()
+            self.save(notMakingSure=True)
                 
                 
                 
