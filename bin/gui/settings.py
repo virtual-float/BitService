@@ -16,6 +16,26 @@ class settings:
         pass
         
         
+    def __changeTab(self, newTab:str) -> None:
+        match self.__status:
+            case 'graphics':
+                self.__graphics.pack_forget()
+                
+            case 'sounds':
+                self.__sounds.pack_forget()
+        
+        self.__status = newTab
+        
+        match newTab:
+            case 'graphics':
+                self.__graphics.pack(anchor="nw")
+            case 'sounds':
+                self.__sounds.pack(anchor="nw")
+                self.__val.set(69)
+                self.__useUpd(self.__scaleInfo,self.__scale, self.__val)
+        
+        
+        
     def __init__(self, master: tk.Tk):
         # ustawienia mastera
         self.__master = master
@@ -32,10 +52,10 @@ class settings:
         
         # menu
         self.__menu = tk.Menu()
-        self.__menu.add_command(label = "Grafika", command=self.__setToGraphics)
-        self.__menu.add_command(label = "Dźwięk", command=self.__setToGraphics)
-        self.__menu.add_command(label = "Konto", command=self.__setToGraphics)
-        self.__menu.add_command(label = "Inne", command=self.__setToGraphics)
+        self.__menu.add_command(label = "Grafika", command=lambda: self.__changeTab('graphics'))
+        self.__menu.add_command(label = "Dźwięk", command=lambda: self.__changeTab('sounds'))
+        self.__menu.add_command(label = "Konto", command=lambda: self.__changeTab('graphics'))
+        self.__menu.add_command(label = "Inne", command=lambda: self.__changeTab('graphics'))
         self.__menu.add_separator()
         self.__menu.add_separator()
         self.__menu.add_separator()
@@ -90,6 +110,44 @@ class settings:
             master=self.__graphics,
             text="niestandardowy kursor"
         ).grid(row=2, column=1, pady=10, sticky="w")
+        
+        
+        # sounds
+        self.__sounds = ttk.Frame(master=self.__me, padding="10", width=400, height=400)
+        # self.__soundsInfo = ttk.Frame(master=self.__me, padding="10",
+        #                               width=400, height=200)
+        
+        ttk.Label(
+            master=self.__sounds,
+            text = "Dźwięk ogólny:",
+            justify="left"
+        ).place(y=0, x=0)
+        
+        def useUpd(label, scale, val):
+            def scale_upd(*args):
+                x, _ = scale.coords()
+                y, h = scale.winfo_y(), scale.winfo_height()
+                label.place(x=x+scale.winfo_x()-20, y=h+y-20)
+                label.configure(text=str(round(val.get(),2)) + "%")
+                
+            return scale_upd
+        
+        self.__useUpd = useUpd
+
+        self.__val = tk.IntVar(self.__me)
+        self.__scaleInfo = ttk.Label(master=self.__sounds)
+        self.__scale = ttk.Scale(master=self.__sounds,
+                  from_=0,
+                  to=100,
+                  variable=self.__val,
+                  length=200,
+                  )
+        self.__scaleInfo.lift()
+        self.__scale.place(y=0, x=120)
+        
+        self.__val.trace_add('write', useUpd(self.__scaleInfo,self.__scale, self.__val))
+        
+        self.__scale.bind('<Configure>', lambda ev: self.__scale.after(1, useUpd(self.__scaleInfo,self.__scale, self.__val)))
         
         # finalne
         self.__me.config(menu=self.__menu)
