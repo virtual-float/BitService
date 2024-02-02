@@ -284,7 +284,7 @@ class save:
                         
             
         
-    def __init__(self, file:str="./bin/save.json", pattern:str="./bin/savePattern.json", saveTime:int=10, saveToCurrent:bool=True):
+    def __init__(self, file:str="./data/save.json", pattern:str="./bin/savePattern.json", saveTime:int=10, saveToCurrent:bool=True):
         self.__fileSave, self.__patternSave, self.__saveTime = file, pattern, saveTime
         
         self.__events = []
@@ -375,7 +375,7 @@ class save:
         
         
         
-def get(file="./bin/save.json", pattern="./bin/savePattern.json", saveTime:int=10, alwaysNew:bool=True) -> save:
+def get(file="./data/save.json", pattern="./bin/savePattern.json", saveTime:int=10, alwaysNew:bool=True) -> save:
     if not alwaysNew and save.currentSave != None:
         return save.currentSave
     else:

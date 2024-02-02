@@ -66,7 +66,7 @@ class Menu:
     def statusType(self, type: str) -> None:
         global GS
         if type == 'play':
-            GS = readJSON('./bin/settings.json')
+            GS = readJSON('./data/settings.json')
             self.status = 1
         self.handle.destroy()
 
@@ -248,7 +248,7 @@ async def main(gameSettings: dict):
         pauseScreenOb = pauseScreen(display)
         
         # Inicjalizacja menadżera savów
-        save = saveManager.get(saveTime=GS['autosaveTime'] * 60)
+        save = saveManager.get(saveTime=GS['autoSavetime'] * 60)
 
         # Gracz
         kera = Player("./bin/images/player/init.json", 0, 0, save)
@@ -402,13 +402,16 @@ async def main(gameSettings: dict):
 
 
 
-
-if __name__ == "__main__":
+# testuje otwieranie bez okna windowsowego, wiem że to nie jest najlepsza metoda, ale niewiem
+# jak zrobić inaczej to XD
+# potem można to odwrócić łatwo jak coś
+if __name__ == "__main__" or True:
     
     # Odczytaj dane
-    data = readJSON('./bin/settings.json')
+    data = readJSON('./data/settings.json')
 
     if data == {}:
-        messagebox.showerror('Błąd', 'Wykryto puste dane ustawień. Nie można uruchomić gry!')
-        exit()
+        messagebox.showerror('Błąd', 'Wykryto puste dane ustawień. Przywrocono ustawienia z kopi zapasowej!')
+        data = readJSON('./bin/settingsPattern.json')
+        updateJSON('./data/settings.json', data)
     asyncio.run(main(data))    
