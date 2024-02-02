@@ -31,8 +31,6 @@ class settings:
                 self.__graphics.pack(anchor="nw")
             case 'sounds':
                 self.__sounds.pack(anchor="nw")
-                self.__val.set(69)
-                self.__useUpd(self.__scaleInfo,self.__scale, self.__val)
         
         
         
@@ -145,9 +143,11 @@ class settings:
         self.__scaleInfo.lift()
         self.__scale.place(y=0, x=120)
         
-        self.__val.trace_add('write', useUpd(self.__scaleInfo,self.__scale, self.__val))
+        self.__scale.bind('<Configure>', lambda ev: self.__scale.after(10, useUpd(self.__scaleInfo, self.__scale, self.__val)))
         
-        self.__scale.bind('<Configure>', lambda ev: self.__scale.after(1, useUpd(self.__scaleInfo,self.__scale, self.__val)))
+        self.__val.trace_add('write', useUpd(self.__scaleInfo, self.__scale, self.__val))
+        
+        self.__val.set(50)
         
         # finalne
         self.__me.config(menu=self.__menu)
