@@ -12,6 +12,9 @@ import bin.window as window
 import bin.savemanager as saveManager
 import bin.util as game
 
+# gui
+from bin.gui.settings import settings as settingsGui
+
 # Game Setting
 GS: dict
 
@@ -42,6 +45,13 @@ class Menu:
             height=2,
             command=lambda: self.statusType('exit')
         ).place(x=15, y=200)
+        
+        settings = Button(
+            text='Ustawienia',
+            width=20,
+            height=2,
+            command=lambda: settingsGui(self.handle)
+        ).place(x=15, y=250)
 
         VersionLabel = Label(
             text=GS['ApplicationVersion']
