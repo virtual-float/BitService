@@ -375,9 +375,9 @@ class save:
         
         
         
-def get(file="./bin/save.json", pattern="./bin/savePattern.json", alwaysNew:bool=True) -> save:
+def get(file="./bin/save.json", pattern="./bin/savePattern.json", saveTime:int=10, alwaysNew:bool=True) -> save:
     if not alwaysNew and save.currentSave != None:
         return save.currentSave
     else:
-        return save(file,pattern)     
+        return save(file,pattern, saveTime=saveTime)     
     

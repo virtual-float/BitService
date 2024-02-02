@@ -214,9 +214,21 @@ class settings:
         
         # podstawy
         self.__other = ttk.Frame(master=self.__me, padding="10")
-        self.__other.pack(anchor="nw")
         
-        # rozdzielczość natywna
+        # czas autosavu
+        def autoSaveHandler(*args):
+            self.__newSettings['autoSavetime'] = {
+                    "co 10 sekund": 0.16,
+                    "co minutę": 1,
+                    "co 5 minut": 5,
+                    "co 10 minut": 10,
+                    "co 15 minut": 15,
+                    "co 30 minut": 30,
+                    "co 60 minut": 60,
+                    "nigdy": 99999999
+                }[self.__autoSaveTime.get()]
+            self.__checkSave()        
+        
         ttk.Label(
             master=self.__other,
             text = "Czas autosavu:",
@@ -224,6 +236,7 @@ class settings:
         ).grid(row=0, column=0)
         
         self.__autoSaveTime = tk.StringVar(self.__me, {
+                "0.16": "co 10 sekund",
                 '1': "co minutę",
                 "5": "co 5 minut",
                 "10": "co 10 minut",
@@ -231,15 +244,17 @@ class settings:
                 "30": "co 30 minut",
                 "60": "co 60 minut",
                 "99999999": "nigdy"
-            }[str(self.__newSettings['autoSaveTime'])])
+            }[str(self.__previousSettings['autoSavetime'])])
         
-        ttk.Combobox(master=self.__other, 
-                     values=["co minutę", "co 5 minut", "co 10 minut", "co 15 minut", "co 30 minut", "co 60 minut", "nigdy"],
+        
+        self._cmm = ttk.Combobox(master=self.__other, 
+                     values=["co 10 sekund", "co minutę", "co 5 minut", "co 10 minut", "co 15 minut", "co 30 minut", "co 60 minut", "nigdy"],
                      justify="center",
                      state="readonly",
                     textvariable=self.__autoSaveTime
                      ).grid(row=0, column=1, padx="10")
         
+        self.__autoSaveTime.trace_add('write', autoSaveHandler)
         
         # finalne
         self.__me.config(menu=self.__menu)

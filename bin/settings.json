@@ -13,6 +13,6 @@
     "fullscreen": false,
     "devmode": true,
     "customCursor": false,
-    "autoSaveTime": 10,
+    "autoSavetime": 0.16,
     "soundVolume": 100
 }

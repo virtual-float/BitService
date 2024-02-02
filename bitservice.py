@@ -248,7 +248,7 @@ async def main(gameSettings: dict):
         pauseScreenOb = pauseScreen(display)
         
         # Inicjalizacja menadżera savów
-        save = saveManager.get()
+        save = saveManager.get(saveTime=GS['autosaveTime'] * 60)
 
         # Gracz
         kera = Player("./bin/images/player/init.json", 0, 0, save)
