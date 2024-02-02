@@ -25,6 +25,8 @@ RENDER_SCALE : int = 4
 class Menu:
     # Konstruktor
     def __init__(self, rootHandle: Tk) -> None:
+        global GS
+        
         self.handle = rootHandle
 
         # Status
@@ -62,7 +64,9 @@ class Menu:
         self.handle.mainloop()
     
     def statusType(self, type: str) -> None:
+        global GS
         if type == 'play':
+            GS = readJSON('./bin/settings.json')
             self.status = 1
         self.handle.destroy()
 
