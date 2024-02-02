@@ -31,6 +31,7 @@ class settings:
                 self.__graphics.pack(anchor="nw")
             case 'sounds':
                 self.__sounds.pack(anchor="nw")
+                self.__scale.after(20, lambda *args, **kwargs: self.__useUpd(self.__scaleInfo, self.__scale, self.__val)())
         
         
         
@@ -147,7 +148,7 @@ class settings:
         
         self.__val.trace_add('write', useUpd(self.__scaleInfo, self.__scale, self.__val))
         
-        self.__val.set(50)
+        self.__val.set(100)
         
         # finalne
         self.__me.config(menu=self.__menu)
