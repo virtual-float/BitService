@@ -14,5 +14,8 @@
     "devmode": true,
     "customCursor": false,
     "autoSavetime": 1,
-    "soundVolume": 100
+    "soundAll": 100,
+    "soundMusic": 100,
+    "soundEffect": 100,
+    "soundDialogue": 100
 }
