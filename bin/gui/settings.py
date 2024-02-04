@@ -92,7 +92,8 @@ class settings:
             
             return scale_upd        
         
-
+        self.__useUpd = useUpd
+        
         # ustawienia mastera
         self.__master = master
     
