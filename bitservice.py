@@ -66,7 +66,7 @@ class Menu:
     def statusType(self, type: str) -> None:
         global GS
         if type == 'play':
-            GS = readJSON('./bin/settingsPattern.json')
+            GS = readJSON('./bin/settings.json')
             self.status = 1
         self.handle.destroy()
 
@@ -408,7 +408,7 @@ async def main(gameSettings: dict):
 if __name__ == "__main__":
     
     # Odczytaj dane
-    data = readJSON('./bin/settingsPattern.json')
+    data = readJSON('./bin/settings.json')
 
     if data == {}:
         messagebox.showerror('Błąd', 'Wykryto puste dane ustawień!')
