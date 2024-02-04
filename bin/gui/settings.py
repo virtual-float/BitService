@@ -100,7 +100,7 @@ class settings:
         # podstawy
         self.__status = 'graphics'
         self.__hasSettingsChanged = False
-        self.__previousSettings = readJSON('./bin/settingsPattern.json')
+        self.__previousSettings = readJSON('./bin/settings.json')
         self.__newSettings =  self.__previousSettings.copy()
     
         # podstawy

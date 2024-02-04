@@ -11,10 +11,10 @@
         600
     ],
     "fullscreen": false,
-    "devmode": true,
+    "devmode": false,
     "customCursor": false,
     "autoSavetime": 99999999,
-    "soundAll": 23,
+    "soundAll": 100,
     "soundMusic": 100,
     "soundEffect": 100,
     "soundDialogue": 100
