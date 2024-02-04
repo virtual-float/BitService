@@ -68,7 +68,7 @@ class settings:
     def __fabric(self) -> None:
         if messagebox.askyesno("Utrata danych", "Czy napewno chcesz usunąć wszystkie swoje ustawienia?"):
             howshouldbe = readJSON("./bin/settingsPattern.json")
-            updateJSON("./bin/settingsPattern.json", howshouldbe)
+            updateJSON("./bin/settings.json", howshouldbe)
             self.kill()
         
     def __handleSave(self) -> None:
@@ -78,7 +78,7 @@ class settings:
         self.__previousSettings = self.__newSettings.copy()
         self.__checkSave()
         
-        updateJSON('./bin/settingsPattern.json', self.__newSettings)
+        updateJSON('./bin/settings.json', self.__newSettings)
         
         
     def __init__(self, master: tk.Tk):
@@ -100,7 +100,7 @@ class settings:
         # podstawy
         self.__status = 'graphics'
         self.__hasSettingsChanged = False
-        self.__previousSettings = readJSON('./bin/settingsPattern.json')
+        self.__previousSettings = readJSON('./bin/settings.json')
         self.__newSettings =  self.__previousSettings.copy()
     
         # podstawy
