@@ -1,1 +1,10 @@
-[]
+[
+    {
+        "QUESTION": "Ile wynosi 5 << 2?",
+        "ANSWER": "0x14"
+    },
+    {
+        "QUESTION": "Ile wynosi 5 & 4",
+        "ANSWER": "0x04"
+    }
+]

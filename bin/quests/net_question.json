@@ -1,0 +1,12 @@
+[
+    {
+        "QUESTION": "Oblicz adres rozgłoszeniowy",
+        "Q_DATA": "127.0.0.1 /24",
+        "ANSWER": "7F.0.1.0"
+    },
+    {
+        "QUESTION": "Oblicz adres rozgłoszeniowy",
+        "Q_DATA": "127.0.0.1 /25",
+        "ANSWER": "7F.0.0.80"
+    }
+]
