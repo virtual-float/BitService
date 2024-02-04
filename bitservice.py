@@ -66,7 +66,7 @@ class Menu:
     def statusType(self, type: str) -> None:
         global GS
         if type == 'play':
-            GS = readJSON('./data/settings.json')
+            GS = readJSON('./bin/settingsPattern.json')
             self.status = 1
         self.handle.destroy()
 
