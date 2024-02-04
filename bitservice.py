@@ -405,13 +405,12 @@ async def main(gameSettings: dict):
 # testuje otwieranie bez okna windowsowego, wiem że to nie jest najlepsza metoda, ale niewiem
 # jak zrobić inaczej to XD
 # potem można to odwrócić łatwo jak coś
-if __name__ == "__main__" or True:
+if __name__ == "__main__":
     
     # Odczytaj dane
-    data = readJSON('./data/settings.json')
+    data = readJSON('./bin/settingsPattern.json')
 
     if data == {}:
-        messagebox.showerror('Błąd', 'Wykryto puste dane ustawień. Przywrocono ustawienia z kopi zapasowej!')
-        data = readJSON('./bin/settingsPattern.json')
-        updateJSON('./data/settings.json', data)
-    asyncio.run(main(data))    
+        messagebox.showerror('Błąd', 'Wykryto puste dane ustawień!')
+        exit()
+    asyncio.run(main(data))
