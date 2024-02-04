@@ -68,11 +68,23 @@ def NestedDictValues(d):
             yield v
 
 
-def hex_crypt(value: str | int) -> list[hex]:
+def hex_crypt(value: str | int, asciiEnabled: bool, sep: str = '') -> str:
     '''Funkcja, która zwróci zaszyfrowane dane w postaci szesnastkowej'''
-    return list(map(lambda letter: hex(ord(letter)), list(value)))
+    if asciiEnabled:
+        return sep.join((map(lambda letter: hex(ord(letter)).removeprefix('0x'), value.split(sep))))
+    return sep.join((map(lambda letter: hex(int(letter, base=0)).removeprefix('0x'), value.split(sep))))
 
 
-def hex_decrypt(value: list[hex]) -> str:
+def hex_decrypt(value: str, asciiEnabled: bool, sep: str = '') -> str:
     '''Funkcja, która zwraca odszyfrowane dane z postaci szesnastkowej'''
-    return ''.join(map(lambda hex_value: chr(int(hex_value, base=16)), value))
+    if asciiEnabled:
+        return sep.join(map(lambda hex_value: chr(int(hex_value, base=16)), value.split(sep)))
+    return sep.join(map(lambda hex_value: str(int(hex_value, base=16)), value.split(sep)))
+
+
+# TO BYŁO DO TESTOWANIA
+# dane = '7F.0.1.0'
+
+# print(hex_decrypt(dane, False, '.'))
+
+# print(hex_crypt('127.0.1.0', False, '.'))
