@@ -82,6 +82,17 @@ class settings:
         
         
     def __init__(self, master: tk.Tk):
+
+        def useUpd(label, scale, val):
+            def scale_upd(*args):
+                x, _ = scale.coords()
+                y, h = scale.winfo_y(), scale.winfo_height()
+                label.place(x=x+scale.winfo_x()-20, y=h+y-20)
+                label.configure(text=str(round(val.get(),2)) + "%")
+            
+            return scale_upd        
+        
+
         # ustawienia mastera
         self.__master = master
     
@@ -219,18 +230,7 @@ class settings:
         # sounds
         # ----------------
         
-        # updater wskaźnika
-        def useUpd(label, scale, val):
-            def scale_upd(*args):
-                x, _ = scale.coords()
-                y, h = scale.winfo_y(), scale.winfo_height()
-                label.place(x=x+scale.winfo_x()-20, y=h+y-20)
-                label.configure(text=str(round(val.get(),2)) + "%")
-            
-            return scale_upd
         
-        self.__useUpd = useUpd
-
         self.__sounds = ttk.Frame(master=self.__me, padding="10", width=400, height=400)
         # self.__soundsInfo = ttk.Frame(master=self.__me, padding="10",
         #                               width=400, height=200)
@@ -416,6 +416,21 @@ class settings:
                      ).grid(row=0, column=1, padx="10")
         
         self.__autoSaveTime.trace_add('write', autoSaveHandler)
+        
+        self.__devMode = tk.BooleanVar(self.__me, self.__previousSettings['devmode'])
+        
+        ttk.Checkbutton(
+            master=self.__other,
+            text="tryb dewelopera",
+            variable=self.__devMode
+        ).grid(row=1, column=0, pady=10, sticky="w")
+
+
+        def handleDevMode(*args):
+            self.__newSettings['devmode'] = self.__devMode.get()
+            self.__checkSave()
+            
+        self.__devMode.trace_add('write', handleDevMode)
         
         # finalne
         self.__me.config(menu=self.__menu)
