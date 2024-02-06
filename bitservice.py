@@ -123,7 +123,7 @@ class Player:
         self.__playerdata : dict = readJSON(initPlayerFile)
         
         # TODO: Zsynchronizować ilość ratio dla gracza w przypadku gdy istnieje save
-        self.ratio_level = 10
+        self.ratio_level = dataManager.get('player.ratiolevel')
 
         if self.__playerdata == {}:
             messagebox.showerror(__name__, 'Dane animacji gracza są puste!')

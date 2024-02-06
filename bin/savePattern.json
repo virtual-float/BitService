@@ -47,7 +47,7 @@
     "player":{
         "type": "player",
         "nickname": "kera",
-        "ratiolevel": 1,
+        "ratiolevel": 10,
         "appearance":{
 
         }
