@@ -384,7 +384,7 @@ async def main(gameSettings: dict):
             # Layout
             bars_t = list(generateBars(kera.ratio_level))
             
-            if bars_t != []:
+            if bars_t == []:
                 # TODO: Wyświetl gameover screen
                 pass
 
