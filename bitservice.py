@@ -1,7 +1,9 @@
 # Importowanie modułow niezbędnych do uruchomienia gry
 import pygame, asyncio
 import random as rand
-from tkinter import Button, Label, messagebox, Tk
+from tkinter import Button, Label, messagebox, Tk, Canvas
+from PIL import Image, ImageTk
+import numpy, os
 
 
 # Zaimportuj lokalne moduły
@@ -34,6 +36,30 @@ class Menu:
         # 1 = play
         self.status = 0
 
+        self.BackgroundCanvas = Canvas(
+            width=GS['ApplicationSize'][0],
+            height=GS['ApplicationSize'][1]
+        )
+        self.BackgroundCanvas.place(x=0,y=0)
+
+        image = Image.open(os.getcwd() + '\\bin\\images\\menu.jpg')
+        tkinter_img = ImageTk.PhotoImage(image=image)
+
+        self.BackgroundCanvas.create_image(-2, -2, anchor='nw', image=tkinter_img)
+
+        c_text = self.BackgroundCanvas.create_text(
+            192, 64, 
+            text=GS['ApplicationName'], 
+            font=('Consolas', 38, 'bold'), 
+            fill='#f0f0f0')
+        
+        c_version = self.BackgroundCanvas.create_text(
+            GS['ApplicationSize'][0] - 64, 
+            GS['ApplicationSize'][1] - 32,
+            text=GS['ApplicationVersion'],
+            font=('Consolas', 12),
+            fill='#f0f0f0')
+
         PlayButton = Button(
             text='Graj',
             width=20,
@@ -41,23 +67,19 @@ class Menu:
             command=lambda: self.statusType('play')
         ).place(x=15, y=150)
 
-        ExitButton = Button(
-            text='Wyjdź',
-            width=20,
-            height=2,
-            command=lambda: self.statusType('exit')
-        ).place(x=15, y=200)
-        
         settings = Button(
             text='Ustawienia',
             width=20,
             height=2,
             command=lambda: settingsGui(self.handle)
-        ).place(x=15, y=250)
+        ).place(x=15, y=200)
 
-        VersionLabel = Label(
-            text=GS['ApplicationVersion']
-        ).place(x=GS['ApplicationSize'][0] - 125, y=GS['ApplicationSize'][1] - 50)
+        ExitButton = Button(
+            text='Wyjdź',
+            width=20,
+            height=2,
+            command=lambda: self.statusType('exit')
+        ).place(x=15, y=250)
 
         # TODO: Zrobić menu z tłem bin/images/menu.jpg
 
@@ -171,7 +193,8 @@ async def main(gameSettings: dict):
         # Tworzenie root dla tkinter menu
         root = Tk()
         root.title(GS['ApplicationName'])
-        root.iconbitmap('./' + GS['ApplicationIcon'])
+        root.wm_resizable(False, False)
+        root.iconbitmap('./' + str(GS['ApplicationIcon']).replace('.png', '.ico'))
         root.geometry("{}x{}".format(GS['ApplicationSize'][0], GS['ApplicationSize'][1]))
         
         # Wywołaj klasę Menu o handle root
@@ -281,8 +304,10 @@ async def main(gameSettings: dict):
         
         # funkcja ułatwiająca
         async def waitForOther():
-            await asyncio.sleep(0.02)  
-               
+            await asyncio.sleep(0.02)
+
+        animation_i = 0
+
         while GameOn:
             await waitForOther()
             # obsługa eventów 
@@ -298,12 +323,18 @@ async def main(gameSettings: dict):
                                 pauseScreenOb.toggle(checkFocus=False)
                             case pygame.K_q:
                                 pauseScreenOb.toggle()
-                                
-            # obliczanie elementów gry
-                            
-                
-
             
+
+            # Animacja stała dla gracza (idle mode)
+            if animation_i == 0:
+                kera.current_img = kera.animation_idle[0]
+                animation_i += 1
+            elif animation_i == 30:
+                kera.current_img = kera.animation_idle[1]
+                animation_i = 0
+
+                           
+            # obliczanie elementów gry
             if pauseScreenOb.getState(): 
                 # obsługa zdarzeń z eventHandlera z menu pauzy
                 _temp = pauseScreenOb.eventHandler(GS['devmode'], EVENTS, save)
