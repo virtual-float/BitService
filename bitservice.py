@@ -224,7 +224,7 @@ async def main(gameSettings: dict):
         # Dla gry
         ProgressBar = pygame.image.load('bin/images/progress_bar.png').convert_alpha()
         ProgressBarRect = ProgressBar.get_rect()
-        pb_x = GS['ApplicationSize'][0] // 2 + (ProgressBar.get_width() // 2)
+        pb_x = (GS['ApplicationSize'][0] + ProgressBar.get_width()) // 2
         pb_y = GS['ApplicationSize'][1] // 2 + (8 * ProgressBar.get_height())
         ProgressBarRect.x = pb_x
         ProgressBarRect.y = pb_y
@@ -275,7 +275,7 @@ async def main(gameSettings: dict):
 
         # Gracz
         kera = Player("./bin/images/player/init.json", 0, 0, save)
-        kera.rect.x = GS['ApplicationSize'][0] - int(kera.animation_idle[0].get_width() * 1.5) - 128 + 16
+        kera.rect.x = GS['ApplicationSize'][0] - round(kera.animation_idle[0].get_width() * 1.5) - 112
         kera.rect.y = GS['ApplicationSize'][1] - kera.animation_idle[0].get_height() - 64
         
         # System osiągnieć (Inicjalizacja)
@@ -323,17 +323,8 @@ async def main(gameSettings: dict):
                                 pauseScreenOb.toggle(checkFocus=False)
                             case pygame.K_q:
                                 pauseScreenOb.toggle()
-            
 
-            # Animacja stała dla gracza (idle mode)
-            if animation_i == 0:
-                kera.current_img = kera.animation_idle[0]
-                animation_i += 1
-            elif animation_i == 30:
-                kera.current_img = kera.animation_idle[1]
-                animation_i = 0
-
-                           
+    
             # obliczanie elementów gry
             if pauseScreenOb.getState(): 
                 # obsługa zdarzeń z eventHandlera z menu pauzy
