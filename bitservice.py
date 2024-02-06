@@ -114,10 +114,14 @@ def generateBars(repStatus: int):
 # Klasa gracza
 class Player:
 
+    # Opcje emotek
+    EmoteAnger : int = 0
+    EmoteHappy : int = 1
+
     # Opcje animacji
-    AnimationDefault : int = -1
-    AnimationTypewrite : int = 0
-    AnimationMove : int = 1
+    EmoteIdle : int = -1
+    AnimationTypewrite : int = 2
+    AnimationMove : int = 3
 
     def __init__(self, initPlayerFile: str, x: int, y: int, dataManager: saveManager) -> None:
         self.__playerdata : dict = readJSON(initPlayerFile)
@@ -149,22 +153,20 @@ class Player:
 
         self.current_img = self.animation_idle[0]
 
-    # Metoda, która zwraca aktualny tryb animacji oraz obrazy png dla tej animacji
+    # Metoda, która włączy tryb animacji zależnie od wybranego trybu
+    # Dla tej metody dostępne są tryby tylko:
+    #           1.      Anger
+    #           2.      Happy
+    #           3.      Idle
     @classmethod
-    def get_from_state(self) -> tuple:
-        Data = None
-
-        match self.state:
-            case self.AnimationDefault:
-                Data = self.animation_idle
-            case self.AnimationTypewrite:
-                Data = self.animation_typewrite
-            case self.AnimationMove:
-                Data = self.animation_move 
-        
-        return self.state, Data
-
-
+    def emote_play(self, EmoteMode: int) -> None:
+        match EmoteMode:
+            case self.EmoteAnger:
+                pass
+            case self.EmoteHappy:
+                pass
+            case _: # Idle
+                pass
 
 
 async def main(gameSettings: dict):
