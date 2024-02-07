@@ -37,19 +37,24 @@ def generate_gate():
             kwargs['me'].getBody().getWindow().kill()
         else:
             # informacja o złej odpowiedzi
-            _body: wn.windowBody = kwargs['me'].getBody()
+            # _body: wn.windowBody = kwargs['me'].getBody()
             
-            # tworzenie informacji o złej odpowiedzi
-            if len(_body.findByName("n")) == 0:
-                _body.add(
-                    wn.windowText(
-                        fontName="VERYSMALL_COMICSANS", 
-                        text="niepoprawna odpowiedz!", 
-                        color=(230,10,10),
-                        cords=(30, 220),
-                        name="n"
-                    )
-                )
+            # # tworzenie informacji o złej odpowiedzi
+            # if len(_body.findByName("n")) == 0:
+            #     _body.add(
+            #         wn.windowText(
+            #             fontName="VERYSMALL_COMICSANS", 
+            #             text="niepoprawna odpowiedz!", 
+            #             color=(230,10,10),
+            #             cords=(30, 220),
+            #             name="n"
+            #         )
+            #     )
+            _s = sm.get(alwaysNew=False)
+            _s.set("player.ratiolevel",
+                    _s.get('player.ratiolevel')-1)
+            kwargs['me'].getBody().getWindow().kill()
+            
             
             # # ustawianie spowrotem tekstu (przy jednym evencie jest usuwany, przy k) 
             # kwargs['me'].getBody().findByName("textBox")[0].setText(_text)
