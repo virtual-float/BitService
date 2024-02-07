@@ -116,11 +116,11 @@ class Player:
     EmoteCry : int = 2
 
 
-    def __init__(self, initPlayerFile: str, x: int, y: int, dataManager: saveManager) -> None:
+    def __init__(self, initPlayerFile: str, x: int, y: int) -> None:
         self.__playerdata : dict = readJSON(initPlayerFile)
         
         # TODO: Zsynchronizować ilość ratio dla gracza w przypadku gdy istnieje save
-        self.ratio_level = dataManager.get('player.ratiolevel')
+        # self.ratio_level = dataManager.get('player.ratiolevel')
 
         if self.__playerdata == {}:
             messagebox.showerror(__name__, 'Dane animacji gracza są puste!')
@@ -149,20 +149,24 @@ class Player:
     # Metoda, która będzie sprawdzała 'logiki' dla gracza
     def update(self) -> None:
         # Logika dla ratio level
-        if self.ratio_level >= 10:
-            self.ratio_level = 10
-        elif self.ratio_level <= 0:
-            self.ratio_level = 0
+        _s = saveManager.get(alwaysNew=False)
+        
+        if _s.getSafe('player.ratiolevel', default=0) >= 10:
+            _s.set('player.ratiolevel', 10)
+        elif _s.getSafe('player.ratiolevel', default=0) <= 0:
+            _s.set('player.ratiolevel', 0)
             self.gameover = True
 
         # Logika emotek
-        if self.ratio_level <= 0:
+        _ratio = _s.getSafe('player.ratiolevel', default=0)
+        
+        if _ratio <= 0:
             self.current_img = self.emote_cry
-        elif self.ratio_level > 0 and self.ratio_level <= 4:
+        elif _ratio > 0 and _ratio <= 4:
             self.current_img = self.emote_sad
-        elif self.ratio_level > 4 and self.ratio_level <= 7:
+        elif _ratio > 4 and _ratio <= 7:
             self.current_img = self.emote_idle
-        elif self.ratio_level > 7 and self.ratio_level <= 10:
+        elif _ratio > 7 and _ratio <= 10:
             self.current_img = self.emote_happy
 
         # Logika w przypadku game over
@@ -303,7 +307,7 @@ async def main(gameSettings: dict):
         save = saveManager.get(saveTime=GS['autoSavetime'] * 60)
 
         # Gracz
-        kera = Player("./bin/images/player/init.json", 0, 0, save)
+        kera = Player("./bin/images/player/init.json", 0, 0)
         kera.rect.x = GS['ApplicationSize'][0] - round(kera.emote_idle.get_width() * 1.5) - 112
         kera.rect.y = GS['ApplicationSize'][1] - kera.emote_idle.get_height() - 64
         
@@ -359,9 +363,12 @@ async def main(gameSettings: dict):
                                     pauseScreenOb.toggle()
                             # WYŁĄCZNIE DLA TESTU TO CO PONIŻEJ
                             case pygame.K_LEFT:
-                                kera.ratio_level -= 1
+                                save.set('player.ratiolevel', save.getSafe('player.ratiolevel', default=0)-1)
                             case pygame.K_RIGHT:
-                                kera.ratio_level += 1
+                                save.set('player.ratiolevel', save.getSafe('player.ratiolevel', default=0)+1)
+                            case pygame.K_UP:
+                                if not game.window.checkWindow("gate_gui"):
+                                    generate_gate()
 
     
             # obliczanie elementów gry
@@ -427,7 +434,7 @@ async def main(gameSettings: dict):
                 display.blit(ProgressBar, (ProgressBarRect.x, ProgressBarRect.y))
 
                 # Layout
-                bars_t = generateBars(kera.ratio_level)
+                bars_t = generateBars(save.getSafe('player.ratiolevel', default=0))
                 
                 if not isinstance(bars_t, str):
                     # temp
