@@ -4,8 +4,6 @@
         "bin/images/player/left_step.png",
         "bin/images/player/right_step.png"
     ],
-    "STATE_TYPEWRITE": [
-        "bin/images/player/left_type.png",
-        "bin/images/player/right_type.png"
-    ]
+    "EMOTE_ANGER": "bin/images/player/anger.png",
+    "EMOTE_HAPPY": "bin/images/player/happy.png"
 }

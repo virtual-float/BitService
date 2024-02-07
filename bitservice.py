@@ -20,6 +20,9 @@ from bin.gui.settings import settings as settingsGui
 # Game Setting
 GS: dict
 
+# GameOn
+GameOn : bool = False
+
 # Constant
 RENDER_SCALE : int = 4
 
@@ -101,27 +104,26 @@ def scaleImage(imgSource: str, scaleBy: int) -> pygame.Surface:
 
 # Funkcja, która zwróci ilość barów dla progress baru
 def generateBars(repStatus: int):
-    if repStatus <= 0: yield []
-    elif repStatus > 10: repStatus = 10
-
-    for i in range(0, repStatus, 1):
-        if i == repStatus - 1 and repStatus != 10: # 10 - max
-            yield pygame.image.load('bin/images/bar_head.png'), pygame.image.load('bin/images/bar_head.png').get_rect()
-            break
-        yield pygame.image.load('bin/images/bar_body.png'), pygame.image.load('bin/images/bar_body.png').get_rect()
+    if repStatus > 0:
+        for i in range(0, repStatus, 1):
+            if i == repStatus - 1 and repStatus != 10: # 10 - max
+                yield pygame.image.load('bin/images/bar_head.png'), pygame.image.load('bin/images/bar_head.png').get_rect()
+                break
+            yield pygame.image.load('bin/images/bar_body.png'), pygame.image.load('bin/images/bar_body.png').get_rect()
+    else:
+        return ''
 
 
 # Klasa gracza
 class Player:
 
     # Opcje emotek
+    EmoteIdle : int = -1
     EmoteAnger : int = 0
     EmoteHappy : int = 1
 
     # Opcje animacji
-    EmoteIdle : int = -1
-    AnimationTypewrite : int = 2
-    AnimationMove : int = 3
+    AnimationMove : int = 2
 
     def __init__(self, initPlayerFile: str, x: int, y: int, dataManager: saveManager) -> None:
         self.__playerdata : dict = readJSON(initPlayerFile)
@@ -133,44 +135,74 @@ class Player:
             messagebox.showerror(__name__, 'Dane animacji gracza są puste!')
             exit()
 
-        self.animation_idle : pygame.image = [
-            scaleImage(self.__playerdata['STATE_IDLE'], RENDER_SCALE),
-            pygame.transform.flip(scaleImage(self.__playerdata['STATE_IDLE'], RENDER_SCALE), True, False)
-        ]
+        self.emote_idle : pygame.image = scaleImage(self.__playerdata['STATE_IDLE'], RENDER_SCALE)
 
-        self.rect : pygame.rect.Rect = self.animation_idle[0].get_rect()
+        self.rect : pygame.rect.Rect = self.emote_idle.get_rect()
         self.rect.x, self.rect.y = x, y
 
         self.animation_move : list = list(map(
-            lambda a_path: (scaleImage(a_path, RENDER_SCALE), pygame.transform.flip(scaleImage(a_path, RENDER_SCALE), True, False)),
+            lambda a_path: scaleImage(a_path, RENDER_SCALE),
             self.__playerdata['STATE_MOVE']
         ))
 
-        self.animation_typewrite : list = list(map(
-            lambda a_path: (scaleImage(a_path, RENDER_SCALE), pygame.transform.flip(scaleImage(a_path, RENDER_SCALE), True, False)),
-            self.__playerdata['STATE_TYPEWRITE']
-        ))
+        self.emote_anger : pygame.image = scaleImage(self.__playerdata['EMOTE_ANGER'], RENDER_SCALE)
 
-        self.current_img = self.animation_idle[0]
+        self.emote_happy : pygame.image = scaleImage(self.__playerdata['EMOTE_HAPPY'], RENDER_SCALE)
+
+        self.current_img = self.emote_idle
+
+        self.gameover : bool = False
 
     # Metoda, która włączy tryb animacji zależnie od wybranego trybu
     # Dla tej metody dostępne są tryby tylko:
     #           1.      Anger
     #           2.      Happy
     #           3.      Idle
-    @classmethod
     def emote_play(self, EmoteMode: int) -> None:
         match EmoteMode:
             case self.EmoteAnger:
-                pass
+                self.current_img = self.emote_anger
             case self.EmoteHappy:
-                pass
+                self.current_img = self.emote_happy
             case _: # Idle
-                pass
+                self.current_img = self.emote_idle
+    
+    def update(self) -> None:
+        # Logika dla ratio level
+        if self.ratio_level >= 10:
+            self.ratio_level = 10
+        elif self.ratio_level <= 0:
+            self.ratio_level = 0
+            self.gameover = True
+
+        # Logika emotek
+        if self.ratio_level <= 4:
+            self.emote_play(self.EmoteAnger)
+        elif self.ratio_level > 4 and self.ratio_level <= 7:
+            self.emote_play(self.EmoteIdle)
+        elif self.ratio_level > 7 and self.ratio_level <= 10:
+            self.emote_play(self.EmoteHappy)
+
+        # Logika w przypadku game over
+        if self.gameover:
+            if not hasattr(self, 'temp_player_x') and not hasattr(self, 'temp_player_y'):
+                self.temp_player_x, self.temp_player_y = self.rect.x, self.rect.y
+            
+            if self.rect.x < self.temp_player_x - 64:
+                self.rect.x += 1
+            elif self.rect.y < self.temp_player_y - 500:
+                self.rect.y -= 1
+            
+            # if self.rect.x >= self.temp_player_x - 64 and self.rect.y >= self.temp_player_y - 500:
+            #     GameOn = False
+            
+
+            
+        
 
 
 async def main(gameSettings: dict):
-    global GS
+    global GS, GameOn
     # messagebox.showinfo('Informacja', 'uruchomiono pomyślnie')
 
     # Przypisanie ustawień do GS
@@ -277,8 +309,8 @@ async def main(gameSettings: dict):
 
         # Gracz
         kera = Player("./bin/images/player/init.json", 0, 0, save)
-        kera.rect.x = GS['ApplicationSize'][0] - round(kera.animation_idle[0].get_width() * 1.5) - 112
-        kera.rect.y = GS['ApplicationSize'][1] - kera.animation_idle[0].get_height() - 64
+        kera.rect.x = GS['ApplicationSize'][0] - round(kera.emote_idle.get_width() * 1.5) - 112
+        kera.rect.y = GS['ApplicationSize'][1] - kera.emote_idle.get_height() - 64
         
         # System osiągnieć (Inicjalizacja)
         achievement.configure(display)
@@ -308,8 +340,6 @@ async def main(gameSettings: dict):
         async def waitForOther():
             await asyncio.sleep(0.02)
 
-        animation_i = 0
-
         while GameOn:
             await waitForOther()
             # obsługa eventów 
@@ -325,6 +355,11 @@ async def main(gameSettings: dict):
                                 pauseScreenOb.toggle(checkFocus=False)
                             case pygame.K_q:
                                 pauseScreenOb.toggle()
+                            # WYŁĄCZNIE DLA TESTU TO CO PONIŻEJ
+                            case pygame.K_LEFT:
+                                kera.ratio_level -= 1
+                            case pygame.K_RIGHT:
+                                kera.ratio_level += 1
 
     
             # obliczanie elementów gry
@@ -373,6 +408,8 @@ async def main(gameSettings: dict):
             # Renderowanie gracza
             display.blit(kera.current_img, (kera.rect.x, kera.rect.y))
 
+            
+
             # Renderowanie objektów
             display.blit(Table, (TableRect.x, TableRect.y))
             display.blit(Screen, (ScreenRect.x, ScreenRect.y))
@@ -384,23 +421,20 @@ async def main(gameSettings: dict):
             display.blit(ProgressBar, (ProgressBarRect.x, ProgressBarRect.y))
 
             # Layout
-            bars_t = list(generateBars(kera.ratio_level))
+            bars_t = generateBars(kera.ratio_level)
             
-            if bars_t == []:
-                # TODO: Wyświetl gameover screen
-                pass
+            if not isinstance(bars_t, str):
+                # temp
+                temp_x = 0
 
-            # temp
-            temp_x = 0
+                # Render barów dla progress bar
+                for bar in list(bars_t):
+                    bar[1].x, bar[1].y = (pb_x + 2) + temp_x, (pb_y + 2)
 
-            # Render barów dla progress bar
-            for bar in bars_t:
-                bar[1].x, bar[1].y = (pb_x + 2) + temp_x, (pb_y + 2)
+                    temp_x += bar[0].get_width()
 
-                temp_x += bar[0].get_width()
-
-                display.blit(bar[0], (bar[1].x, bar[1].y))
-                
+                    display.blit(bar[0], (bar[1].x, bar[1].y))
+        
                 
                 
             # renderowanie okna
@@ -420,6 +454,10 @@ async def main(gameSettings: dict):
 
 
             pygame.display.update()
+
+            # Update metoda dla gracza
+            kera.update()
+
             GameClock.tick(15)
             
         pygame.quit()
