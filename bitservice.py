@@ -7,7 +7,7 @@ import numpy, os
 
 
 # Zaimportuj lokalne moduły
-from bin.function import readJSON, updateJSON
+from bin.function import readJSON, updateJSON, scaleImage
 from bin.pausescreen import pauseScreen
 from bin.achievements import achievement
 import bin.window as window
@@ -16,6 +16,7 @@ import bin.util as game
 
 # gui
 from bin.gui.settings import settings as settingsGui
+from bin.gui.gate_gui import generate_gate
 
 # Game Setting
 GS: dict
@@ -92,13 +93,6 @@ class Menu:
             GS = readJSON('./bin/settings.json')
             self.status = 1
         self.handle.destroy()
-
-# Funkcja, która zwraca zeskalone obrazy
-def scaleImage(imgSource: str, scaleBy: int) -> pygame.Surface:
-    image = pygame.image.load(imgSource)
-
-    return pygame.transform.scale(image, (image.get_width() * scaleBy, image.get_height() * scaleBy))
-
 
 # Funkcja, która zwróci ilość barów dla progress baru
 def generateBars(repStatus: int):
@@ -324,7 +318,7 @@ async def main(gameSettings: dict):
         game.window.startTask()
         game.window.eraseWindows()
 
-        game.question('test')
+        generate_gate()
         # chmura = game.windowElement(Cloud0)
         # chmura.addClickListener(lambda pressed, pos: print('test'))
         # game.window('test', (400,100), pygame.sprite.Group(

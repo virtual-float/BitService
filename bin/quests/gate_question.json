@@ -1,12 +1,12 @@
 [
     {
-        "QUESTION": "Jaki wynik będzie dla C, w przypadku gdy A = 1, a B = 0",
-        "Q_DATA": "logic_gates/and00.png",
+        "QUESTION": "Jaki wynik będzie dla C, \nw przypadku gdy A = 1, a B = 0",
+        "Q_DATA": "bin/quests/logic_gates/and00.png",
         "ANSWER": "0"
     },
     {
-        "QUESTION": "Jaki wynik będzie dla C, w przypadku gdy A = 0, a B = 0",
-        "Q_DATA": "logic_gates/andnot00.png",
+        "QUESTION": "Jaki wynik będzie dla C, \nw przypadku gdy A = 0, a B = 0",
+        "Q_DATA": "bin/quests/logic_gates/andnot00.png",
         "ANSWER": "1"
     }
 ]

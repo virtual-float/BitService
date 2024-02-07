@@ -1,6 +1,7 @@
 # Importuj moduły niezbędne
 import os, json
 from tkinter import messagebox
+import pygame
 
 # Tryb kodowania znaków [ string ] ( Zmienna stała )
 ENCODING_MODE : str = "UTF-8"
@@ -88,3 +89,10 @@ def hex_decrypt(value: str, asciiEnabled: bool, sep: str = '') -> str:
 # print(hex_decrypt(dane, False, '.'))
 
 # print(hex_crypt('127.0.1.0', False, '.'))
+
+
+# Funkcja, która zwraca zeskalone obrazy
+def scaleImage(imgSource: str, scaleBy: int) -> pygame.Surface:
+    image = pygame.image.load(imgSource)
+
+    return pygame.transform.scale(image, (image.get_width() * scaleBy, image.get_height() * scaleBy))

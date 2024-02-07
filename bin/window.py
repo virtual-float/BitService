@@ -1,4 +1,5 @@
 # importy podstawowe
+from types import NoneType
 from typing import Any, Iterable, Union
 import pygame
 import asyncio
@@ -182,15 +183,18 @@ class windowElement(pygame.sprite.Sprite):
         return self.rect.topleft
     
     
-    def setImage(self, image: pygame.surface.Surface) -> 'windowElement':
+    def setImage(self, image: pygame.surface.Surface | str) -> 'windowElement':
         '''
             Służy do ustawiania grafiki obiektu\n
             ---------------------\n
             Argumenty:\n
-                * grafika (pygame.surface.Surface)\n
+                * grafika (pygame.surface.Surface lub string z lokalizacją)\n
             Zwraca:\n
                 * self (ten sam obiekt na którym to wywołałeś)
         '''
+        if isinstance(image, str):
+            image : pygame.surface.Surface = pygame.image.load(image)
+
         self.image = image.convert_alpha()
         self.rect = self.image.get_rect()
         return self
@@ -250,21 +254,46 @@ class windowElement(pygame.sprite.Sprite):
         self.click = function
         return self
     
-    def __init__(self, image: pygame.surface.Surface, cords: list[int, int] | tuple[int, int] = [0,0], clickListener:None|object = None, name:str=""):
+    def __init__(self, image: pygame.surface.Surface | str, cords: list[int, int] | tuple[int, int] = [0,0], clickListener:None|object = None, name:str="", rescale: None | str | tuple[int,int] = None):
         '''Tworzenie obiektu\n
             Argumenty:\n
-                * image (jak będzie wyglądać obiekt, pygame.surface.Surface)\n
+                * image (jak będzie wyglądać obiekt, pygame.surface.Surface lub string z lokalizacją)\n
                 * cords (lista dwóch intów, relatywne kordynaty do okna; opcjonalne, lecz zalecane)\n
                 \n
                 * clickListener (opcjonalny, funkcja), pozwala na łatwe ustawienie clickListenera odrazu bez wywoływania
                 dodatkowej metody\n
                 * Name (opcjonalne, String), nazwa obiektu, pozwala potem łatwo go uzyskać, bez konieczności przypisywania go do zmiennej, jest to dlatego że przypisywanie obiektów takich do zmiennych powinno zostać zredukowane do minimum ze względu na sposób działania pythona\n
+                * rescale (opcjonalne, tuple dwóch intów lub string z wartością %), umożliwia zeskalowanie do danych rozmiarów obiektu lub %\n
             Zwraca:\n
                 * Obiekt
         '''
         
         # inicjalizacja klasy nadrzędnej od pygama
         super().__init__()
+        
+        # pozyskanie obrazu ze stringa
+        if isinstance(image, str):
+            image : pygame.surface.Surface = pygame.image.load(image)
+        
+        # przeskalowanie
+        if type(rescale) != NoneType:
+            # stałe
+            if isinstance(rescale, tuple):
+                image: pygame.surface.Surface = pygame.transform.scale(image, rescale)
+                
+            else: raise Exception("Niegotowa funkcja została wywowałana!")
+                
+            # aktualnie nie chciało mi się robić skalowania za pomocą % poprostu, jeżeli będzie kiedyś potrzebne to sie napisze
+            # elif isinstance(rescale, str):
+            #     if not rescale.endswith("%"):
+            #         raise Exception("Wartośc powinna być w %")
+                
+            #     rescale = rescale[:-1]
+                
+            #     if not rescale.isdecimal:
+            #         raise Exception("Wartośc powinna być w %")
+            #     else:
+            #         image = pygame.transform.scale(image, (image.get_size()[0] * ))
         
         # podstawowe atrybuty
         self.pos = cords
@@ -330,7 +359,7 @@ class windowText(windowElement):
         
         return self.__color     
     
-    def __init__(self, fontName:str, text:str, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], color:tuple[int] = (0,0,0), clickListener:None|object = None, name:str=""):
+    def __init__(self, fontName:str, text:str, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], color:tuple[int] = (0,0,0), clickListener:None|object = None, name:str="", rescale: None | str | tuple[int,int] = None):
         '''Tworzenie obiektu\n
             Argumenty:\n
                 * fontName (string, nazwa fonta, aktualnie obiekt obsługuje tylko i wyłącznie stringi z fonts.py)\n
@@ -341,6 +370,7 @@ class windowText(windowElement):
                 * clickListener (opcjonalny, funkcja), pozwala na łatwe ustawienie clickListenera odrazu bez wywoływania
                 dodatkowej metody\n
                 * Name (opcjonalne, String), nazwa obiektu, pozwala potem łatwo go uzyskać, bez konieczności przypisywania go do zmiennej, jest to dlatego że przypisywanie obiektów takich do zmiennych powinno zostać zredukowane do minimum ze względu na sposób działania pythona\n
+                * rescale (opcjonalne, tuple dwóch intów lub string z wartością %), umożliwia zeskalowanie do danych rozmiarów obiektu lub %\n
             Zwraca:\n
                 * Obiekt
         '''
@@ -355,7 +385,7 @@ class windowText(windowElement):
         _img = self.__font.render(text, False, color).convert_alpha()
         
         # inicjalizacja klasy nadrzędnej
-        super().__init__(_img, cords, clickListener=clickListener, name=name)    
+        super().__init__(_img, cords, clickListener=clickListener, name=name, rescale=rescale)    
 
 
 class windowTextBox(windowElement):
@@ -415,7 +445,7 @@ class windowTextBox(windowElement):
                     self.text = self.text[:-1]
                 # enter
                 elif event.key == pygame.K_RETURN:
-                    if not self.__returnText(self, self.text):
+                    if not self.__returnText(me=self, text=self.text):
                         self.text = ''
                 # wpisywanie znaków
                 elif event.key != pygame.K_ESCAPE:
@@ -577,7 +607,7 @@ class windowTextBox(windowElement):
     
     
     def __init__(self, cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0], startingText:str="", maxlength:int = 500, xsize:int=10, fontName:str="SMALL_COMICSANS", color:tuple[int,int,int] = (0,0,0),
-                 marginleft:int=5, clickListener:None|object = None, name:str=""):
+                 marginleft:int=5, clickListener:None|object = None, name:str="", rescale: None | str | tuple[int,int] = None):
         '''Tworzenie obiektu\n
             Argumenty:\n
                 * cords (lista dwóch intów, relatywne kordynaty do okna; opcjonalne lecz zalecane)\n
@@ -591,6 +621,7 @@ class windowTextBox(windowElement):
                 * clickListener (opcjonalny, funkcja), pozwala na łatwe ustawienie clickListenera odrazu bez wywoływania
                 dodatkowej metody\n
                 * Name (opcjonalne, String), nazwa obiektu, pozwala potem łatwo go uzyskać, bez konieczności przypisywania go do zmiennej, jest to dlatego że przypisywanie obiektów takich do zmiennych powinno zostać zredukowane do minimum ze względu na sposób działania pythona\n
+                * rescale (opcjonalne, tuple dwóch intów lub string z wartością %), umożliwia zeskalowanie do danych rozmiarów obiektu lub %\n
             Zwraca:\n
                 * Obiekt
         '''
@@ -602,13 +633,14 @@ class windowTextBox(windowElement):
         self.maxlength = maxlength
         self.__marginLeft = marginleft
         self.__regexCompiled = None
+        self.__regexText = ""
         
         # stworzenie fonta
         _fn = fn.getfonts()
         self.__font = _fn[fontName]
         
         # wywołanie klasy nadrzędnej
-        super().__init__(windowTextBox.textboxLeftImg, cords, clickListener=clickListener, name=name)
+        super().__init__(windowTextBox.textboxLeftImg, cords, clickListener=clickListener, name=name, rescale=rescale)
         
         # wygenerowanie początkowego wyglądu
         self.__generateApperance()
@@ -640,9 +672,9 @@ class windowBody(pygame.sprite.Group):
         Argumenty:\n
             * name (string, nazwa obiektu)\n
         Zwraca:\n
-            * windowElement lub windowText lub windowTextbox'        
+            * windowElement lub windowText lub windowTextbox (lista elementów)'        
         '''
-        yield from [i for i in self.sprites() if i.name.startswith(prefix)]
+        return [i for i in self.sprites() if i.name.startswith(prefix)]
     
     
     def findByName(self, name:str) -> windowElement | windowText | windowTextBox:
@@ -651,9 +683,9 @@ class windowBody(pygame.sprite.Group):
         Argumenty:\n
             * name (string, nazwa obiektu)\n
         Zwraca:\n
-            * windowElement lub windowText lub windowTextbox'        
+            * windowElement lub windowText lub windowTextbox (lista elementów)'        
         '''
-        yield from [i for i in self.sprites() if i.name == name]
+        return [i for i in self.sprites() if i.name == name]
         # for i in self.sprites():
         #     if i.name.startsWith(name):
         #         yield i
@@ -877,6 +909,7 @@ class window():
                     'size': window.getSize(),
                     'visible': window.visible,
                     'closable': window.closable,
+                    'storage': window.storage,
                     'objectsToListen': [
                         {
                             "name": element.name,
@@ -1034,7 +1067,7 @@ class window():
             if _temp_rect.collidepoint(pos):
                 
                 # wywołaj metodę na spricie wtedy
-                sprite.click(sprite, pressed, pos, (pos[0] + self.__position[0], self.__position[1] + self.__position[1]), window.events, self)
+                sprite.click(me=sprite, pressed=pressed, pos=pos, posRelative=(pos[0] + self.__position[0], self.__position[1] + self.__position[1]), events=window.events, window=self)
                 
                 # zmienna że zostało coś kliknięte
                 _beenclicked = True
@@ -1226,6 +1259,7 @@ class window():
         self.__position = cords
         self.closable = closable
         self.__backgroundColor = backgroundColor
+        self.storage = {}
         
         # tło
         self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 15))
