@@ -344,6 +344,11 @@ async def main(gameSettings: dict):
         while GameOn:
             await waitForOther()
             # obsługa eventów 
+            
+            # wyłączanie gdy już wcześniej ktoś włączył ekran pauzy i nagle jakimś cudem ma mniej (przeciwko bugom)
+            if pauseScreenOb.getState() and kera.gameover:
+                pauseScreenOb.toggle(forceState=False)
+            
             EVENTS = pygame.event.get()
             game.window.sendEvents(EVENTS)
             for e in EVENTS:
@@ -353,9 +358,11 @@ async def main(gameSettings: dict):
                     case pygame.KEYDOWN:
                         match e.key:
                             case pygame.K_ESCAPE:
-                                pauseScreenOb.toggle(checkFocus=False)
+                                if not kera.gameover:
+                                    pauseScreenOb.toggle(checkFocus=False)
                             case pygame.K_q:
-                                pauseScreenOb.toggle()
+                                if not kera.gameover:
+                                    pauseScreenOb.toggle()
                             # WYŁĄCZNIE DLA TESTU TO CO PONIŻEJ
                             case pygame.K_LEFT:
                                 kera.ratio_level -= 1

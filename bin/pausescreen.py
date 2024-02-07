@@ -44,8 +44,9 @@ class pauseScreen():
             - Bool (stan stopowania)\n
         '''  
         return self.__state
+    
             
-            
+                    
     def draw(self, screen: pygame.surface.Surface, DEVMODE: bool) -> None:
         '''Służy do rysowania stanu zastopowania gry\n
         Argumenty:\n
