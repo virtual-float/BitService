@@ -1046,57 +1046,62 @@ class window():
             Zwraca:\n
                 * None lub nowy focus\n
         '''
+        try:
         # ta zmienna niewiem czy nie zostanie usunięta, bo jej sens jest aktualnie nie istniejący przez to że
         # returna się używa, ale zostawiam by jakby co można było łatwo przerobić kod
         # dodane przy okazji dodawania focusu na dany element
-        _beenclicked = False
-        
-        # by zapamiętac jakie okno kliknęło ostatnio
-        window.lastFocusedWindow = self
-        
-        # po wszystkich spritach
-        for sprite in self.__body.sprites():
-            # skopiuj recta i przesuń go tam gdzie powinno być okno (pozycja względna z bezwzględnej)
-            _temp_rect = sprite.rect.copy()
-            _temp_rect.topleft = (
-                _temp_rect.topleft[0] + self.__position[0],
-                _temp_rect.topleft[1] + self.__position[1] + 15
-            )
+            _beenclicked = False
             
-            # jeśli myszka jest w tym spricie
-            if _temp_rect.collidepoint(pos):
+            # by zapamiętac jakie okno kliknęło ostatnio
+            window.lastFocusedWindow = self
+            
+            # po wszystkich spritach
+            for sprite in self.__body.sprites():
+                # skopiuj recta i przesuń go tam gdzie powinno być okno (pozycja względna z bezwzględnej)
+                _temp_rect = sprite.rect.copy()
+                _temp_rect.topleft = (
+                    _temp_rect.topleft[0] + self.__position[0],
+                    _temp_rect.topleft[1] + self.__position[1] + 15
+                )
                 
-                # wywołaj metodę na spricie wtedy
-                sprite.click(me=sprite, pressed=pressed, pos=pos, posRelative=(pos[0] + self.__position[0], self.__position[1] + self.__position[1]), events=window.events, window=self)
-                
-                # zmienna że zostało coś kliknięte
-                _beenclicked = True
-                
-                # usuń starego focusa
-                if previousFocused != None:
-                    previousFocused.focused = False
-                    previousFocused.focusEnd(sprite, window.events, self)
-                
-                # ustaw nowego
-                sprite.focused = True
-                sprite.focusStart(sprite, window.events, self)
-                return sprite
+                # jeśli myszka jest w tym spricie
+                if _temp_rect.collidepoint(pos):
+                    
+                    # wywołaj metodę na spricie wtedy
+                    sprite.click(me=sprite, pressed=pressed, pos=pos, posRelative=(pos[0] + self.__position[0], self.__position[1] + self.__position[1]), events=window.events, window=self)
+                    
+                    # zmienna że zostało coś kliknięte
+                    _beenclicked = True
+                    
+                    # usuń starego focusa
+                    if previousFocused != None:
+                        previousFocused.focused = False
+                        previousFocused.focusEnd(sprite, window.events, self)
+                    
+                    # ustaw nowego
+                    sprite.focused = True
+                    sprite.focusStart(sprite, window.events, self)
+                    return sprite
 
-        # gdy nie został żaden sprite kliknięty      
-        if not _beenclicked:
-            # wyłączanie okna (ten x)
-            if self.closable and pressed[0] and self.closableRect.collidepoint(pos):
-                window.removeWindow(self.__name)
-                return None
-            
-            # usunięcie focusa gdy się kliknęło na np tło
-            if previousFocused != None:
-                    previousFocused.focused = False
-                    previousFocused.focusEnd(sprite, window.events, self)
+            # gdy nie został żaden sprite kliknięty      
+            if not _beenclicked:
+                # wyłączanie okna (ten x)
+                if self.closable and pressed[0] and self.closableRect.collidepoint(pos):
+                    window.removeWindow(self.__name)
+                    return None
                 
-            #TODO: tu opcjonalnie można by zaimplementować poruszanie oknami
-            
-            return None
+                # usunięcie focusa gdy się kliknęło na np tło
+                if previousFocused != None:
+                        previousFocused.focused = False
+                        previousFocused.focusEnd(sprite, window.events, self)
+                    
+                #TODO: tu opcjonalnie można by zaimplementować poruszanie oknami
+                
+                return None
+        except Exception as ex:
+            print(f"Błąd w oknie {self.__name} przy obsłudze wydarzenia kliknięcia\n\nTreść:\n{ex.args}")
+           
+        
 
 
     def __regenerateRect(self):
