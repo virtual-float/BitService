@@ -53,12 +53,12 @@ class Menu:
         c_text = self.BackgroundCanvas.create_text(
             192, 64, 
             text=GS['ApplicationName'], 
-            font=('Consolas', 38, 'bold'), 
+            font=('Consolas', 38, 'bold'),
             fill='#f0f0f0')
         
         c_version = self.BackgroundCanvas.create_text(
-            GS['ApplicationSize'][0] - 64, 
-            GS['ApplicationSize'][1] - 32,
+            GS['ApplicationSize'][0] - 32, 
+            GS['ApplicationSize'][1] - 16,
             text=GS['ApplicationVersion'],
             font=('Consolas', 12),
             fill='#f0f0f0')
@@ -83,8 +83,6 @@ class Menu:
             height=2,
             command=lambda: self.statusType('exit')
         ).place(x=15, y=250)
-
-        # TODO: Zrobić menu z tłem bin/images/menu.jpg
 
         self.handle.mainloop()
     
@@ -118,12 +116,11 @@ def generateBars(repStatus: int):
 class Player:
 
     # Opcje emotek
-    EmoteIdle : int = -1
+    EmoteSad : int = -1
     EmoteAnger : int = 0
     EmoteHappy : int = 1
+    EmoteCry : int = 2
 
-    # Opcje animacji
-    AnimationMove : int = 2
 
     def __init__(self, initPlayerFile: str, x: int, y: int, dataManager: saveManager) -> None:
         self.__playerdata : dict = readJSON(initPlayerFile)
@@ -145,7 +142,9 @@ class Player:
             self.__playerdata['STATE_MOVE']
         ))
 
-        self.emote_anger : pygame.image = scaleImage(self.__playerdata['EMOTE_ANGER'], RENDER_SCALE)
+        self.emote_sad : pygame.image = scaleImage(self.__playerdata['EMOTE_SAD'], RENDER_SCALE)
+
+        self.emote_cry : pygame.image = scaleImage(self.__playerdata['EMOTE_CRY'], RENDER_SCALE)
 
         self.emote_happy : pygame.image = scaleImage(self.__playerdata['EMOTE_HAPPY'], RENDER_SCALE)
 
@@ -153,20 +152,7 @@ class Player:
 
         self.gameover : bool = False
 
-    # Metoda, która włączy tryb animacji zależnie od wybranego trybu
-    # Dla tej metody dostępne są tryby tylko:
-    #           1.      Anger
-    #           2.      Happy
-    #           3.      Idle
-    def emote_play(self, EmoteMode: int) -> None:
-        match EmoteMode:
-            case self.EmoteAnger:
-                self.current_img = self.emote_anger
-            case self.EmoteHappy:
-                self.current_img = self.emote_happy
-            case _: # Idle
-                self.current_img = self.emote_idle
-    
+    # Metoda, która będzie sprawdzała 'logiki' dla gracza
     def update(self) -> None:
         # Logika dla ratio level
         if self.ratio_level >= 10:
@@ -176,27 +162,31 @@ class Player:
             self.gameover = True
 
         # Logika emotek
-        if self.ratio_level <= 4:
-            self.emote_play(self.EmoteAnger)
+        if self.ratio_level <= 0:
+            self.current_img = self.emote_cry
+        elif self.ratio_level > 0 and self.ratio_level <= 4:
+            self.current_img = self.emote_sad
         elif self.ratio_level > 4 and self.ratio_level <= 7:
-            self.emote_play(self.EmoteIdle)
+            self.current_img = self.emote_idle
         elif self.ratio_level > 7 and self.ratio_level <= 10:
-            self.emote_play(self.EmoteHappy)
+            self.current_img = self.emote_happy
 
         # Logika w przypadku game over
         if self.gameover:
-            if not hasattr(self, 'temp_player_x') and not hasattr(self, 'temp_player_y'):
-                self.temp_player_x, self.temp_player_y = self.rect.x, self.rect.y
-            
-            if self.rect.x < self.temp_player_x - 64:
-                self.rect.x += 1
-            elif self.rect.y < self.temp_player_y - 500:
-                self.rect.y -= 1
-            
-            # if self.rect.x >= self.temp_player_x - 64 and self.rect.y >= self.temp_player_y - 500:
-            #     GameOn = False
-            
+            global GameOn, RENDER_SCALE, GS
 
+            if not hasattr(self, 'new_dest_x') and not hasattr(self, 'new_dest_y'):
+                self.new_dest_x, self.new_dest_y = self.rect.x - GS['ApplicationSize'][0] + self.current_img.get_width(), self.rect.y - 48
+            
+            if self.rect.y > self.new_dest_y:
+                self.rect.y -= 1 * RENDER_SCALE
+            elif self.rect.x > self.new_dest_x:
+                self.rect.x -= 1 * (RENDER_SCALE * RENDER_SCALE) // 2
+            
+            if self.rect.x <= self.new_dest_x and self.rect.y <= self.new_dest_y:
+                delattr(self, 'new_dest_x')
+                delattr(self, 'new_dest_y')
+                GameOn = False
             
         
 
@@ -279,6 +269,8 @@ async def main(gameSettings: dict):
         # Klawiatura
         Keyboard = scaleImage("bin/images/keyboard.png", RENDER_SCALE).convert_alpha()
         KeyboardRect = Keyboard.get_rect()
+        KeyboardRect.x = GS['ApplicationSize'][0] // 2 + (Keyboard.get_width() + 64) + 48
+        KeyboardRect.y = GS['ApplicationSize'][1] // 2 + (Keyboard.get_height() // 3) + 68
 
         # Kubek
         Cup = scaleImage("bin/images/cup.png", RENDER_SCALE).convert_alpha()
@@ -299,6 +291,15 @@ async def main(gameSettings: dict):
         GameOn = True
         # Zegar gry
         GameClock = pygame.time.Clock()
+
+
+        # Gameover
+        GameoverScreenSurface = pygame.surface.Surface((GS['ApplicationSize'][0], GS['ApplicationSize'][1]), pygame.SRCALPHA, 32)
+        GameoverScreenSurface.fill((0, 0, 0, 95))
+        GameOverImage = scaleImage('bin/images/game_over.png', 4).convert_alpha()
+
+        # ...
+        GameoverScreenSurface.blit(GameOverImage, (GS['ApplicationSize'][0] // 2 - GameOverImage.get_width() // 2, GS['ApplicationSize'][1] // 2 - GameOverImage.get_height()))
         
         
         # Obiekt pauseScreen służący do stopowania gry
@@ -412,30 +413,36 @@ async def main(gameSettings: dict):
 
             # Renderowanie objektów
             display.blit(Table, (TableRect.x, TableRect.y))
+            display.blit(Keyboard, (KeyboardRect.x, KeyboardRect.y))
             display.blit(Screen, (ScreenRect.x, ScreenRect.y))
 
             # Renderowanie klientów 
             # ...
 
-            # Progress bar
-            display.blit(ProgressBar, (ProgressBarRect.x, ProgressBarRect.y))
+            if kera.gameover:
+                display.blit(GameoverScreenSurface, (0, 0))
+            else:
+                # Progress bar
+                display.blit(ProgressBar, (ProgressBarRect.x, ProgressBarRect.y))
 
-            # Layout
-            bars_t = generateBars(kera.ratio_level)
-            
-            if not isinstance(bars_t, str):
-                # temp
-                temp_x = 0
-
-                # Render barów dla progress bar
-                for bar in list(bars_t):
-                    bar[1].x, bar[1].y = (pb_x + 2) + temp_x, (pb_y + 2)
-
-                    temp_x += bar[0].get_width()
-
-                    display.blit(bar[0], (bar[1].x, bar[1].y))
-        
+                # Layout
+                bars_t = generateBars(kera.ratio_level)
                 
+                if not isinstance(bars_t, str):
+                    # temp
+                    temp_x = 0
+
+                    # Render barów dla progress bar
+                    for bar in list(bars_t):
+                        bar[1].x, bar[1].y = (pb_x + 2) + temp_x, (pb_y + 2)
+
+                        temp_x += bar[0].get_width()
+
+                        display.blit(bar[0], (bar[1].x, bar[1].y))
+                    
+
+            
+        
                 
             # renderowanie okna
             window.window.draw(display)
@@ -451,7 +458,6 @@ async def main(gameSettings: dict):
                 surface=display, 
                 size=pygame.display.get_surface().get_size(), 
                 dest_surface=displayFinal)
-
 
             pygame.display.update()
 

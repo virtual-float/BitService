@@ -4,6 +4,7 @@
         "bin/images/player/left_step.png",
         "bin/images/player/right_step.png"
     ],
-    "EMOTE_ANGER": "bin/images/player/anger.png",
-    "EMOTE_HAPPY": "bin/images/player/happy.png"
+    "EMOTE_SAD": "bin/images/player/sad.png",
+    "EMOTE_HAPPY": "bin/images/player/happy.png",
+    "EMOTE_CRY": "bin/images/player/cry.png"
 }
