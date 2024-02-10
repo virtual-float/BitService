@@ -296,8 +296,14 @@ async def main(gameSettings: dict):
         GameoverScreenSurface.fill((0, 0, 0, 95))
         GameOverImage = scaleImage('bin/images/game_over.png', 4).convert_alpha()
 
+        # Informacje o grze [game over]
+        FontRender = pygame.font.Font(None, 28)
+        InformationLabel = FontRender.render('Zostałeś wyrzucony z Bits & Services :( !!!', False, (255, 255, 255))
+
         # ...
         GameoverScreenSurface.blit(GameOverImage, (GS['ApplicationSize'][0] // 2 - GameOverImage.get_width() // 2, GS['ApplicationSize'][1] // 2 - GameOverImage.get_height()))
+        GameoverScreenSurface.blit(InformationLabel, (GS['ApplicationSize'][0] // 2 - GameOverImage.get_width() // 2 + 32, GS['ApplicationSize'][1] // 2 + (GameOverImage.get_height() // 2)))
+
         
         
         # Obiekt pauseScreen służący do stopowania gry
