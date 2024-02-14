@@ -703,6 +703,9 @@ class window():
     # ikona zamykania
     closeImg = pygame.image.load('bin/images/close.png')
     
+    # grafika okna
+    backgroundDefault = pygame.image.load("bin/images/window.png")
+    
     # aktualnie nie pełni żadnego celu, w przyszłości moze będzie pokazywał czy jest włączona wymagana pętla
     isconfigured = False
     
@@ -1233,7 +1236,8 @@ class window():
         yield from self.__objectsToListen
 
     def __init__(self, name:str, size:tuple[int,int], body:windowBody | pygame.sprite.Group, closable:bool=False,
-                 backgroundColor: tuple[int,int,int] = (195,195,195), cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0]):
+                 backgroundColor: tuple[int,int,int] = (195,195,195), cords: list[int, int] | tuple[int, int] | pygame.Vector2 = [0, 0],
+                 background: None|pygame.surface.Surface|bool = True):
         '''Tworzenie nowego okna\n
             NIE PRZYPISUJ TEGO DO ŻADNEJ ZMIENNEJ\n
             by pozyskiwać okno wcześniejsze użyj window.getWindow(nazwaOkna)\n
@@ -1246,6 +1250,8 @@ class window():
                 * closable (bool, opcjonalne, czy można zamknać okno i czy wyświetlać krzyżyk do tego zamknięcia, domyślnie nie można)\n
                 * backgroundColor (tuple trzech intów, rgb; opcjonalne; poprostu kolor tła, podstawowo (195,195,195))\n
                 * position (tuple dwóch intów, pozycja; opcjonalne; domyślnie (0,0))
+                * background (None, bool lub pygame.Surface.Surface; podstawowo grafika window.png, gdy None użyje koloru z backGround,
+                użyj True by użyć automatycznie grafiki domyślnej oraz False by wymusić przezroczyste okno (to ostatnie aktualnie niewspierane))\n
             Zwraca:\n
                 * Obiekt\n       
         '''
@@ -1267,10 +1273,22 @@ class window():
         self.storage = {}
         
         # tło
-        self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 15))
-        self.__tempSurfaceBackground.fill(self.__backgroundColor)
-        self.__tempSurfaceBackground = self.__tempSurfaceBackground.convert()
-        
+
+        if background == True:
+            # domyślne, gdy używa domyślnego
+            self.__tempSurfaceBackground = pygame.transform.scale(window.backgroundDefault, size).convert_alpha()
+        elif isinstance(background, pygame.surface.Surface):
+            # gdy jest dostarczone inne
+             self.__tempSurfaceBackground = pygame.transform.scale(background, size).convert_alpha()
+        elif background == None:
+            # gdy ma użyć koloru 
+            self.__tempSurfaceBackground = pygame.surface.Surface(size=(size[0], size[1] + 15))
+            self.__tempSurfaceBackground.fill(self.__backgroundColor)
+            self.__tempSurfaceBackground = self.__tempSurfaceBackground.convert()
+        else:
+            # gdy ma nie być tła
+            raise Exception("Aktualnie to nie jest wspierane")
+            
         # rect
         self.__regenerateRect()
         
