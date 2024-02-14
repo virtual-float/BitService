@@ -208,7 +208,7 @@ async def main(gameSettings: dict):
         # achievement.kill()
         
         for task in asyncio.all_tasks():
-            if task.get_name() in ['windowManager', 'saveManager', 'saveManagerSec', 'achievementManager', 'gameClock', 'eventManager']: task.cancel()
+            if task.get_name() in ['windowManager', 'clientManager', 'saveManager', 'saveManagerSec', 'achievementManager', 'gameClock', 'eventManager']: task.cancel()
     
         
         
@@ -341,6 +341,10 @@ async def main(gameSettings: dict):
         # game.window('test2', (200,200), pygame.sprite.Group(), closable=True)
         # game.window.getWindow('test2').setPosition((0,300))
         
+        game.client.startTask()
+        
+        game.client()
+        
         # funkcja ułatwiająca
         async def waitForOther():
             await asyncio.sleep(0.02)
@@ -431,7 +435,7 @@ async def main(gameSettings: dict):
             display.blit(Screen, (ScreenRect.x, ScreenRect.y))
 
             # Renderowanie klientów 
-            # ...
+            game.client.clientGroup.draw(display)
 
             if kera.gameover:
                 display.blit(GameoverScreenSurface, (0, 0))

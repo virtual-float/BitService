@@ -1,0 +1,11 @@
+[
+    {
+        "name": "1",
+        "forGender": "n",
+        "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
+        "idle": "./bin/images/clients/client_idle01.png",
+        "disappointed": "./bin/images/clients/client_disappointed01.png",
+        "leftStep": "./bin/images/clients/client_left_step01.png",
+        "rightStep": "./bin/images/clients/client_right_step01.png"   
+    }
+]

@@ -1,0 +1,33 @@
+{
+    "firstNames": {
+        "m": [
+            "zygmunt",
+            "arkadiusz",
+            "wojciech",
+            "patryk",
+            "tomasz",
+            "janusz",
+            "krzystof",
+            "bartosz",
+            "dariusz",
+            "eryk",
+            "tadeusz",
+            "hubert"
+        ],
+        "f": [
+            "klaudia",
+            "patrycja",
+            "natalia",
+            "nikola",
+            "sandra"
+        ]
+    },
+    "surnames": {
+        "m": [
+            "kowalski"
+        ],
+        "f": [
+            "kowalska"
+        ]
+    }
+}
