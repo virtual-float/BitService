@@ -542,7 +542,7 @@ class windowTextBox(windowElement):
         self.__background = _tempSurf.convert_alpha()
         
         
-    def __generateApperance(self) -> None:
+    def __generateAppearance(self) -> None:
         '''Funkcja prywatna, służąca do finalnego renderingu'''
         
         # wywołanie pozostałych renderingów przed
@@ -569,7 +569,7 @@ class windowTextBox(windowElement):
         self.text = text
                 
         # renderowanie fonta
-        self.__generateApperance()
+        self.__generateAppearance()
         return self
 
 
@@ -592,7 +592,7 @@ class windowTextBox(windowElement):
         self.__color = color
                 
         # renderowanie fonta
-        self.__generateApperance()
+        self.__generateAppearance()
         return self
 
 
@@ -643,7 +643,7 @@ class windowTextBox(windowElement):
         super().__init__(windowTextBox.textboxLeftImg, cords, clickListener=clickListener, name=name, rescale=rescale)
         
         # wygenerowanie początkowego wyglądu
-        self.__generateApperance()
+        self.__generateAppearance()
         
 
 # Tylko po to by mieć fajną nazwę, nie trzeba tego używać, działa identycznie jak Groupa z pygama

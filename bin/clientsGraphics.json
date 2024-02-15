@@ -1,7 +1,7 @@
 [
     {
         "name": "1",
-        "forGender": "n",
+        "forGender": "m",
         "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
         "idle": "./bin/images/clients/client_idle01.png",
         "disappointed": "./bin/images/clients/client_disappointed01.png",
@@ -10,7 +10,7 @@
     },
     {
         "name": "2",
-        "forGender": "n",
+        "forGender": "f",
         "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
         "idle": "./bin/images/clients/client_idle02.png",
         "disappointed": "./bin/images/clients/client_disappointed02.png",
@@ -19,7 +19,7 @@
     },
     {
         "name": "3",
-        "forGender": "n",
+        "forGender": "m",
         "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
         "idle": "./bin/images/clients/client_idle03.png",
         "disappointed": "./bin/images/clients/client_disappointed03.png",
