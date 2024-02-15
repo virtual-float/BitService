@@ -71,7 +71,7 @@ def generate_gate():
             wn.windowElement(scaleImage(newQuestion['Q_DATA'],3), cords=(300,55)),
             _t := wn.windowTextBox(cords=(40, 180), xsize=40, name="textBox").
             setRegex("^[0-9]*$").setReturnListener(handler),
-            wn.windowText(fontName="SMALL_COMICSANS", text="SPRAWDZ", cords=(185, 230))
+            wn.windowText(fontName="MEDIUM_CONSOLAS", text="SPRAWDZ", cords=(190, 240), color=(240, 240, 240))
             .addClickListener(handler)
             
             
