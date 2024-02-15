@@ -66,7 +66,7 @@ async def __loop():
             devModeSprites.empty()
             break
         
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(0.5)
             
 # uruchamianie dev moda
 def runDevMode():

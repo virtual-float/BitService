@@ -354,7 +354,7 @@ async def main(gameSettings: dict):
         
         # funkcja ułatwiająca
         async def waitForOther():
-            await asyncio.sleep(0.02)
+            await asyncio.sleep(0.00002)
 
         while GameOn:
             await waitForOther()
