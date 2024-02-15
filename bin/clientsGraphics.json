@@ -7,5 +7,23 @@
         "disappointed": "./bin/images/clients/client_disappointed01.png",
         "leftStep": "./bin/images/clients/client_left_step01.png",
         "rightStep": "./bin/images/clients/client_right_step01.png"   
+    },
+    {
+        "name": "2",
+        "forGender": "n",
+        "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
+        "idle": "./bin/images/clients/client_idle02.png",
+        "disappointed": "./bin/images/clients/client_disappointed02.png",
+        "leftStep": "./bin/images/clients/client_left_step02.png",
+        "rightStep": "./bin/images/clients/client_right_step02.png"   
+    },
+    {
+        "name": "3",
+        "forGender": "n",
+        "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
+        "idle": "./bin/images/clients/client_idle03.png",
+        "disappointed": "./bin/images/clients/client_disappointed03.png",
+        "leftStep": "./bin/images/clients/client_left_step03.png",
+        "rightStep": "./bin/images/clients/client_right_step03.png"   
     }
 ]
