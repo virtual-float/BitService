@@ -7,6 +7,11 @@ import bin.fonts as fn
 import bin.savemanager as sm
 import bin.window as wn
 
+# importy lokalne
+import bin.savemanager as sm
+import bin.achievements as ach
+import bin.devmode as devmode
+
 # klasa główna
 class pauseScreen():
     object = None
@@ -130,6 +135,17 @@ class pauseScreen():
                         case 2: return 1
                         # wyjście z gry
                         case 3: return 2
+                        # devmode
+                        case 4:
+                            _s = sm.get(alwaysNew=False)
+                            _s.set("everdevmode", True)
+                            _s.set("devmode", not _s.get("devmode", default=False))
+                            
+                            if _s.get("devmode", default=False):
+                                ach.achievement("devmode ON")
+                                devmode.runDevMode()
+                            else:
+                                ach.achievement("devmode OFF")
                         
                         case _: 
                             return 0

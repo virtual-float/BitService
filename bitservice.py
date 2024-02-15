@@ -13,6 +13,7 @@ from bin.achievements import achievement
 import bin.window as window
 import bin.savemanager as saveManager
 import bin.util as game
+from bin.devmode import devModeSprites, giveClock
 
 # gui
 from bin.gui.settings import settings as settingsGui
@@ -23,6 +24,9 @@ GS: dict
 
 # GameOn
 GameOn : bool = False
+
+# gameClock (np do przesyłania fpsów)
+GameClock: pygame.time.Clock | None = None
 
 # Constant
 RENDER_SCALE : int = 4
@@ -190,7 +194,7 @@ class Player:
 
 
 async def main(gameSettings: dict):
-    global GS, GameOn
+    global GS, GameOn, GameClock
     # messagebox.showinfo('Informacja', 'uruchomiono pomyślnie')
 
     # Przypisanie ustawień do GS
@@ -210,7 +214,8 @@ async def main(gameSettings: dict):
         for task in asyncio.all_tasks():
             if task.get_name() in ['windowManager', 'clientManager', 'saveManager', 'saveManagerSec', 'achievementManager', 'gameClock', 'eventManager']: task.cancel()
     
-        
+        # usuwanie devmoda
+        saveManager.get(alwaysNew=False).set("devmode", False)
         
         # Tworzenie root dla tkinter menu
         root = Tk()
@@ -289,6 +294,7 @@ async def main(gameSettings: dict):
         GameOn = True
         # Zegar gry
         GameClock = pygame.time.Clock()
+        giveClock(GameClock)
 
 
         # Gameover
@@ -473,6 +479,10 @@ async def main(gameSettings: dict):
             pauseScreenOb.draw(display, GS['devmode'])
             
             
+            # renderowanie devmoda
+            devModeSprites.draw(display)
+            
+            # renderowanie osiągnieć
             achievement.loopDraw()
             
             # upscalowanie

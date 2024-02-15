@@ -7,6 +7,8 @@
     "difficulty": "easy",
     "orginVersion": 10000,
     "lastVersion": 10000,
+    "devmode": false,
+    "everdevmode": false,
     "time":{
         "totalSec": 0,
 
