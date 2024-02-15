@@ -437,6 +437,9 @@ async def main(gameSettings: dict):
 
             # Renderowanie klientów 
             game.client.clientGroup.draw(display)
+            
+            # renderowanie efektów dla klientów
+            game.client.clientEffectGroup.draw(display)
 
             if kera.gameover:
                 display.blit(GameoverScreenSurface, (0, 0))

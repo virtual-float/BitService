@@ -13,6 +13,7 @@ def getfonts():
     "MEDIUM_COMICSANS": pygame.font.SysFont('Comic Sans MS', 40),
     "SMALL_COMICSANS": pygame.font.SysFont('Comic Sans MS', 30),
     "VERYSMALL_COMICSANS": pygame.font.SysFont('Comic Sans MS', 20),
+    "TINY_COMICSANS": pygame.font.SysFont('Comic Sans MS', 18),
 
     "BIG_CONSOLAS": pygame.font.SysFont("consolas", 70),
     "MEDIUM_CONSOLAS": pygame.font.SysFont("consolas", 40), 

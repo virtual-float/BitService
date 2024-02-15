@@ -14,6 +14,7 @@ import bin.pausescreen as ps
 
 class client(pygame.sprite.Sprite):
     clientGroup = pygame.sprite.Group()
+    clientEffectGroup = pygame.sprite.Group()
     gameStage = 0
     __timeForNextClient = 0
     __timeForNextClientTemplate = 25
@@ -31,6 +32,7 @@ class client(pygame.sprite.Sprite):
                 "gender": cl.gender,
                 "type": "client",
                 "graphicsBody": cl.graphicsBody,
+                "imageName": cl.imageForJson,
                 "pos": (cl.pos.x, cl.pos.y),
                 "state": cl.state
             }
@@ -104,6 +106,7 @@ class client(pygame.sprite.Sprite):
             if not ps.pauseScreen.object.getState():
             
                 _s = sm.get(alwaysNew=False)
+                
                 match cls.gameStage:
                     # 1: oczekiwanie 6 sekund od rozpoczęcia gry na pojawienie pierwszego klienta
                     case 1:
@@ -137,10 +140,14 @@ class client(pygame.sprite.Sprite):
     def startTask(cls):
         cls.gameStage = 0
         cls.clientGroup.empty()
+        cls.clientEffectGroup.empty()
         asyncio.create_task(cls.__loop(), name="clientManager")
         
     def selfLoop(self):
         _m = sm.get(alwaysNew=False)
+        
+        if self.rect.collidepoint(pygame.mouse.get_pos()):
+            clientTextEffect(self)
         
         match self.state:
             case 'joining':
@@ -148,18 +155,23 @@ class client(pygame.sprite.Sprite):
                 
                 if self.image == self.__graphics['leftStepRight']:
                     self.image = self.__graphics['rightStepRight']
+                    self.imageForJson = 'rightStepRight'
                 else:
                     self.image = self.__graphics['leftStepRight']
+                    self.imageForJson = 'leftStepRight'
                     
                 if self.pos.x > self.queueXMax:
                     self.pos.x = self.queueXMax
                     if _m.getSafe("clientQueue", default=[])[0] == self.__id:
                         self.state = "awaitingFirst"
+                        self.imageForJson = 'idleRight'
                         self.image = self.__graphics['idleRight']
                     else:
                         self.state = "awaiting"
+                        self.imageForJson = 'idleRight'
                         self.image = self.__graphics['idleRight']
                         
+                self.save()        
                     
                 
                 
@@ -233,10 +245,11 @@ class client(pygame.sprite.Sprite):
         }
         
         self.image = self.__graphics['leftStepRight']
+        self.imageForJson = 'leftStepRight'
         self.rect = self.image.get_rect()
         
         if pos == None:
-            self.__pos = Vector2(0,4*70)
+            self.__pos = Vector2(0,4*70+ 4 * random.randint(0,8))
         else:
             if isinstance(pos, Vector2): self.__pos = pos
             else: self.__pos = Vector2(pos)
@@ -245,11 +258,48 @@ class client(pygame.sprite.Sprite):
         
         
         self.state = "joining"
+        self.stateName = False
         
-        self.queueXMax = 135 * 4 - 90 * len(client.clientGroup.sprites())
+        self.queueXMax = 150 * 4 - 90 * len(client.clientGroup.sprites())
         
         print(client.clientGroup.sprites())
         client.save()
         
         # NOTKA: * 4 jest do zmiennych rozdzielczości, staram się robić by łatwo było przerobić,
         # nie wpływa to znacząco na wydajność aż tak bardzo
+        
+class clientEffect(pygame.sprite.Sprite):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+class clientTextEffect(clientEffect):
+    async def __loop(self):
+        while True:
+            self.__generateRect()
+            
+            if not self.client.rect.collidepoint(pygame.mouse.get_pos()):
+                self.client.stateName = False
+                self.kill()
+                break
+            
+            await asyncio.sleep(0.05)
+    
+    def __generateRect(self):
+        self.rect.center = pygame.mouse.get_pos()
+    
+    def __init__(self, client: client):
+        if client.stateName: return
+        
+        client.stateName = True
+        self.client = client
+        
+        
+        
+        super().__init__(client.clientEffectGroup)
+        
+        self.image = fn.getfonts()['TINY_COMICSANS'].render(client.nickname, False, (0,0,0))
+        self.rect = self.image.get_rect()
+        self.__generateRect()
+        
+        asyncio.create_task(self.__loop(), name=f"clientTextEffectName_{client.id}")
+        
