@@ -12,7 +12,8 @@
             "dariusz",
             "eryk",
             "tadeusz",
-            "hubert"
+            "hubert",
+            "mikołaj"
         ],
         "f": [
             "klaudia",
@@ -24,10 +25,18 @@
     },
     "surnames": {
         "m": [
-            "kowalski"
+            "kowalski",
+            "nowak",
+            "wiśniewski",
+            "wójcik",
+            "wilk"
         ],
         "f": [
-            "kowalska"
+            "kowalska",
+            "nowakowa",
+            "wiśniewska",
+            "wójcik",
+            "wilczka"
         ]
     }
 }
