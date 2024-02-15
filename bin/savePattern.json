@@ -5,6 +5,7 @@
     "gameVersionfirst": 0,
     "gameVersionLast": 0,
     "difficulty": "easy",
+    "orginVersion": 10000,
     "lastVersion": 10000,
     "time":{
         "totalSec": 0,

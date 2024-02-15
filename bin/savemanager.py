@@ -49,7 +49,7 @@ class save:
         
         
         self.set("lastGame", time.time_ns())
-        self.set("version", 10000)
+        self.set("lastVersion", 10000)
         self.set("checkSum", 0)
          
         # checksum
