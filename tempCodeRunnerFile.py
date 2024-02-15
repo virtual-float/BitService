@@ -1,3 +1,1 @@
-        game.client.startTask()
-        
-        game.client()
+game.client.startQueue()

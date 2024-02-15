@@ -341,9 +341,10 @@ async def main(gameSettings: dict):
         # game.window('test2', (200,200), pygame.sprite.Group(), closable=True)
         # game.window.getWindow('test2').setPosition((0,300))
         
+        # game.client.clientGroup.empty()
         game.client.startTask()
         
-        game.client()
+        game.client.startQueue()
         
         # funkcja ułatwiająca
         async def waitForOther():

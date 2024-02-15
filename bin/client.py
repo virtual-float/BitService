@@ -14,6 +14,7 @@ import bin.pausescreen as ps
 
 class client(pygame.sprite.Sprite):
     clientGroup = pygame.sprite.Group()
+    gameStage = 0
     
     
     @classmethod
@@ -28,10 +29,14 @@ class client(pygame.sprite.Sprite):
                 "gender": cl.gender,
                 "type": "client",
                 "graphicsBody": cl.graphicsBody,
-                "pos": (cl.pos.x, cl.pos.y)
+                "pos": (cl.pos.x, cl.pos.y),
+                "state": cl.state
             }
             for cl in cls.clientGroup.sprites()
         ])    
+        
+        smv.set("charactersLength", len(cls.clientGroup.sprites()))
+        smv.set("queueStage", cls.gameStage)
     
     # id
     @property
@@ -88,33 +93,61 @@ class client(pygame.sprite.Sprite):
         self.__pos = val
         self.rect = self.image.get_rect()
         self.rect.topleft = self.__pos
-        
+     
         
     @classmethod
     async def __loop(cls):
         while True:
             if not ps.pauseScreen.object.getState():
             
+                _s = sm.get(alwaysNew=False)
+                match cls.gameStage:
+                    case 1:
+                        if _s.getSafe('time.totalSec', default=0) > 6:
+                            cls.gameStage = 2
+                            
+                            cls.newClientToQueue()
+                            
+                            
+                
+                
                 for client in cls.clientGroup.sprites():
                     client.selfLoop()
             await asyncio.sleep(0.05)
             
+    @classmethod
+    def startQueue(cls):
+        cls.gameStage = 1
             
     @classmethod
     def startTask(cls):
-        cls.clientGroup.sprites()
+        cls.gameStage = 0
         cls.clientGroup.empty()
-        print(cls.clientGroup.sprites())
         asyncio.create_task(cls.__loop(), name="clientManager")
         
     def selfLoop(self):
-        match self.__state:
+        print(self.nickname, self.pos)
+        match self.state:
             case 'joining':
                 self.pos += Vector2(10,0)
                 
+                if self.image == self.__graphics['leftStepRight']:
+                    self.image = self.__graphics['rightStepRight']
+                else:
+                    self.image = self.__graphics['leftStepRight']
+                    
+                
+                
+    @classmethod
+    def newClientToQueue(cls, *args, **kwargs):
+        _s = sm.get(alwaysNew=False)
+        _cl = cls(*args, **kwargs)
+        
+        _s.set("clientQueue", [*_s.getSafe("clientQueue", default=[]), _cl.id])
+                
     
     
-    def __init__(self, forceID: int|None = None, forceGender:bool|None = None, forceName: int|None = None, forceGraphicsBody: dict|None = None, pos:list = Vector2(0,280)):
+    def __init__(self, forceID: int|None = None, forceGender:bool|None = None, forceName: int|None = None, forceGraphicsBody: dict|None = None, pos:list|None = None):
         super().__init__(client.clientGroup)
         
         # pozyskanie unikalnego id
@@ -164,20 +197,29 @@ class client(pygame.sprite.Sprite):
             
             
         self.__graphics = {
-            "idle": pygame.transform.scale(pygame.image.load(self.__graphicsJson['idle']), (25*4,61*4)).convert_alpha(),
-            "disappointed": pygame.transform.scale(pygame.image.load(self.__graphicsJson['disappointed']), (25*4,61*4)).convert_alpha(),
-            "leftStep": pygame.transform.scale(pygame.image.load(self.__graphicsJson['leftStep']), (25*4,61*4)).convert_alpha(),      
-            "rightStep": pygame.transform.scale(pygame.image.load(self.__graphicsJson['rightStep']), (25*4,61*4)).convert_alpha(),         
+            "idleLeft": pygame.transform.scale(pygame.image.load(self.__graphicsJson['idle']), (25*4,61*4)).convert_alpha(),
+            "idleRight": pygame.transform.scale(pygame.transform.flip(pygame.image.load(self.__graphicsJson['idle']),flip_x=True, flip_y=False), (25*4,61*4)).convert_alpha(),
+            "disappointedLeft": pygame.transform.scale(pygame.image.load(self.__graphicsJson['disappointed']), (25*4,61*4)).convert_alpha(),
+            "disappointedRight": pygame.transform.scale(pygame.transform.flip(pygame.image.load(self.__graphicsJson['disappointed']),flip_x=True, flip_y=False), (25*4,61*4)).convert_alpha(),
+            "leftStepLeft": pygame.transform.scale(pygame.image.load(self.__graphicsJson['leftStep']), (25*4,61*4)).convert_alpha(),      
+            "leftStepRight": pygame.transform.scale(pygame.transform.flip(pygame.image.load(self.__graphicsJson['leftStep']),flip_x=True, flip_y=False), (25*4,61*4)).convert_alpha(), 
+            "rightStepLeft": pygame.transform.scale(pygame.image.load(self.__graphicsJson['rightStep']), (25*4,61*4)).convert_alpha(),         
+            "rightStepRight": pygame.transform.scale(pygame.transform.flip(pygame.image.load(self.__graphicsJson['rightStep']),flip_x=True, flip_y=False), (25*4,61*4)).convert_alpha(),   
         }
         
-        self.image = self.__graphics['idle']
+        self.image = self.__graphics['leftStepRight']
         self.rect = self.image.get_rect()
         
-        self.__pos = pos
+        if pos == None:
+            self.__pos = Vector2(0,200)
+        else:
+            if isinstance(pos, Vector2): self.__pos = pos
+            else: self.__pos = Vector2(pos)
+            
         self.rect.topleft = self.__pos
         
         
-        self.__state = "joining"
+        self.state = "joining"
         
-            
+        print(client.clientGroup.sprites())
         client.save()

@@ -43,7 +43,9 @@
             }
         }
     ],
-    "clientQueue":[0,5,2],
+    "charactersLength": 0,
+    "queueStage": 0,
+    "clientQueue":[],
     "player":{
         "type": "player",
         "nickname": "kera",
