@@ -88,15 +88,15 @@ class client(pygame.sprite.Sprite):
         self.newIdentity(graphicsBody=val) 
         
         
-    @property
-    def pos(self):
-        return self.__pos
+    # @property
+    # def pos(self):
+    #     return self.pos
     
-    @pos.setter
-    def pos(self, val):
-        self.__pos = val
-        self.rect = self.image.get_rect()
-        self.rect.topleft = self.__pos
+    # @pos.setter
+    # def pos(self, val):
+    #     self.pos = val
+    #     self.rect = self.image.get_rect()
+    #     self.rect.topleft = self.pos
      
     
         
@@ -145,6 +145,8 @@ class client(pygame.sprite.Sprite):
         
     def selfLoop(self):
         _m = sm.get(alwaysNew=False)
+        
+        self.rect.topleft = self.pos
         
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             clientTextEffect(self)
@@ -249,12 +251,12 @@ class client(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         
         if pos == None:
-            self.__pos = Vector2(0,4*70+ 4 * random.randint(0,8))
+            self.pos = Vector2(0,4*70+ 4 * random.randint(0,8))
         else:
-            if isinstance(pos, Vector2): self.__pos = pos
-            else: self.__pos = Vector2(pos)
+            if isinstance(pos, Vector2): self.pos = pos
+            else: self.pos = Vector2(pos)
             
-        self.rect.topleft = self.__pos
+        self.rect.topleft = self.pos
         
         
         self.state = "joining"
@@ -285,7 +287,7 @@ class clientTextEffect(clientEffect):
             await asyncio.sleep(0.05)
     
     def __generateRect(self):
-        self.rect.center = pygame.mouse.get_pos()
+        self.rect.center = (self.client.pos.x + self.client.rect.width / 2, self.client.pos.y - 1.5 * 4)
     
     def __init__(self, client: client):
         if client.stateName: return
