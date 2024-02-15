@@ -15,6 +15,8 @@ import bin.pausescreen as ps
 class client(pygame.sprite.Sprite):
     clientGroup = pygame.sprite.Group()
     gameStage = 0
+    __timeForNextClient = 0
+    __timeForNextClientTemplate = 25
     
     
     @classmethod
@@ -94,6 +96,7 @@ class client(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = self.__pos
      
+    
         
     @classmethod
     async def __loop(cls):
@@ -102,11 +105,22 @@ class client(pygame.sprite.Sprite):
             
                 _s = sm.get(alwaysNew=False)
                 match cls.gameStage:
+                    # 1: oczekiwanie 6 sekund od rozpoczęcia gry na pojawienie pierwszego klienta
                     case 1:
                         if _s.getSafe('time.totalSec', default=0) > 6:
                             cls.gameStage = 2
                             
                             cls.newClientToQueue()
+                
+                    # dodawanie potem kolejnych 
+                    case 2:
+                        cls.__timeForNextClient += 1
+                        if cls.__timeForNextClient >= cls.__timeForNextClientTemplate:
+                            cls.__timeForNextClient = 0
+                            if len(cls.clientGroup) < 3:
+                                cls.newClientToQueue()
+                    
+                    
                             
                             
                 
@@ -126,7 +140,8 @@ class client(pygame.sprite.Sprite):
         asyncio.create_task(cls.__loop(), name="clientManager")
         
     def selfLoop(self):
-        print(self.nickname, self.pos)
+        _m = sm.get(alwaysNew=False)
+        
         match self.state:
             case 'joining':
                 self.pos += Vector2(10,0)
@@ -135,6 +150,16 @@ class client(pygame.sprite.Sprite):
                     self.image = self.__graphics['rightStepRight']
                 else:
                     self.image = self.__graphics['leftStepRight']
+                    
+                if self.pos.x > self.queueXMax:
+                    self.pos.x = self.queueXMax
+                    if _m.getSafe("clientQueue", default=[])[0] == self.__id:
+                        self.state = "awaitingFirst"
+                        self.image = self.__graphics['idleRight']
+                    else:
+                        self.state = "awaiting"
+                        self.image = self.__graphics['idleRight']
+                        
                     
                 
                 
@@ -211,7 +236,7 @@ class client(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         
         if pos == None:
-            self.__pos = Vector2(0,200)
+            self.__pos = Vector2(0,4*70)
         else:
             if isinstance(pos, Vector2): self.__pos = pos
             else: self.__pos = Vector2(pos)
@@ -221,5 +246,10 @@ class client(pygame.sprite.Sprite):
         
         self.state = "joining"
         
+        self.queueXMax = 135 * 4 - 90 * len(client.clientGroup.sprites())
+        
         print(client.clientGroup.sprites())
         client.save()
+        
+        # NOTKA: * 4 jest do zmiennych rozdzielczości, staram się robić by łatwo było przerobić,
+        # nie wpływa to znacząco na wydajność aż tak bardzo
