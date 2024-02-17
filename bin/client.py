@@ -21,6 +21,41 @@ class client(pygame.sprite.Sprite):
     
     
     @classmethod
+    def restore(cls):
+        '''Służy do odzyskania klientów z savu'''
+        smv = sm.get(alwaysNew=False)
+        
+        cls.clientEffectGroup.empty()
+        cls.clientGroup.empty()
+        cls.gameStage = 0
+        cls.__timeForNextClient = 0
+        __timeForNextClientTemplate = 25
+        
+        _char = smv.getSafe("characters", default={})
+        
+        if _char == {}:
+            cls.startNewQueue()
+            
+            cls.gameStage = 1
+        else:
+            # odzyskiwanie
+            
+            cls.gameStage = smv.get('queueStage', default=0)
+            
+            for char in _char:
+                cls.loadCharacter(char)
+                
+            if cls.gameStage == 0: cls.gameStage = 1
+                
+    
+    @classmethod
+    def loadCharacter(cls, charInfo:dict):
+        _char = cls(forceID = charInfo['id'], forceGender = charInfo['gender'], forceName = charInfo['nickname'],
+                    forceGraphicsBody = charInfo['graphicsBody'], pos = charInfo['pos'])
+        
+        _char.image = _char.setGraphics(charInfo['imageName'])
+    
+    @classmethod
     def save(cls):
         '''Służy do zapisu wszystkich klientów'''
         smv = sm.get(alwaysNew=False)
@@ -133,7 +168,7 @@ class client(pygame.sprite.Sprite):
             await asyncio.sleep(0.05)
             
     @classmethod
-    def startQueue(cls):
+    def startNewQueue(cls):
         cls.gameStage = 1
             
     @classmethod
@@ -142,6 +177,12 @@ class client(pygame.sprite.Sprite):
         cls.clientGroup.empty()
         cls.clientEffectGroup.empty()
         asyncio.create_task(cls.__loop(), name="clientManager")
+        
+    def setGraphics(self, name:str):
+        if not name in self.__graphics:
+            raise Exception(f"Błąd z grafiką w kliencie id {self.id}, nieznaleziono grafiki o nazwie {name}")
+        
+        self.image = self.__graphics[name]
         
     def selfLoop(self):
         _m = sm.get(alwaysNew=False)

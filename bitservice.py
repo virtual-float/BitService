@@ -212,10 +212,9 @@ async def main(gameSettings: dict):
         # achievement.kill()
         
         for task in asyncio.all_tasks():
-            if task.get_name() in ['windowManager', 'clientManager', 'saveManager', 'saveManagerSec', 'achievementManager', 'gameClock', 'eventManager']: task.cancel()
+            if task.get_name() != "Task-1": task.cancel()
     
         # usuwanie devmoda
-        saveManager.get(alwaysNew=False).set("devmode", False)
         
         # Tworzenie root dla tkinter menu
         root = Tk()
@@ -317,6 +316,9 @@ async def main(gameSettings: dict):
         
         # Inicjalizacja menadżera savów
         save = saveManager.get(saveTime=GS['autoSavetime'] * 60)
+        
+        # usuwanie devmoda
+        save.set("devmode", False)
 
         # Gracz
         kera = Player("./bin/images/player/init.json", 0, 0)
@@ -350,7 +352,7 @@ async def main(gameSettings: dict):
         # game.client.clientGroup.empty()
         game.client.startTask()
         
-        game.client.startQueue()
+        game.client.restore()
         
         # funkcja ułatwiająca
         async def waitForOther():
