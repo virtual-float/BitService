@@ -32,6 +32,8 @@ def generate_gate(newQuestion: dict, client):
             _s.set("player.ratiolevel",
                     _s.get('player.ratiolevel')+1)
             kwargs['me'].getBody().getWindow().kill()
+            
+            client.correctAnswer()
         else:
             # informacja o złej odpowiedzi
             # _body: wn.windowBody = kwargs['me'].getBody()

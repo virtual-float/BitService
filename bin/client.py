@@ -279,6 +279,23 @@ class client(pygame.sprite.Sprite):
                 if self.pos.x < -80:
                     self.kill()
 
+            case 'leavingHappy':
+                self.pos -= Vector2(10,10)
+                
+                
+                self.tempVars['leavingStageOne'] += 1
+                if self.tempVars['leavingStageOne'] >= 6:
+                    _m.get("clientQueue", default=[]).remove(self.id)
+                    self.state = 'leavingHappy2'
+                    
+            case 'leavingHappy2':
+                self.pos -= Vector2(10,0)
+                
+                
+                if self.pos.x < -80:
+                    self.kill()                    
+
+
             case 'awaiting':
                 self.__regenerateXMax()
                 if self.pos.x != self.queueXMax:
@@ -301,13 +318,20 @@ class client(pygame.sprite.Sprite):
         self.tempVars['queueXMax'] = self.queueXMax
 
     def wrongAnswer(self):   
-        print(self)
         self.state = 'leavingAngry'
         self.tempVars['as'] = 'backEffect'
         self.tempVars['leavingStageOne'] = 0
         self.setGraphics('disappointedLeft')
         self.imageForJson = 'disappointedLeft'
         self.save()      
+        
+    def correctAnswer(self):
+        self.state = 'leavingHappy'
+        self.tempVars['as'] = 'backEffect'
+        self.tempVars['leavingStageOne'] = 0
+        self.setGraphics('happyLeft')
+        self.imageForJson = 'happyLeft'
+        self.save()            
                 
                 
     @classmethod
@@ -379,6 +403,8 @@ class client(pygame.sprite.Sprite):
             "leftStepRight": pygame.transform.scale(pygame.transform.flip(pygame.image.load(self.__graphicsJson['leftStep']),flip_x=True, flip_y=False), (25*4,61*4)).convert_alpha(), 
             "rightStepLeft": pygame.transform.scale(pygame.image.load(self.__graphicsJson['rightStep']), (25*4,61*4)).convert_alpha(),         
             "rightStepRight": pygame.transform.scale(pygame.transform.flip(pygame.image.load(self.__graphicsJson['rightStep']),flip_x=True, flip_y=False), (25*4,61*4)).convert_alpha(),   
+            "happyLeft": pygame.transform.scale(pygame.image.load(self.__graphicsJson['happy']), (25*4,61*4)).convert_alpha(),         
+            "happyRight": pygame.transform.scale(pygame.transform.flip(pygame.image.load(self.__graphicsJson['happy']),flip_x=True, flip_y=False), (25*4,61*4)).convert_alpha(),   
         }
         
         self.image = self.__graphics['leftStepRight']
