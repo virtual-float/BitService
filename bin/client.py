@@ -16,6 +16,7 @@ import bin.gui.gate_gui as gi
 class client(pygame.sprite.Sprite):
     clientGroup = pygame.sprite.Group()
     clientEffectGroup = pygame.sprite.Group()
+    clientBackEffectGroup = pygame.sprite.Group()
     gameStage = 0
     __timeForNextClient = 0
     __timeForNextClientTemplate = 25
@@ -57,6 +58,8 @@ class client(pygame.sprite.Sprite):
         
         _char.setGraphics(charInfo['imageName'])
         _char.tempVars = charInfo['tempVars']
+        
+        _char.queueXMax = _char.tempVars['queueXMax']
         
         # przywoływanie spowrotem okna
         if _char.state == "askingDone":
@@ -175,6 +178,10 @@ class client(pygame.sprite.Sprite):
                 
                 for client in cls.clientGroup.sprites():
                     client.selfLoop()
+                
+                for ef in filter(lambda obj: isinstance(obj, client), cls.clientBackEffectGroup):
+                    ef.selfLoop()
+                    
             await asyncio.sleep(0.05)
             
     @classmethod
@@ -256,11 +263,51 @@ class client(pygame.sprite.Sprite):
             case 'askingDone':
                 self.tempVars['angryLevel'] += 1
                 
+            case 'leavingAngry':
+                self.pos -= Vector2(10,10)
+                
+                
+                self.tempVars['leavingStageOne'] += 1
+                if self.tempVars['leavingStageOne'] >= 6:
+                    _m.get("clientQueue", default=[]).remove(self.id)
+                    self.state = 'leavingAngry2'
+                    
+            case 'leavingAngry2':
+                self.pos -= Vector2(10,0)
+                
+                
+                if self.pos.x < -80:
+                    self.kill()
+
+            case 'awaiting':
+                self.__regenerateXMax()
+                if self.pos.x != self.queueXMax:
+                    self.state = "joining"
+                    self.__regenerateXMax()
+                    
                 
                 
                         
         self.save()        
-                    
+    
+    def __regenerateXMax(self):
+        _sm = sm.get(alwaysNew=False)
+        
+        try:
+            self.queueXMax = 150 * 4 - 90 * (_sm.get("clientQueue", default=[]).index(self.id)+1)
+        except:
+            self.queueXMax = 150 * 4 - 90 * (len(_sm.get("clientQueue", default=[]))+1)
+            
+        self.tempVars['queueXMax'] = self.queueXMax
+
+    def wrongAnswer(self):   
+        print(self)
+        self.state = 'leavingAngry'
+        self.tempVars['as'] = 'backEffect'
+        self.tempVars['leavingStageOne'] = 0
+        self.setGraphics('disappointedLeft')
+        self.imageForJson = 'disappointedLeft'
+        self.save()      
                 
                 
     @classmethod
@@ -350,7 +397,7 @@ class client(pygame.sprite.Sprite):
         self.state = forceState
         self.stateName = False
         
-        self.queueXMax = 150 * 4 - 90 * len(client.clientGroup.sprites())
+        self.__regenerateXMax()
         
         print(client.clientGroup.sprites())
         client.save()

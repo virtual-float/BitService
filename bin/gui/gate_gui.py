@@ -52,6 +52,8 @@ def generate_gate(newQuestion: dict, client):
                     _s.get('player.ratiolevel')-1)
             kwargs['me'].getBody().getWindow().kill()
             
+            client.wrongAnswer()
+            
             
             # # ustawianie spowrotem tekstu (przy jednym evencie jest usuwany, przy k) 
             # kwargs['me'].getBody().findByName("textBox")[0].setText(_text)
