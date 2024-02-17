@@ -43,6 +43,10 @@ class save:
         import bin.achievements as ach
         if ach.achievement.screen != None: _zapAch = ach.achievement("Zapisuję grę...")
 
+
+        # naprawa folderu jakby co
+        os.makedirs(os.getcwd() + "/data/", exist_ok=True)
+
         # aktualnianie informacji
         if not notMakingSure:
             wn.window.makeSureToBeUpToDate()
