@@ -320,7 +320,7 @@ class clientTextEffect(clientEffect):
         while True:
             self.__generateRect()
             
-            if not self.client.rect.collidepoint(pygame.mouse.get_pos()):
+            if (not self.client.rect.collidepoint(pygame.mouse.get_pos())) or ps.pauseScreen.object.getState():
                 self.client.stateName = False
                 self.kill()
                 break
