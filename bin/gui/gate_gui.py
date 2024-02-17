@@ -8,7 +8,7 @@ import bin.savemanager as sm
 
 
 
-def generate_gate(newQuestion: dict):
+def generate_gate(newQuestion: dict, client):
     
     text : tuple[str] = newQuestion['QUESTION'].split("\n")
     

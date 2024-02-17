@@ -52,9 +52,17 @@ class client(pygame.sprite.Sprite):
     @classmethod
     def loadCharacter(cls, charInfo:dict):
         _char = cls(forceID = charInfo['id'], forceGender = charInfo['gender'], forceName = charInfo['nickname'],
-                    forceGraphicsBody = charInfo['graphicsBody'], pos = charInfo['pos'], tempVars = charInfo['tempVars'])
+                    forceGraphicsBody = charInfo['graphicsBody'], pos = charInfo['pos'], tempVars = charInfo['tempVars'],
+                    forceState=charInfo['state'])
         
-        _char.image = _char.setGraphics(charInfo['imageName'])
+        _char.setGraphics(charInfo['imageName'])
+        _char.tempVars = charInfo['tempVars']
+        
+        # przywoływanie spowrotem okna
+        if _char.state == "askingDone":
+            match _char.tempVars['question']['questionType']:
+                case 'gate_question':
+                    gi.generate_gate(_char.tempVars['question'], _char)
     
     @classmethod
     def save(cls):
@@ -236,11 +244,11 @@ class client(pygame.sprite.Sprite):
                         newQuestion = questions[random.randint(0, len(questions)-1)]
                 
                 self.tempVars['question'] = {
-                    "questionType": random.choice("gate_question"),
+                    "questionType": questionType,
                     **newQuestion
                 }
                 
-                gi.generate_gate(newQuestion)
+                gi.generate_gate(newQuestion, self)
                 
                 self.tempVars['angryLevel'] = 0
                 self.state = 'askingDone'
@@ -264,7 +272,7 @@ class client(pygame.sprite.Sprite):
                 
     
     
-    def __init__(self, forceID: int|None = None, forceGender:bool|None = None, forceName: int|None = None, forceGraphicsBody: dict|None = None, pos:list|None = None, tempVars:dict={}):
+    def __init__(self, forceID: int|None = None, forceGender:bool|None = None, forceName: int|None = None, forceGraphicsBody: dict|None = None, pos:list|None = None, tempVars:dict={}, forceState:str="joining"):
         super().__init__(client.clientGroup)
         
         self.tempVars = {}
@@ -339,7 +347,7 @@ class client(pygame.sprite.Sprite):
         self.rect.topleft = self.pos
         
         
-        self.state = "joining"
+        self.state = forceState
         self.stateName = False
         
         self.queueXMax = 150 * 4 - 90 * len(client.clientGroup.sprites())
