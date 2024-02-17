@@ -510,9 +510,10 @@ async def main(gameSettings: dict):
 if __name__ == "__main__":
     
     # Odczytaj dane
+    
     data = readJSON('./bin/settings.json')
 
     if data == {}:
-        messagebox.showerror('Błąd', 'Wykryto puste dane ustawień!')
-        exit()
+        data = readJSON("./bin/settingsPattern.json")
+        updateJSON('./bin/settings.json', data)
     asyncio.run(main(data))
