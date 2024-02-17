@@ -1,42 +1,66 @@
 {
     "firstNames": {
         "m": [
-            "zygmunt",
-            "arkadiusz",
-            "wojciech",
-            "patryk",
-            "tomasz",
-            "janusz",
-            "krzystof",
-            "bartosz",
-            "dariusz",
-            "eryk",
-            "tadeusz",
-            "hubert",
-            "mikołaj"
+            "Zygmunt",
+            "Arkadiusz",
+            "Wojciech",
+            "Patryk",
+            "Tomasz",
+            "Janusz",
+            "Krzysztof",
+            "Bartosz",
+            "Dariusz",
+            "Eryk",
+            "Tadeusz",
+            "Hubert",
+            "Mikołaj",
+            "Krystian",
+            "Wiktor",
+            "Hektor",
+            "Szymon",
+            "Miłosz",
+            "Grzegorz",
+            "Maciej",
+            "Błażej",
+            "Fryderyk"
         ],
         "f": [
-            "klaudia",
-            "patrycja",
-            "natalia",
-            "nikola",
-            "sandra"
+            "Klaudia",
+            "Patrycja",
+            "Natalia",
+            "Nikola",
+            "Sandra",
+            "Julia",
+            "Martyna",
+            "Oliwia",
+            "Aleksandra",
+            "Monika",
+            "Magda",
+            "Joanna",
+            "Alicja",
+            "Karolina",
+            "Dagmara",
+            "Kamila",
+            "Emilia",
+            "Asia",
+            "Marzena",
+            "Barbara"
         ]
     },
     "surnames": {
         "m": [
-            "kowalski",
-            "nowak",
-            "wiśniewski",
-            "wójcik",
-            "wilk"
+            "Kowalski",
+            "Nowak",
+            "Wiśniewski",
+            "Wójcik",
+            "Wolski"
         ],
         "f": [
-            "kowalska",
-            "nowakowa",
-            "wiśniewska",
-            "wójcik",
-            "wilczka"
+            "Kowalska",
+            "Nowak",
+            "Wiśniewska",
+            "Wójcik",
+            "Wolska"
         ]
     }
 }
