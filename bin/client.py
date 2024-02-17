@@ -252,8 +252,8 @@ class client(pygame.sprite.Sprite):
         if forceName == None:
             _temp = readJSON("./bin/clientsNames.json")
             
-            _firstName = _temp['firstNames']["f" if self.__gender else "m"][random.randint(0,len(_temp['firstNames']["f" if self.__gender else "m"])-1)]
-            _surname = _temp['surnames']["f" if self.__gender else "m"][random.randint(0,len(_temp['surnames']["f" if self.__gender else "m"])-1)]            
+            _firstName = _temp['firstNames'][1 if self.__gender else 0][random.randint(0,len(_temp['firstNames'][1 if self.__gender else 0])-1)]
+            _surname = _temp['surnames'][1 if self.__gender else 0][random.randint(0,len(_temp['surnames'][1 if self.__gender else 0])-1)]            
             
             self.__nickname = f"{_firstName} {_surname}"
             

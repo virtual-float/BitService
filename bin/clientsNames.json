@@ -1,6 +1,6 @@
 {
-    "firstNames": {
-        "m": [
+    "firstNames": [
+        [
             "Zygmunt",
             "Arkadiusz",
             "Wojciech",
@@ -24,7 +24,7 @@
             "Błażej",
             "Fryderyk"
         ],
-        "f": [
+        [
             "Klaudia",
             "Patrycja",
             "Natalia",
@@ -46,21 +46,21 @@
             "Marzena",
             "Barbara"
         ]
-    },
-    "surnames": {
-        "m": [
+    ],
+    "surnames": [
+        [
             "Kowalski",
             "Nowak",
             "Wiśniewski",
             "Wójcik",
             "Wolski"
         ],
-        "f": [
+        [
             "Kowalska",
             "Nowak",
             "Wiśniewska",
             "Wójcik",
             "Wolska"
         ]
-    }
+    ]
 }
