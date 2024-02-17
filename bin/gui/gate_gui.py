@@ -8,10 +8,7 @@ import bin.savemanager as sm
 
 
 
-def generate_gate():
-    questions = readJSON("./bin/quests/gate_question.json")
-    print(questions)
-    newQuestion = questions[random.randint(0, len(questions)-1)]
+def generate_gate(newQuestion: dict):
     
     text : tuple[str] = newQuestion['QUESTION'].split("\n")
     

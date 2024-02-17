@@ -336,7 +336,6 @@ async def main(gameSettings: dict):
         game.window.startTask()
         game.window.eraseWindows()
 
-        generate_gate()
         # chmura = game.windowElement(Cloud0)
         # chmura.addClickListener(lambda pressed, pos: print('test'))
         # game.window('test', (400,100), pygame.sprite.Group(
@@ -387,7 +386,7 @@ async def main(gameSettings: dict):
                                 save.set('player.ratiolevel', save.getSafe('player.ratiolevel', default=0)+1)
                             case pygame.K_UP:
                                 if not game.window.checkWindow("gate_gui"):
-                                    generate_gate()
+                                    pass
 
     
             # obliczanie elementów gry

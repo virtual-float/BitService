@@ -11,6 +11,7 @@ import bin.achievements as ah
 import bin.fonts as fn
 import bin.util as game
 import bin.pausescreen as ps
+import bin.gui.gate_gui as gi
 
 class client(pygame.sprite.Sprite):
     clientGroup = pygame.sprite.Group()
@@ -51,7 +52,7 @@ class client(pygame.sprite.Sprite):
     @classmethod
     def loadCharacter(cls, charInfo:dict):
         _char = cls(forceID = charInfo['id'], forceGender = charInfo['gender'], forceName = charInfo['nickname'],
-                    forceGraphicsBody = charInfo['graphicsBody'], pos = charInfo['pos'])
+                    forceGraphicsBody = charInfo['graphicsBody'], pos = charInfo['pos'], tempVars = charInfo['tempVars'])
         
         _char.image = _char.setGraphics(charInfo['imageName'])
     
@@ -69,7 +70,8 @@ class client(pygame.sprite.Sprite):
                 "graphicsBody": cl.graphicsBody,
                 "imageName": cl.imageForJson,
                 "pos": (cl.pos.x, cl.pos.y),
-                "state": cl.state
+                "state": cl.state,
+                "tempVars": cl.tempVars,
             }
             for cl in cls.clientGroup.sprites()
         ])    
@@ -185,6 +187,7 @@ class client(pygame.sprite.Sprite):
         self.image = self.__graphics[name]
         
     def selfLoop(self):
+        # 20Hz, wykonuje sie 20 razy na sekunde
         _m = sm.get(alwaysNew=False)
         
         self.rect.topleft = self.pos
@@ -193,6 +196,7 @@ class client(pygame.sprite.Sprite):
             clientTextEffect(self)
         
         match self.state:
+            # idzie zając swoje miejsce
             case 'joining':
                 self.pos += Vector2(10,0)
                 
@@ -207,14 +211,47 @@ class client(pygame.sprite.Sprite):
                     self.pos.x = self.queueXMax
                     if _m.getSafe("clientQueue", default=[])[0] == self.__id:
                         self.state = "awaitingFirst"
+                        self.tempVars["awaitingFirstTime"] = 0
                         self.imageForJson = 'idleRight'
                         self.image = self.__graphics['idleRight']
                     else:
                         self.state = "awaiting"
                         self.imageForJson = 'idleRight'
                         self.image = self.__graphics['idleRight']
+                 
+            # czeka jako pierwszy w kolejce już w miejscu       
+            case 'awaitingFirst':
+                self.tempVars["awaitingFirstTime"] = self.tempVars.get("awaitingFirstTime") + 1
+                
+                if self.tempVars["awaitingFirstTime"] > 60:
+                    self.state = "asking"
+            
+            # pyta o coś
+            case 'asking':
+                questionType = random.choice(["gate_question"])
+                
+                match questionType:
+                    case 'gate_question':
+                        questions = readJSON("./bin/quests/gate_question.json")
+                        newQuestion = questions[random.randint(0, len(questions)-1)]
+                
+                self.tempVars['question'] = {
+                    "questionType": random.choice("gate_question"),
+                    **newQuestion
+                }
+                
+                gi.generate_gate(newQuestion)
+                
+                self.tempVars['angryLevel'] = 0
+                self.state = 'askingDone'
+                
+            case 'askingDone':
+                self.tempVars['angryLevel'] += 1
+                
+                
+                
                         
-                self.save()        
+        self.save()        
                     
                 
                 
@@ -227,8 +264,10 @@ class client(pygame.sprite.Sprite):
                 
     
     
-    def __init__(self, forceID: int|None = None, forceGender:bool|None = None, forceName: int|None = None, forceGraphicsBody: dict|None = None, pos:list|None = None):
+    def __init__(self, forceID: int|None = None, forceGender:bool|None = None, forceName: int|None = None, forceGraphicsBody: dict|None = None, pos:list|None = None, tempVars:dict={}):
         super().__init__(client.clientGroup)
+        
+        self.tempVars = {}
         
         # pozyskanie unikalnego id
         if forceID == None:
