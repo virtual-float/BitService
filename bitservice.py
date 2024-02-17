@@ -511,7 +511,7 @@ if __name__ == "__main__":
     
     # Odczytaj dane
     
-    data = readJSON('./bin/settings.json')
+    data = readJSON('./bin/settings.json', showErrors=False)
 
     if data == {}:
         data = readJSON("./bin/settingsPattern.json")

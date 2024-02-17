@@ -8,13 +8,14 @@ ENCODING_MODE : str = "UTF-8"
 
 # Funkcja, która umożliwia odczytywanie danych z struktury json 
 # Funkcja zwraca dane json w postaci słownika [ dict ]
-def readJSON(localizationPath: str) -> dict:
+def readJSON(localizationPath: str, showErrors:bool=True) -> dict:
     '''Funkcja, która umożliwia odczytywanie danych z struktury json\n
         Funkcja zwraca dane json w postaci słownika [ dict ]'''
     try:
         # Jeżeli ścieżka pliku nie kończy się na .json, zwróć błąd
         if not localizationPath.endswith(".json"):
-            messagebox.showerror('Rozszerzenie', f'Rozszerzenie pliku {localizationPath} nie jest typu json!')
+            if showErrors: 
+                messagebox.showerror('Rozszerzenie', f'Rozszerzenie pliku {localizationPath} nie jest typu json!')
 
         # Otwórz plik json 
         with open(os.getcwd() + localizationPath, mode='r', encoding=ENCODING_MODE) as file:
@@ -25,22 +26,25 @@ def readJSON(localizationPath: str) -> dict:
             
     except json.JSONDecodeError:
         # Zwróć poprawny komunikat jeśli nastąpił błąd z dekodowaniem znaków
-        messagebox.showerror('Dekodowanie', f'Plik {localizationPath} nie mógł zostać zdekodowany na UTF-8')
+        if showErrors: 
+            messagebox.showerror('Dekodowanie', f'Plik {localizationPath} nie mógł zostać zdekodowany na UTF-8')
     except OSError:
         # Zwróć poprawny komunikat jeśli nastąpił błąd z otwarciem pliku
-        messagebox.showerror('Dostępność', f'Plik {localizationPath} nie mógł być otworzony ')
+        if showErrors: 
+            messagebox.showerror('Dostępność', f'Plik {localizationPath} nie mógł być otworzony ')
     # Fabrycznie zwróć pusty słownik
     return {}
 
 
 # Funkcja, która umożliwia aktualizowanie danych do pliku json
 # oraz zwraca wynik wykonania aktualizacji
-def updateJSON(localizationPath: str, newData: dict) -> bool:
+def updateJSON(localizationPath: str, newData: dict, showErrors:bool=True) -> bool:
     '''Funkcja, która umożliwia aktualizowanie danych do pliku json oraz zwraca wynik wykonania aktualizacji'''
     try:
         # Jeżeli ścieżka pliku nie kończy się na .json, zwróć błąd
         if not localizationPath.endswith(".json"):
-            messagebox.showerror('Rozszerzenie', f'Rozszerzenie {localizationPath} pliku nie jest typu json!')
+            if showErrors:
+                messagebox.showerror('Rozszerzenie', f'Rozszerzenie {localizationPath} pliku nie jest typu json!')
 
         # Otwórz plik json
         with open(os.getcwd() + localizationPath, mode='w', encoding=ENCODING_MODE) as file:
@@ -53,7 +57,8 @@ def updateJSON(localizationPath: str, newData: dict) -> bool:
             return True
     except OSError:
         # Zwróć poprawny komunikat jeśli nastąpił błąd z otwarciem pliku
-        messagebox.showerror('Dostępność', f'Plik {localizationPath} nie mógł być otworzony')
+        if showErrors:
+            messagebox.showerror('Dostępność', f'Plik {localizationPath} nie mógł być otworzony')
     # Fabrycznie zwróć wynik aktualizacji danych json
     return False
 
