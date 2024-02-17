@@ -14,12 +14,3 @@ i wiele więcej!!
 Jako pracownik musisz starać się, żeby zadania były rozwiązane przez ciebie w 100% poprawne. W przypadku,
 gdy dane zadanie zostanie błędnie rozwiązane - zwiększa się licznik błędnych udzielonych odpowiedzi.
 Im większa wartość licznika - tym większa szansa na zostanie zwolnionym z pracy przez szefa.
-
-
-
-## Uruchomienie
-
-Należy uruchmić plik run.pyw w głównym w folderze gry. Jednakże jeżeli okaże się to niemożliwe
-należy uruchomić run_console.py. Zasadniczą różnicą między tymi plikami jest to że run_console.py
-uruchomi ci konsolę pythona gdzie będą  pokazywać się logi oraz różne notatki programistyczne -
-możesz tą konsolę zignorować.
