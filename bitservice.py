@@ -260,7 +260,7 @@ async def main(gameSettings: dict):
         Stuff = scaleImage("bin/images/stuff_prefab.png", RENDER_SCALE).convert_alpha()
         StuffRect = Stuff.get_rect()
         StuffRect.x = GS['ApplicationSize'][0] // 2 + (Stuff.get_width() - 50)
-        StuffRect.y = GS['ApplicationSize'][1] // 2 + (Stuff.get_height() // 3) + 10
+        StuffRect.y = GS['ApplicationSize'][1] // 2 + (Stuff.get_height() // 12) - 32
 
         # Chmury
         Cloud0 = scaleImage('bin/images/cloud.png', RENDER_SCALE // RENDER_SCALE).convert_alpha()
