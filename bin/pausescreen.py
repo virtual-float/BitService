@@ -64,38 +64,38 @@ class pauseScreen():
         screen.blit(self.__image, (0,0))
         screen.blit(
             self.__fonts['BIG_COMICSANS'].render("Gra zatrzymana", False, (255,255,255,77)),
-            (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.07)
+            (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.07)
         )        
         screen.blit(
             self.__fonts['VERYSMALL_COMICSANS'].render("użyj strzałek/wsadu i enteru; q/esc by powrócić do gry", False, (255,255,255,77)),
-            (20, pygame.display.get_window_size()[1] - 35)
+            (20, screen.get_size()[1] - 35)
         )
         
         screen.blit(
             self.__fonts['SMALL_COMICSANS'].render(f"Powróć do gry {'<-- ' if self.__cursorPosition == 0 else ''}", False, (255,255,255,77)),
-            (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30)
+            (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30)
         )
         
         screen.blit(
             self.__fonts['SMALL_COMICSANS'].render(f"Zapisz grę {'<-- ' if self.__cursorPosition == 1 else ''}", False, (255,255,255,77)),
-            (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 40)
+            (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30 + 40)
         )
         
         screen.blit(
             self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź do menu {'<-- ' if self.__cursorPosition == 2 else ''}", False, (255,255,255,77)),
-            (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 80)
+            (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30 + 80)
         )
         
         screen.blit(
             self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź z gry {'<-- ' if self.__cursorPosition == 3 else ''}", False, (255,255,255,77)),
-            (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 120)
+            (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30 + 120)
         )
         
         
         if DEVMODE:
             screen.blit(
                 self.__fonts['SMALL_COMICSANS'].render(f"Tryb dewelopera {'<-- ' if self.__cursorPosition == 4 else ''}", False, (255,255,255,77)),
-                (pygame.display.get_window_size()[0] * 0.32, pygame.display.get_window_size()[1] * 0.30 + 160)
+                (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30 + 160)
             )
          
 
