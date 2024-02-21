@@ -328,28 +328,14 @@ async def main(gameSettings: dict):
         # System osiągnieć (Inicjalizacja)
         achievement.configure(display)
         achievement("uruchomienie")
-
-
-        # testy okien, możesz wyrzucić, moja "zabawa", jedynie renderują aktualnie, niewiem, bawię się ucząć
-        # możesz zobaczyć, ale nie jest okomentowane mocno
         
-        game.window.startTask()
+        # okna
+        game.window.startTask(screen=display)
         game.window.eraseWindows()
 
-        # chmura = game.windowElement(Cloud0)
-        # chmura.addClickListener(lambda pressed, pos: print('test'))
-        # game.window('test', (400,100), pygame.sprite.Group(
-        #     # chmura,
-        #     # game.windowText('SMALL_COMICSANS', 'Test', (5,5))
-        #     box := game.windowTextBox((20,20), "", xsize=7, maxlength=3, marginleft=7).setReturnListener(lambda text: print(text))
-        # ), closable=True).addObjectToListen(box)
-        
-        # game.window.getWindow('test').setPosition((400,200))
-        # game.window('test2', (200,200), pygame.sprite.Group(), closable=True)
-        # game.window.getWindow('test2').setPosition((0,300))
         
         # game.client.clientGroup.empty()
-        game.client.startTask()
+        game.client.startTask(screen=display)
         
         game.client.restore()
         
@@ -420,7 +406,8 @@ async def main(gameSettings: dict):
                 CloudRect1.x -= 3     
                 
                 
-
+                
+                
             # renderowanie gry
 
             display.fill((98, 125, 206))

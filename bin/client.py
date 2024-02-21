@@ -21,6 +21,8 @@ class client(pygame.sprite.Sprite):
     __timeForNextClient = 0
     __timeForNextClientTemplate = 25
     
+    screen = None
+    
     
     @classmethod
     def restore(cls):
@@ -189,7 +191,12 @@ class client(pygame.sprite.Sprite):
         cls.gameStage = 1
             
     @classmethod
-    def startTask(cls):
+    def startTask(cls, screen: pygame.surface.Surface | None = None):
+        if screen == None:
+            cls.screen = pygame.display.get_surface()
+        else:
+            cls.screen = screen
+        
         cls.gameStage = 0
         cls.clientGroup.empty()
         cls.clientEffectGroup.empty()
@@ -207,7 +214,12 @@ class client(pygame.sprite.Sprite):
         
         self.rect.topleft = self.pos
         
-        if self.rect.collidepoint(pygame.mouse.get_pos()):
+        _pos = (
+            pygame.mouse.get_pos()[0] * (client.screen.get_size()[0] / pygame.display.get_surface().get_size()[0]),
+            pygame.mouse.get_pos()[1] * (client.screen.get_size()[1] / pygame.display.get_surface().get_size()[1])
+        )
+        
+        if self.rect.collidepoint(_pos):
             clientTextEffect(self)
         
         match self.state:
@@ -440,7 +452,14 @@ class clientTextEffect(clientEffect):
         while True:
             self.__generateRect()
             
-            if (not self.client.rect.collidepoint(pygame.mouse.get_pos())) or ps.pauseScreen.object.getState():
+            _pos = (
+                pygame.mouse.get_pos()[0] * (client.screen.get_size()[0] / pygame.display.get_surface().get_size()[0]),
+                pygame.mouse.get_pos()[1] * (client.screen.get_size()[1] / pygame.display.get_surface().get_size()[1])
+            )
+            
+            print(_pos)
+            
+            if (not self.client.rect.collidepoint(_pos)) or ps.pauseScreen.object.getState():
                 self.client.stateName = False
                 self.kill()
                 break

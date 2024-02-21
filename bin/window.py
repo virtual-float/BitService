@@ -729,6 +729,10 @@ class window():
     events = None
     
     
+    # link do okna
+    screen: pygame.surface.Surface = None
+    
+    
     @classmethod
     def getFocusElement(cls) -> None | windowElement:
         '''Pozwala uzyskać aktualny focus jeżeli istnieje, jeżeli nie, to zwraca None'''
@@ -752,8 +756,19 @@ class window():
         
     
     @classmethod
-    def startTask(cls) -> None:
-        '''Włączenie tasku, powinien być maksymalnie 1 i zawsze minimum 1!'''
+    def startTask(cls, screen: pygame.surface.Surface | None = None) -> None:
+        '''Włączenie tasku, powinien być maksymalnie 1 i zawsze minimum 1!\n
+                ----------------\n
+        Argumenty:\n
+            * screen (pygame.surface.Surface, None; none oznacza automatyczne pobranie)\n
+        Zwraca:\n
+            * None'''
+        
+        if screen == None:
+            cls.screen = pygame.display.get_surface()    
+        else:
+            cls.screen = screen
+        
         asyncio.create_task(cls.__globalLoop(), name=f"windowManager")
     
     @classmethod
@@ -773,8 +788,15 @@ class window():
             
             # obsługa naciśniecia
             if any(_pres):
-                _pos = pygame.mouse.get_pos()
+                # oblicz pozycje kursora ze skalą
+                _pos = (
+                    pygame.mouse.get_pos()[0] * (cls.screen.get_size()[0] / pygame.display.get_surface().get_size()[0]),
+                    pygame.mouse.get_pos()[1] * (cls.screen.get_size()[1] / pygame.display.get_surface().get_size()[1])
+                )
+                
                 _foundWindow = False
+                
+                
                 
                 # wyszukanie okna które mogłoby być nacisnięte
                 for name in cls.__windowOrder:
