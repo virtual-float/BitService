@@ -255,31 +255,12 @@ async def main(gameSettings: dict):
         ProgressBarRect.x = pb_x
         ProgressBarRect.y = pb_y
 
-        # Objekty
-        # Biurko
-        Table = scaleImage("bin/images/table.png", RENDER_SCALE).convert_alpha()
-        TableRect = Table.get_rect()
-        TableRect.x = GS['ApplicationSize'][0] // 2 + (Table.get_width() - 50)
-        TableRect.y = GS['ApplicationSize'][1] // 2 + (Table.get_height() // 3) + 10
-
-        # Monitor
-        Screen = scaleImage("bin/images/monitor.png", RENDER_SCALE).convert_alpha()
-        ScreenRect = Screen.get_rect()
-        ScreenRect.x = GS['ApplicationSize'][0] // 2 + (Screen.get_width() + 50)
-        ScreenRect.y = GS['ApplicationSize'][1] // 2 + (Screen.get_height() // 3) - 50
-
-        # Klawiatura
-        Keyboard = scaleImage("bin/images/keyboard.png", RENDER_SCALE).convert_alpha()
-        KeyboardRect = Keyboard.get_rect()
-        KeyboardRect.x = GS['ApplicationSize'][0] // 2 + (Keyboard.get_width() + 64) + 48
-        KeyboardRect.y = GS['ApplicationSize'][1] // 2 + (Keyboard.get_height() // 3) + 68
-
-        # Kubek
-        Cup = scaleImage("bin/images/cup.png", RENDER_SCALE).convert_alpha()
-        CupRect = Cup.get_rect()
-
-        # Komputer
-        # ...
+        # Objekt
+        # Biurko z rzeczami od razu
+        Stuff = scaleImage("bin/images/stuff_prefab.png", RENDER_SCALE).convert_alpha()
+        StuffRect = Stuff.get_rect()
+        StuffRect.x = GS['ApplicationSize'][0] // 2 + (Stuff.get_width() - 50)
+        StuffRect.y = GS['ApplicationSize'][1] // 2 + (Stuff.get_height() // 12) - 32
 
         # Chmury
         Cloud0 = scaleImage('bin/images/cloud.png', RENDER_SCALE // RENDER_SCALE).convert_alpha()
@@ -425,9 +406,7 @@ async def main(gameSettings: dict):
             
 
             # Renderowanie objektów
-            display.blit(Table, (TableRect.x, TableRect.y))
-            display.blit(Keyboard, (KeyboardRect.x, KeyboardRect.y))
-            display.blit(Screen, (ScreenRect.x, ScreenRect.y))
+            display.blit(Stuff, (StuffRect.x, StuffRect.y))
 
             # Renderowanie klientów 
             game.client.clientGroup.draw(display)
