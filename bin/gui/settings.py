@@ -142,7 +142,8 @@ class settings:
         self.__appSizeVar = tk.StringVar(self.__me, f"{self.__newSettings['ApplicationSize'][0]}x{self.__newSettings['ApplicationSize'][1]}")
         
         ttk.Combobox(master=self.__graphics, 
-                     values=["100x100","200x200", "300x300"],
+                     values=["1024x600", "1280x720", "1366x768", "1280x800", "1536x864", "1440x900", 
+                             "1600x900", "1280x1024", "1920x1080"],
                     #  state="readonly",
                     state = tk.DISABLED,
                      justify="center",
@@ -161,21 +162,40 @@ class settings:
         # rozdzielczość upscalowana
         self.__appRenderVar = tk.StringVar(self.__me, f"{self.__newSettings['renderSize'][0]}x{self.__newSettings['renderSize'][1]}")
         
-        ttk.Combobox(master=self.__graphics, 
-                     values=["100x100","200x200", "300x300"],
-                    #  state="readonly",
-                    state = tk.DISABLED,
+        self.__appRender = ttk.Combobox(master=self.__graphics, 
+                     values=["1024x600", "1280x720", "1366x768", "1280x800", "1536x864", "1440x900", 
+                             "1600x900", "1280x1024", "1920x1080"],
+                     state="readonly",
+                    # state = tk.DISABLED,
                      justify="center",
                     textvariable=self.__appRenderVar
-                     ).grid(row=1, column=1, padx="10",pady=15)
-      
-
+                     )
+        
+        self.__appRender.grid(row=1, column=1, padx="10",pady=15)
+        
+        if self.__newSettings['fullscreen']:
+            self.__appRender.configure(state=tk.DISABLED)
+        else:
+            self.__appRender.configure(state="readonly")
+            
+        def handlerAppRender(*args):
+            self.__newSettings['renderSize'] = list(map(lambda x: int(x), self.__appRenderVar.get().split("x")))
+            self.__checkSave()
+            
+        self.__appRenderVar.trace_add("write", handlerAppRender)
 
         # pełny ekran
         
         def handleFullscreen(*args):
             self.__newSettings['fullscreen'] = self.__fullscreen.get()
             self.__checkSave()
+            
+            if self.__newSettings['fullscreen']:
+                self.__appRender.configure(state=tk.DISABLED)
+            else:
+                self.__appRender.configure(state="readonly")
+                
+
             
         
         self.__fullscreen = tk.BooleanVar(self.__me, self.__previousSettings['fullscreen'])
