@@ -4,7 +4,27 @@
         "ANSWER": "14"
     },
     {
-        "QUESTION": "Ile wynosi 5 & 4",
+        "QUESTION": "Ile wynosi 5 & 4?",
+        "ANSWER": "4"
+    },
+    {
+        "QUESTION": "Ile wynosi 2 << 2?",
+        "ANSWER": "8"
+    },
+    {
+        "QUESTION": "Ile wynosi 2 >> 10?",
+        "ANSWER": "2"
+    },
+    {
+        "QUESTION": "Ile wynosi 6 ^ 2?",
+        "ANSWER": "4"
+    },
+    {
+        "QUESTION": "Ile wynosi 13 | 9?",
+        "ANSWER": "13"
+    },
+    {
+        "QUESTION": "Ile wynosi 7 ^ 5 << 1?",
         "ANSWER": "4"
     }
 ]

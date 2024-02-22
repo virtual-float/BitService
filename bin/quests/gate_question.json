@@ -8,5 +8,30 @@
         "QUESTION": "Jaki wynik będzie dla C, \nw przypadku gdy A = 0, a B = 0",
         "Q_DATA": "bin/quests/logic_gates/andnot00.png",
         "ANSWER": "1"
+    },
+    {
+        "QUESTION": "Jaki wynik będzie dla C, \nw przypadku gdy A = 0, a B = 1",
+        "Q_DATA": "bin/quests/logic_gates/nand00.png",
+        "ANSWER": "1"
+    },
+    {
+        "QUESTION": "Jaki wynik będzie dla C, \nw przypadku gdy A = 1, a B = 1",
+        "Q_DATA": "bin/quests/logic_gates/nor00.png",
+        "ANSWER": "0"
+    },
+    {
+        "QUESTION": "Jaki wynik będzie dla Y, \njeżeli X = 1?",
+        "Q_DATA": "bin/quests/logic_gates/not00.png",
+        "ANSWER": "0"
+    },
+    {
+        "QUESTION": "Jaki wynik będzie dla C, \n w przypadku gdy A = 0, a B = 1",
+        "Q_DATA": "bin/quests/logic_gates/or00.png",
+        "ANSWER": "1"
+    },
+    {
+        "QUESTION": "Jaki wynik będzie dla C, \n w przypadku gdy A = 0, a B = 0",
+        "Q_DATA": "bin/quests/logic_gates/xor00.png",
+        "ANSWER": "0"
     }
 ]
