@@ -1,8 +1,15 @@
+#################################
+# client.py      
+#
+# Cel: ogólne zarządzanie klientami            
+#################################
+
 # importy
 import pygame
 from pygame import Vector2
 import random
 import asyncio
+import abc
 
 # importy lokalne
 from bin.function import readJSON, updateJSON
@@ -18,56 +25,78 @@ import bin.gui.bit_gui as bi
 import bin.gui.net_gui as ni
 
 class client(pygame.sprite.Sprite):
+    '''Poprostu klient'''
+    
+    # grupy spritów które obsługują i efekty oraz samych kientów
     clientGroup = pygame.sprite.Group()
     clientEffectGroup = pygame.sprite.Group()
     clientBackEffectGroup = pygame.sprite.Group()
+    
+    # wartosci tymczasowe służące do obliczania stanu kolejki
     gameStage = 0
     __timeForNextClient = 0
     __timeForNextClientTemplate = 25
     
+    # referencja do ekranu (praktycznie prawie nie wykorzystywana (oprócz paru rzeczy))
     screen = None
     
     
     @classmethod
-    def restore(cls):
+    def restore(cls) -> None:
         '''Służy do odzyskania klientów z savu'''
         smv = sm.get(alwaysNew=False)
         
+        # wyczyść poprzednie dane
         cls.clientEffectGroup.empty()
         cls.clientGroup.empty()
         cls.gameStage = 0
         cls.__timeForNextClient = 0
         __timeForNextClientTemplate = 25
         
+        # pobierz charaktery z savu
         _char = smv.getSafe("characters", default={})
         
         if _char == {}:
+            # gdy brak charakterów rozpocznij kolejkę od nowa
             cls.startNewQueue()
             
             cls.gameStage = 1
         else:
             # odzyskiwanie
             
+            # przypisz ważne dane
             cls.gameStage = smv.get('queueStage', default=0)
             
+            # załaduj charaktery
             for char in _char:
                 cls.loadCharacter(char)
                 
+            # w przypadku braku gameStaga lub zerowego ustaw 1 (rzadko się to zdarza, ale zdarza)
             if cls.gameStage == 0: cls.gameStage = 1
                 
     
     @classmethod
-    def loadCharacter(cls, charInfo:dict):
+    def loadCharacter(cls, charInfo:dict) -> None:
+        '''Ładowanie charakteru\n
+            -------------------\n
+            Argumenty:\n
+            * charInfo (dict, informacje o charakterze pozyskane najczęściej z savaManagera)\n
+            \n
+            Zwaraca:
+            * None'''
+        # samo tworzenie charakteru
         _char = cls(forceID = charInfo['id'], forceGender = charInfo['gender'], forceName = charInfo['nickname'],
                     forceGraphicsBody = charInfo['graphicsBody'], pos = charInfo['pos'], tempVars = charInfo['tempVars'],
                     forceState=charInfo['state'])
         
+        
+        # przypisywanie danych których nie można przypisać w inicjatorze
         _char.setGraphics(charInfo['imageName'])
         _char.tempVars = charInfo['tempVars']
-        
         _char.queueXMax = _char.tempVars['queueXMax']
         
-        # przywoływanie spowrotem okna
+        
+        # przywoływanie spowrotem okna z pytaniem
         if _char.state == "askingDone":
             match _char.tempVars['question']['questionType']:
                 case 'gate_question':
@@ -79,9 +108,10 @@ class client(pygame.sprite.Sprite):
     
     @classmethod
     def save(cls):
-        '''Służy do zapisu wszystkich klientów'''
+        '''Służy do zapisu wszystkich klientów oraz stanu kolejki'''
         smv = sm.get(alwaysNew=False)
         
+        # zapis wszystkich klientów
         smv.set("characters", [
             {
                 "id": cl.id,
@@ -97,8 +127,14 @@ class client(pygame.sprite.Sprite):
             for cl in cls.clientGroup.sprites()
         ])    
         
+        # dane kolejki
         smv.set("charactersLength", len(cls.clientGroup.sprites()))
         smv.set("queueStage", cls.gameStage)
+    
+    #################
+    # parametry
+    #################
+    
     
     # id
     @property
@@ -119,6 +155,7 @@ class client(pygame.sprite.Sprite):
     def id(self):
         raise Exception("Nie możesz usunąć id")
     
+    # nickname
     
     @property
     def nickname(self):
@@ -128,6 +165,7 @@ class client(pygame.sprite.Sprite):
     def nickname(self, val):
         self.newIdentity(name=val)
        
+    # gender
         
     @property
     def gender(self):
@@ -136,6 +174,8 @@ class client(pygame.sprite.Sprite):
     @gender.setter
     def gender(self, val):
         self.newIdentity(gender=val)   
+        
+    # graphicsBody
         
     @property
     def graphicsBody(self):
@@ -160,7 +200,9 @@ class client(pygame.sprite.Sprite):
         
     @classmethod
     async def __loop(cls):
+        '''Prywatna metoda; nie powinna być wywoływana ręcznie;pętla ogólna kolejki'''
         while True:
+            # sprawdzanie czy pausescreen jest włączony
             if not ps.pauseScreen.object.getState():
             
                 _s = sm.get(alwaysNew=False)
@@ -185,51 +227,78 @@ class client(pygame.sprite.Sprite):
                             
                             
                 
-                
+                # wywoływanie selfLoopa dla każdego klienta
                 for client in cls.clientGroup.sprites():
                     client.selfLoop()
                 
+                # to samo co powyżej, tylko że dla klientów z tyłu (szczerze, nie jest to używane,
+                # ale nie wpływa prawie w żadeń sposób na performance, więc zostanie to usunięte dopiero gdy
+                # będzie się szukać dość mocno fpsów;
+                # albowiem według mnie to może zaoszczędzić wiele czasu w przyszłości)
                 for ef in filter(lambda obj: isinstance(obj, client), cls.clientBackEffectGroup):
                     ef.selfLoop()
                     
             await asyncio.sleep(0.05)
             
     @classmethod
-    def startNewQueue(cls):
+    def startNewQueue(cls) -> None:
+        '''Rozpoczęcie nowej kolejki (nie usuwa danych, tylko zaczyna ją)'''
         cls.gameStage = 1
             
     @classmethod
-    def startTask(cls, screen: pygame.surface.Surface | None = None):
+    def startTask(cls, screen: pygame.surface.Surface | None = None) -> None:
+        '''Rozpoczęcie tasku wymaganego dla client.py\n
+        ----------------------\n
+        Argumenty:\n
+        * screen (pygame.surface.Surface; miejsce rysowania klientów)\n
+        \n
+        Zwraca:\n
+        * None'''
+        # screenek
         if screen == None:
             cls.screen = pygame.display.get_surface()
         else:
             cls.screen = screen
         
+        # podstawowe dane
         cls.gameStage = 0
         cls.clientGroup.empty()
         cls.clientEffectGroup.empty()
         asyncio.create_task(cls.__loop(), name="clientManager")
         
-    def setGraphics(self, name:str):
+    def setGraphics(self, name:str) -> None:
+        '''Ustawienie grafiki klienta z tego co ma w sobie zapisane\n
+        ------------------\n
+        Argumenty:\n
+        * name (str, nazwa grafiki)\n
+        \n
+        Zwraca:\n
+        * None'''
         if not name in self.__graphics:
             raise Exception(f"Błąd z grafiką w kliencie id {self.id}, nieznaleziono grafiki o nazwie {name}")
         
         self.image = self.__graphics[name]
         
     def selfLoop(self):
+        '''20Hz, wykonuje sie 20 razy na sekunde\n
+        wewnętrzna pętla klienta, nie tykać'''
         # 20Hz, wykonuje sie 20 razy na sekunde
         _m = sm.get(alwaysNew=False)
         
+        # naprawienie recta
         self.rect.topleft = self.pos
         
+        # pobranie pozycji
         _pos = (
             pygame.mouse.get_pos()[0] * (client.screen.get_size()[0] / pygame.display.get_surface().get_size()[0]),
             pygame.mouse.get_pos()[1] * (client.screen.get_size()[1] / pygame.display.get_surface().get_size()[1])
         )
         
+        # tekst nad klientem
         if self.rect.collidepoint(_pos):
             clientTextEffect(self)
         
+        # obsługa stanów
         match self.state:
             # idzie zając swoje miejsce
             case 'joining':
@@ -289,9 +358,11 @@ class client(pygame.sprite.Sprite):
                 self.tempVars['angryLevel'] = 0
                 self.state = 'askingDone'
                 
+            # skończył pytać
             case 'askingDone':
                 self.tempVars['angryLevel'] += 1
-                
+               
+            # wychodzi wkurzony 
             case 'leavingAngry':
                 self.pos -= Vector2(10,10)
                 
@@ -300,7 +371,8 @@ class client(pygame.sprite.Sprite):
                 if self.tempVars['leavingStageOne'] >= 6:
                     _m.get("clientQueue", default=[]).remove(self.id)
                     self.state = 'leavingAngry2'
-                    
+                
+            # kończy wychodzic wkurzony    
             case 'leavingAngry2':
                 self.pos -= Vector2(10,0)
                 
@@ -308,6 +380,7 @@ class client(pygame.sprite.Sprite):
                 if self.pos.x < -80:
                     self.kill()
 
+            # wychodzi szczęśliwy
             case 'leavingHappy':
                 self.pos -= Vector2(10,10)
                 
@@ -317,6 +390,7 @@ class client(pygame.sprite.Sprite):
                     _m.get("clientQueue", default=[]).remove(self.id)
                     self.state = 'leavingHappy2'
                     
+            # kończy wychodzić szczęśliwy
             case 'leavingHappy2':
                 self.pos -= Vector2(10,0)
                 
@@ -324,7 +398,7 @@ class client(pygame.sprite.Sprite):
                 if self.pos.x < -80:
                     self.kill()                    
 
-
+            # oczekuje aż dostanie role (w kolejce)
             case 'awaiting':
                 self.__regenerateXMax()
                 if self.pos.x != self.queueXMax:
@@ -333,10 +407,11 @@ class client(pygame.sprite.Sprite):
                     
                 
                 
-                        
+        # zapisz wszystko do savu 
         self.save()        
     
-    def __regenerateXMax(self):
+    def __regenerateXMax(self) -> None:
+        '''Metoda prywatna; Ustala miejsce w kolejce'''
         _sm = sm.get(alwaysNew=False)
         
         try:
@@ -346,7 +421,9 @@ class client(pygame.sprite.Sprite):
             
         self.tempVars['queueXMax'] = self.queueXMax
 
-    def wrongAnswer(self):   
+    def wrongAnswer(self) -> None:   
+        '''Przekaż że gracz udzielił złej odpowiedzi'''
+        
         self.state = 'leavingAngry'
         self.tempVars['as'] = 'backEffect'
         self.tempVars['leavingStageOne'] = 0
@@ -354,7 +431,9 @@ class client(pygame.sprite.Sprite):
         self.imageForJson = 'disappointedLeft'
         self.save()      
         
-    def correctAnswer(self):
+    def correctAnswer(self) -> None:
+        '''Przekaż że gracz udzielił poprawnej odpowiedzi'''
+        
         self.state = 'leavingHappy'
         self.tempVars['as'] = 'backEffect'
         self.tempVars['leavingStageOne'] = 0
@@ -364,7 +443,8 @@ class client(pygame.sprite.Sprite):
                 
                 
     @classmethod
-    def newClientToQueue(cls, *args, **kwargs):
+    def newClientToQueue(cls, *args, **kwargs) -> None:
+        '''Dodaje nowego klienta'''
         _s = sm.get(alwaysNew=False)
         _cl = cls(*args, **kwargs)
         
@@ -390,6 +470,7 @@ class client(pygame.sprite.Sprite):
         else:
             self.__id = forceID
             
+        # płeć
         if forceGender == None:
             self.__gender = bool(random.randint(0,1))
         else:
@@ -409,7 +490,7 @@ class client(pygame.sprite.Sprite):
         else:
             self.__nickname = forceName
             
-        
+        # grafika
         if forceGraphicsBody == None:
             _json = readJSON("./bin/clientsGraphics.json")
             while True:
@@ -422,7 +503,7 @@ class client(pygame.sprite.Sprite):
         else:
             self.__graphicsJson = forceGraphicsBody
             
-            
+        # wczytanie grafiki z plików
         self.__graphics = {
             "idleLeft": pygame.transform.scale(pygame.image.load(self.__graphicsJson['idle']), (25*4,61*4)).convert_alpha(),
             "idleRight": pygame.transform.scale(pygame.transform.flip(pygame.image.load(self.__graphicsJson['idle']),flip_x=True, flip_y=False), (25*4,61*4)).convert_alpha(),
@@ -436,10 +517,12 @@ class client(pygame.sprite.Sprite):
             "happyRight": pygame.transform.scale(pygame.transform.flip(pygame.image.load(self.__graphicsJson['happy']),flip_x=True, flip_y=False), (25*4,61*4)).convert_alpha(),   
         }
         
+        # rect oraz finalne załadowanie grafiki
         self.image = self.__graphics['leftStepRight']
         self.imageForJson = 'leftStepRight'
         self.rect = self.image.get_rect()
         
+        # pozycja
         if pos == None:
             self.pos = Vector2(0,4*70+ 4 * random.randint(0,8))
         else:
@@ -448,23 +531,27 @@ class client(pygame.sprite.Sprite):
             
         self.rect.topleft = self.pos
         
-        
+        # stan klienta
         self.state = forceState
         self.stateName = False
         
+        # pozycja klienta w kolejce
         self.__regenerateXMax()
         
-        print(client.clientGroup.sprites())
+        # print(client.clientGroup.sprites())
+        # zapisanie do sava
         client.save()
         
         # NOTKA: * 4 jest do zmiennych rozdzielczości, staram się robić by łatwo było przerobić,
         # nie wpływa to znacząco na wydajność aż tak bardzo
         
-class clientEffect(pygame.sprite.Sprite):
+class clientEffect(pygame.sprite.Sprite, abc.ABC):
+    '''Klasa abstrakcyjna do efektów'''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
 class clientTextEffect(clientEffect):
+    '''nickname nad głową; efekt'''
     async def __loop(self):
         while True:
             self.__generateRect()
