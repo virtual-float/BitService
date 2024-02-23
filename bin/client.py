@@ -11,7 +11,10 @@ import bin.achievements as ah
 import bin.fonts as fn
 import bin.util as game
 import bin.pausescreen as ps
+
+# guis
 import bin.gui.gate_gui as gi
+import bin.gui.bit_gui as bi
 
 class client(pygame.sprite.Sprite):
     clientGroup = pygame.sprite.Group()
@@ -68,6 +71,8 @@ class client(pygame.sprite.Sprite):
             match _char.tempVars['question']['questionType']:
                 case 'gate_question':
                     gi.generate_gate(_char.tempVars['question'], _char)
+                case 'bit_question':
+                    bi.generate_gate(_char.tempVars['question'], _char)
     
     @classmethod
     def save(cls):
@@ -255,19 +260,24 @@ class client(pygame.sprite.Sprite):
             
             # pyta o coś
             case 'asking':
-                questionType = random.choice(["gate_question"])
+                questionType = random.choice(["gate_question","bit_question"])
                 
                 match questionType:
                     case 'gate_question':
                         questions = readJSON("./bin/quests/gate_question.json")
                         newQuestion = questions[random.randint(0, len(questions)-1)]
+                        gi.generate_gate(newQuestion, self)
+                    case 'bit_question':
+                        questions = readJSON("./bin/quests/bit_question.json")
+                        newQuestion = questions[random.randint(0, len(questions)-1)]
+                        bi.generate_gate(newQuestion, self)
                 
                 self.tempVars['question'] = {
                     "questionType": questionType,
                     **newQuestion
                 }
                 
-                gi.generate_gate(newQuestion, self)
+                # gi.generate_gate(newQuestion, self)
                 
                 self.tempVars['angryLevel'] = 0
                 self.state = 'askingDone'
