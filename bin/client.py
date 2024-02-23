@@ -15,6 +15,7 @@ import bin.pausescreen as ps
 # guis
 import bin.gui.gate_gui as gi
 import bin.gui.bit_gui as bi
+import bin.gui.net_gui as ni
 
 class client(pygame.sprite.Sprite):
     clientGroup = pygame.sprite.Group()
@@ -73,6 +74,8 @@ class client(pygame.sprite.Sprite):
                     gi.generate_gate(_char.tempVars['question'], _char)
                 case 'bit_question':
                     bi.generate_gate(_char.tempVars['question'], _char)
+                case 'net_question':
+                    ni.generate_gate(_char.tempVars['question'], _char)
     
     @classmethod
     def save(cls):
@@ -260,7 +263,7 @@ class client(pygame.sprite.Sprite):
             
             # pyta o coś
             case 'asking':
-                questionType = random.choice(["gate_question","bit_question"])
+                questionType = random.choice(["gate_question","bit_question", "net_question"])
                 
                 match questionType:
                     case 'gate_question':
@@ -271,6 +274,10 @@ class client(pygame.sprite.Sprite):
                         questions = readJSON("./bin/quests/bit_question.json")
                         newQuestion = questions[random.randint(0, len(questions)-1)]
                         bi.generate_gate(newQuestion, self)
+                    case 'net_question':
+                        questions = readJSON("./bin/quests/net_question.json")
+                        newQuestion = questions[random.randint(0, len(questions)-1)]
+                        ni.generate_gate(newQuestion, self)
                 
                 self.tempVars['question'] = {
                     "questionType": questionType,
