@@ -220,7 +220,7 @@ class client(pygame.sprite.Sprite):
                         cls.__timeForNextClient += 1
                         if cls.__timeForNextClient >= cls.__timeForNextClientTemplate:
                             cls.__timeForNextClient = 0
-                            if len(cls.clientGroup) < 3:
+                            if len(cls.clientGroup) < 7:
                                 cls.newClientToQueue()
                     
                     
