@@ -75,19 +75,26 @@ class Menu:
             command=lambda: self.statusType('play')
         ).place(x=15, y=150)
 
+        AchievementsButton = Button(
+            text='OSIĄGNIĘCIA',
+            width=20,
+            height=2,
+            command=lambda: self.openAchievements()
+        ).place(x=15, y=200)
+
         settings = Button(
             text='Ustawienia',
             width=20,
             height=2,
             command=lambda: settingsGui(self.handle)
-        ).place(x=15, y=200)
+        ).place(x=15, y=250)
 
         ExitButton = Button(
             text='Wyjdź',
             width=20,
             height=2,
             command=lambda: self.statusType('exit')
-        ).place(x=15, y=250)
+        ).place(x=15, y=300)
 
         self.handle.mainloop()
     
@@ -97,6 +104,10 @@ class Menu:
             GS = readJSON('./bin/settings.json')
             self.status = 1
         self.handle.destroy()
+
+    def openAchievements(self) -> None:
+        pass
+
 
 # Funkcja, która zwróci ilość barów dla progress baru
 def generateBars(repStatus: int):
