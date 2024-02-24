@@ -301,7 +301,7 @@ async def main(gameSettings: dict):
         
         # System osiągnieć (Inicjalizacja)
         achievement.configure(display)
-        achievement("uruchomienie")
+        # achievement("uruchomienie")
         
         # okna
         game.window.startTask(screen=display)
@@ -312,6 +312,9 @@ async def main(gameSettings: dict):
         game.client.startTask(screen=display)
         
         game.client.restore()
+        
+        # osiągniecie za włączenie gry :3
+        achievement.pointHere('firstJob')
         
         # funkcja ułatwiająca
         async def waitForOther():

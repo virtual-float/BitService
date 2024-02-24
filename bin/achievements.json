@@ -1,0 +1,11 @@
+{
+    "firstJob": {
+        "type": "unlock",
+        "point": "inGame",
+        "image": "./bin/images/achievements-icon/achievement-00.png",
+        "description": "brak",
+        "shownName": "Pierwsza praca",
+        "color": [255,255,255],
+        "shownNameLong": "Pierwsza praca"
+    }
+}

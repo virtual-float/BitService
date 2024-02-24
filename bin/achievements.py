@@ -1,13 +1,67 @@
+#################################
+# achievements.py      
+#
+# Cel: Zarządzanie osiągnieciami oraz 
+# defacto informacjami takie jak "zapisywanie gry..."          
+#################################
+
+# importy główne
 import pygame
 import json
 import asyncio
+import time
 
+# importy wewnętrznych modułów
 import bin.fonts as fn
+import bin.savemanager as sm
+from bin.function import readJSON
 class achievement:
+    '''Podstawowa klasa osiągniecia'''
     
     screen = None
     achievementShown = []
     __doExist = False
+    
+    __achievementData = None
+    
+    
+    # samo otrzymywanie osiągnieć
+    @classmethod
+    def pointHere(cls, achievementName: str) -> None:
+        '''
+            pokazuje managerowi osiągnieć że tutaj by się otrzymywało osiągniecia\n
+            poprostu to wymusza danie osiągnięcia\n
+            ----------------------------\n
+            Argumenty:\n
+                * achievementName (str; nazwa osiągniecia)\n
+            zwraca:\n
+                * None       
+        '''
+        if cls.__achievementData == None:
+            raise Exception("Nie zainicjonowano danych osiągnieć!")
+        
+        if not achievementName in cls.__achievementData:
+            raise Exception("nie znane osiągniecie!")
+        
+        _s = sm.get(alwaysNew=False)
+        
+        # # gdy nie ma osiagniecia
+        # if(_s.getSafe(f'achievements.{achievementName}.obtained', default=False)==False):
+        #     _s.set(f"achievements.{achievementName}",
+        #            {
+        #                "gain": True,
+        #                "point": "inGame",
+        #                "type": "onceGained",
+        #                "gainDate": time.time_ns()
+                       
+        #            })
+            
+        #     print(cls.__achievementData[achievementName])
+            # achievement(cls.__achievementData[achievementName]['shownName'], 
+            #             image=pygame.image.load(cls.__achievementData[achievementName]['image']), 
+            #             color=cls.__achievementData[achievementName]['color'])
+        
+    
     
     @classmethod
     def configure(cls, screen: pygame.surface.Surface) -> None:
@@ -21,6 +75,7 @@ class achievement:
         '''
         cls.screen = screen
         cls.achievementShown = []
+        cls.__achievementData = readJSON("./bin/achievements.json")
         
         loop = asyncio.get_event_loop()
         loop.create_task(achievement.__loop(), name="achievementManager")
