@@ -28,5 +28,15 @@
         "leftStep": "./bin/images/clients/client_left_step03.png",
         "rightStep": "./bin/images/clients/client_right_step03.png",
         "happy": "./bin/images/clients/client_happy03.png"  
+    },
+    {
+        "name": "4",
+        "forGender": "m",
+        "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
+        "idle": "./bin/images/clients/client_idle04.png",
+        "disappointed": "./bin/images/clients/client_disappointed04.png",
+        "leftStep": "./bin/images/clients/client_left_step04.png",
+        "rightStep": "./bin/images/clients/client_right_step04.png",
+        "happy": "./bin/images/clients/client_happy04.png"  
     }
 ]
