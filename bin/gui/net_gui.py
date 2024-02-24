@@ -100,7 +100,7 @@ def generate_gate(newQuestion: dict, client):
     else:
         window.getBody().add(
         _t := wn.windowTextBox(cords=(40, 180), xsize=40, name="textBox").
-        setRegex("^[0-9]*$").setReturnListener(handler),
+        setRegex("^[0-9\.]*$").setReturnListener(handler),
         wn.windowText(fontName="MEDIUM_CONSOLAS", text="SPRAWDZ", cords=(190, 240), color=(240, 240, 240))
         .addClickListener(handler)
         )
