@@ -100,7 +100,7 @@ class Menu:
 
 # Funkcja, która zwróci ilość barów dla progress baru
 def generateBars(repStatus: int):
-    if repStatus > 0:
+    if repStatus > 0 and repStatus <= 10:
         for i in range(0, repStatus, 1):
             if i == repStatus - 1 and repStatus < 10: # 10 - max
                 yield pygame.image.load('bin/images/bar_head.png'), pygame.image.load('bin/images/bar_head.png').get_rect()
