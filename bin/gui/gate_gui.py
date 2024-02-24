@@ -7,8 +7,11 @@ import bin.savemanager as sm
 
 
 
-
 def generate_gate(newQuestion: dict, client):
+    
+    # zabezpieczenie by okno się nie pojawiało w przypadku gameover
+    _s = sm.get(alwaysNew=False)
+    if(_s.getSafe('player.ratiolevel', default=0) <= 0): return 
     
     text : tuple[str] = newQuestion['QUESTION'].split("\n")
     
@@ -74,7 +77,7 @@ def generate_gate(newQuestion: dict, client):
             wn.windowText(fontName="MEDIUM_COMICSANS", text="Problem z bramkami!", cords=(60,0), color=(233,233,233)),
             wn.windowElement(scaleImage(newQuestion['Q_DATA'],3), cords=(300,55)),
             _t := wn.windowTextBox(cords=(40, 180), xsize=40, name="textBox").
-            setRegex("^[0-9]*$").setReturnListener(handler),
+            setRegex("^[0-9\.]*$").setReturnListener(handler),
             wn.windowText(fontName="MEDIUM_CONSOLAS", text="SPRAWDZ", cords=(190, 240), color=(240, 240, 240))
             .addClickListener(handler)
             
