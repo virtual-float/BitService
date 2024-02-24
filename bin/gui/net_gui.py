@@ -10,6 +10,10 @@ import bin.savemanager as sm
 
 def generate_gate(newQuestion: dict, client):
     
+    # zabezpieczenie by okno się nie pojawiało w przypadku gameover
+    _s = sm.get(alwaysNew=False)
+    if(_s.getSafe('player.ratiolevel', default=0) <= 0): return
+    
     text : tuple[str] = newQuestion['QUESTION'].split("\n")
     
     def handler(*args, **kwargs):
