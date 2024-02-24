@@ -45,21 +45,22 @@ class achievement:
         
         _s = sm.get(alwaysNew=False)
         
-        # # gdy nie ma osiagniecia
-        # if(_s.getSafe(f'achievements.{achievementName}.obtained', default=False)==False):
-        #     _s.set(f"achievements.{achievementName}",
-        #            {
-        #                "gain": True,
-        #                "point": "inGame",
-        #                "type": "onceGained",
-        #                "gainDate": time.time_ns()
-                       
-        #            })
+        # gdy nie ma osiagniecia
+        if(_s.getSafe(f'achievements.{achievementName}.gain', default=False)==False):
+            _s.set(f"achievements.{achievementName}",
+                   {
+                       "gain": True,
+                       "point": "inGame",
+                       "type": "onceGained",
+                       "gainDate": time.time_ns(),
+                       "gainVersion": 10
+                   })
             
-        #     print(cls.__achievementData[achievementName])
-            # achievement(cls.__achievementData[achievementName]['shownName'], 
-            #             image=pygame.image.load(cls.__achievementData[achievementName]['image']), 
-            #             color=cls.__achievementData[achievementName]['color'])
+            print(cls.__achievementData[achievementName])
+            achievement(cls.__achievementData[achievementName]['shownName'], 
+                        image=pygame.image.load(cls.__achievementData[achievementName]['image']), 
+                        color=cls.__achievementData[achievementName]['color'],
+                        backgroundColor=cls.__achievementData[achievementName]['backgroundColor'])
         
     
     
@@ -137,6 +138,7 @@ class achievement:
                 achievementName (str) -> wyświetlana nazwa\n
                 image (pygame.surface.Surface {64x64}, opcjonalne) -> ikona osiągniecia\n
                 color (TUPLE/LIST: (R,G B), opcjonalne) -> kolor nazwy\n
+                backgroundColor (TUPLE/LIST: (R,G B), opcjonalne) -> kolor tła\n
             zwraca:\n
                 achievement (opcjonalne)     
         '''
@@ -162,6 +164,12 @@ class achievement:
             self.__color = kwargs['color']
         else:
             self.__color = (0,255,0)
+            
+        # backgroundColor
+        if 'color' in kwargs:
+            self.__backgroundColor = kwargs['backgroundColor']
+        else:
+            self.__backgroundColor = (153,153,102)
         
         
         # ustawienie podstawowych parametrów
@@ -172,14 +180,15 @@ class achievement:
         
         # surface
         self.__surface = pygame.surface.Surface((250,64))
-        self.__surface.fill((153, 153, 102))
+        self.__surface.fill(self.__backgroundColor)
         self.__surface.blit(self.__image, (0, 0))
         
         _fonts = fn.getfonts()
-        self.__surface.blit(
-             _fonts['VERYSMALL_COMICSANS'].render(self.__name, False, self.__color),
-            (66, 5)
-        )
+        for elementNumber, element in enumerate(self.__name.split("\n")):
+            self.__surface.blit(
+                _fonts['VERYSMALL_COMICSANS'].render(element, False, self.__color),
+                (66, 5 + (elementNumber * 20))
+            )
         self.__surface = self.__surface.convert_alpha()
         self.__surface.set_alpha(170)
         

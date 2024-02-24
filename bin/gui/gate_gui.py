@@ -1,10 +1,12 @@
+# główne importy
 import random
 import pygame
 
+# importy wewnętrzne
 import bin.window as wn
 from bin.function import readJSON, scaleImage
 import bin.savemanager as sm
-
+import bin.achievements as ach
 
 
 def generate_gate(newQuestion: dict, client):
@@ -37,6 +39,7 @@ def generate_gate(newQuestion: dict, client):
             kwargs['me'].getBody().getWindow().kill()
             
             client.correctAnswer()
+            ach.achievement.pointHere("zeroTimesZero")
         else:
             # informacja o złej odpowiedzi
             # _body: wn.windowBody = kwargs['me'].getBody()
