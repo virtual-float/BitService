@@ -22,31 +22,31 @@
     {
         "QUESTION": "Czy podany skrócony zapis maski jest poprawny?",
         "Q_DATA": "192.168.0.1 /35",
-        "ANSWER": "0"
+        "ANSWER": false
     },
     {
         "QUESTION": "Czy taki adres jest poprawny?",
         "Q_DATA": "192.168.16.256 /28",
-        "ANSWER": "0"
+        "ANSWER": false
     },
     {
         "QUESTION": "Czy adresy IPv4 są 128 bitowe?",
         "Q_DATA": "",
-        "ANSWER": "0"
+        "ANSWER": false
     },
     {
         "QUESTION": "Czy adresy IPv6 są 128 bitowe?",
         "Q_DATA": "",
-        "ANSWER": "1"
+        "ANSWER": true
     },
     {
         "QUESTION": "Czy ten podany adres IPv6 jest zapisany poprawnie?",
         "Q_DATA": "2001:0db8:34f3::417a",
-        "ANSWER": "1"
+        "ANSWER": true
     },
     {
         "QUESTION": "Czy ten podany adres IPv6 jest zapisany poprawnie?",
         "Q_DATA": "2001:0db8:342f3:418a:0aaa::1",
-        "ANSWER": "0"
+        "ANSWER": false
     }
 ]

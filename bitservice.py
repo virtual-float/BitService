@@ -102,7 +102,7 @@ class Menu:
 def generateBars(repStatus: int):
     if repStatus > 0:
         for i in range(0, repStatus, 1):
-            if i == repStatus - 1 and repStatus != 10: # 10 - max
+            if i == repStatus - 1 and repStatus < 10: # 10 - max
                 yield pygame.image.load('bin/images/bar_head.png'), pygame.image.load('bin/images/bar_head.png').get_rect()
                 break
             yield pygame.image.load('bin/images/bar_body.png'), pygame.image.load('bin/images/bar_body.png').get_rect()
@@ -112,13 +112,6 @@ def generateBars(repStatus: int):
 
 # Klasa gracza
 class Player:
-
-    # Opcje emotek
-    EmoteSad : int = -1
-    EmoteAnger : int = 0
-    EmoteHappy : int = 1
-    EmoteCry : int = 2
-
 
     def __init__(self, initPlayerFile: str, x: int, y: int) -> None:
         self.__playerdata : dict = readJSON(initPlayerFile)
