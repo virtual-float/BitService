@@ -65,7 +65,7 @@ def generate_gate(newQuestion: dict, client):
     
     # obiekt okna
     window = wn.window(
-        name="gate_gui",
+        name="bit_gui",
         size=(500,300),
         body=wn.windowBody(
             wn.windowText(fontName="MEDIUM_COMICSANS", text="Bitóweczkii", cords=(60,0)),

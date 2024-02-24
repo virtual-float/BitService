@@ -65,6 +65,7 @@ def generate_gate(newQuestion: dict, client):
     
     def handlerForChoice(*args, **kwargs):
         _s = sm.get(alwaysNew=False)
+        print(kwargs['optionType'], kwargs['me'].getBody().getWindow().storage['correct'], kwargs['optionType'] == kwargs['me'].getBody().getWindow().storage['correct'])
         if kwargs['optionType'] == kwargs['me'].getBody().getWindow().storage['correct']:
             _s.set("player.ratiolevel",
                 _s.get('player.ratiolevel')+1)
@@ -78,7 +79,7 @@ def generate_gate(newQuestion: dict, client):
     
     # obiekt okna
     window = wn.window(
-        name="gate_gui",
+        name="net_gui",
         size=(500,300),
         body=wn.windowBody(
             wn.windowText(fontName="MEDIUM_COMICSANS", text="Sieci playtime", cords=(30,0), color=(233,233,233)),
@@ -89,12 +90,12 @@ def generate_gate(newQuestion: dict, client):
         )
     ).setPosition((50,50))
     
-    if newQuestion['ANSWER'] in ['1', '0']:
+    if newQuestion['ANSWER'] in [False, True]:
         window.getBody().add(
         wn.windowText(fontName="MEDIUM_CONSOLAS", text="TAK", cords=(165, 200), color=(10, 240, 30))
-        .addClickListener(lambda *args, **kwargs: handlerForChoice(*args, optionType="1", **kwargs)),
+        .addClickListener(lambda *args, **kwargs: handlerForChoice(*args, optionType=True, **kwargs)),
         wn.windowText(fontName="MEDIUM_CONSOLAS", text="NIE", cords=(285, 200), color=(240, 10, 30))
-        .addClickListener(lambda *args, **kwargs: handlerForChoice(*args, optionType="1", **kwargs))
+        .addClickListener(lambda *args, **kwargs: handlerForChoice(*args, optionType=False, **kwargs))
         )   
     else:
         window.getBody().add(
@@ -108,6 +109,8 @@ def generate_gate(newQuestion: dict, client):
     
     # zapisanie w storagu poprawnej odpowiedzi
     window.storage['correct'] = newQuestion['ANSWER']
+    print(newQuestion)
+    print(window.storage['correct'], newQuestion['ANSWER'])
     
     # zrobienie napisu z pytaniem
     for id, element in enumerate(text):
