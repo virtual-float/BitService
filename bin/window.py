@@ -1,11 +1,16 @@
+#################################
+# window.py      
+#
+# Cel: narzędzia do tworzenia okien wirtualnych 
+#################################
+
+
 # importy podstawowe
 from types import NoneType
-from typing import Any, Iterable, Union
+from typing import Any, Iterable
 import pygame
 import asyncio
-import abc
 import re
-import json
 
 # importy pygama
 from pygame.sprite import AbstractGroup

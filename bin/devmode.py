@@ -1,6 +1,7 @@
 # -----------------------------
 # devmode.py
-# zarządzanie 
+#
+# Cel: Zarządzanie 
 # -----------------------------
 
 # importy ogólne
@@ -11,7 +12,6 @@ import functools
 
 # importy lokalne
 import bin.savemanager as sm
-import bin.achievements as ach
 import bin.fonts as fn
 
 # lista spritów

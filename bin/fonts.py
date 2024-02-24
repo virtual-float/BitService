@@ -1,3 +1,10 @@
+#################################
+# fonts.py      
+#
+# Cel: szybki dostęp do czcionek po nazwie (z pygama)  
+#################################
+
+
 # stałe do obsługi łatwiej czcionek
 
 # importy i inicjacje

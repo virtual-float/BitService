@@ -1,3 +1,10 @@
+#################################
+# function.py      
+#
+# Cel: różne podręczne funkcje         
+#################################
+
+
 # Importuj moduły niezbędne
 import os, json
 from tkinter import messagebox

@@ -1,3 +1,12 @@
+# UWAGA! PLIK NIEUŻYWANY
+
+#################################
+# templatewindow.py      
+#
+# Cel: brak     
+#################################
+
+
 import bin.window as wn
 
 # szatan tworzył regexa

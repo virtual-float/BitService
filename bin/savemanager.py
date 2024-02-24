@@ -1,4 +1,11 @@
-# importy
+#################################
+# savemanager.py      
+#
+# Cel: zarzadzanie savem i czasem gry oraz jej eventami          
+#################################
+
+
+# importy ogólne
 from tkinter import messagebox
 import json
 import asyncio
@@ -6,8 +13,8 @@ import time
 import pygame
 import os
 from dataclasses import dataclass
-import functools
 
+# importy wewnętrzne
 import bin.function as fc
 import bin.window as wn
 

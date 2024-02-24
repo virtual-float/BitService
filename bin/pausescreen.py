@@ -1,4 +1,9 @@
-# PAUSESCREEN
+#################################
+# pausescreen.py      
+#
+# Cel: zarządzanie pausescrenem który się pojawia po naciśnięciu np. ESC i stopuje grę       
+#################################
+
 # Tak, jest to klasa która musi mieć obiekt, ale mi sie wydaje to najłatwiejszy pomysł
 
 # importy
