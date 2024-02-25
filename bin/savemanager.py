@@ -310,6 +310,8 @@ class save:
         
         if os.path.isfile(os.getcwd() + self.__fileSave):
             self.__save = fc.readJSON(self.__fileSave)
+            if self.__save == {}:
+                messagebox.showwarning("Savamanager", "Nie można zdekodować nawet sava. Automatycznie został utworzony nowy save. Jeśli uważasz że to nie właściwe, to nie zapisuj gry!")
         else: self.__save = {}
         
         
@@ -328,7 +330,36 @@ class save:
             
             self.set("checkSum", _previousCheck)
             
-            if _previousCheck != _check:
+            _err = False
+            
+            
+            # sprawdzanie danych
+            if self.get("type", default="notsave") == "save" and self.get("game", default="notsave") == "bitservice":
+                if self.get("player.ratiolevel", default={}) == {}: _err = True
+                if self.get("gameState", default="e") == "e": _err = True
+                if self.get("orginVersion", default={}) == {}: _err = True
+                if self.get("log", default={}) == {}: _err = True
+                if self.get("lastVersion", default={}) == {}: _err = True
+                if self.get("devmode", default={}) == {}: _err = True
+                if self.get("everdevmode", default={}) == {}: _err = True
+                if self.get("time", default={}) == {}: _err = True
+                if self.get("characters", default="e") == "e": _err = True
+            else: _err = True
+            
+            if self.getSafe("game", default="notsave") != "bitservice":
+                 messagebox.showwarning('Suma kontrolna', "Istneje podejrzenie że ten save jest do innej gry!")
+                 
+            if self.getSafe("type", default="notsave") != "save":
+                 messagebox.showwarning('Suma kontrolna', "Istneje podejrzenie że to nie jest save!")
+                
+            
+            self.set("lastVersion", 10000)
+            
+            
+            if (_previousCheck != _check) or _err:
+                # # informacja do logów
+                # self.set("log", self.getSafe("log", default=[]))
+                
                 messagebox.showwarning('Suma kontrolna', "Istneje podejrzenie że save został uszkodzony!")
                 _choice = messagebox.askyesnocancel("Suma kontrolna", "Czy spróbować przywrócic sava? (Nie = Utworzenie nowego, anulowanie = wyjście z gry, miej pod uwagą to że przywrócony save może nie być stabilny i powodować crashe)")
                 
@@ -340,7 +371,25 @@ class save:
                     case False:
                         self.erase()
                     case True:
-                        pass
+                        # najpierw dodanie tego czego nie ma w save
+                        for element, key in self.__pattern.items():
+                            if element not in self.__save:
+                                self.set(element, key)
+                                
+                        # naprawianie podstawowych informacji
+                        self.set("type", "save")
+                        self.set("game", "bitservice")
+                        
+                        # postacie
+                        # nie robie przywracania dla bezpieczeństwa
+                        # for id, char in enumerate(self.get("characters")):
+                        #     if self.getSafe(f"characters.{id}.nickname", default="ERR") == "ERR":
+                        #         self.set(f"characters.{id}.nickname", "Brak nazwy")
+                                
+                        #     if self.getSafe(f"characters.{id}.nickname", default="ERR") == "ERR":
+                        #         self.set(f"characters.{id}.nickname", "Brak nazwy")
+                            
+                            
                         # TODO: funkcja naprawiająca i sprawdzająca poprawność danych może kiedyś
                         
                 

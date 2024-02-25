@@ -1,5 +1,8 @@
 {
     "checkSum": 0,
+    "type": "save",
+    "game": "bitservice",
+    "log": [],
     "firstRun": 0,
     "lastGame": 0,
     "gameVersionfirst": 0,
