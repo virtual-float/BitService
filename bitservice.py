@@ -376,9 +376,10 @@ async def main(gameSettings: dict):
         
         paused : bool = False
 
-        pygame.mixer.music.load('./bin/audio/gameplay_theme.wav')
-        pygame.mixer.music.set_volume(GS['soundMusic'])
-        pygame.mixer.music.play(-1, 0)
+        if GameOn:
+            pygame.mixer.music.load('./bin/audio/gameplay_theme.wav')
+            pygame.mixer.music.set_volume(GS['soundMusic'])
+            pygame.mixer.music.play(-1, 0)
 
         while GameOn:
             await waitForOther()
