@@ -434,7 +434,7 @@ async def main(gameSettings: dict):
             game.client.clientGroup.draw(display)
             
             # renderowanie efektów dla klientów
-            game.client.clientEffectGroup.draw(display)
+            game.client.clientEffectGroup.draw(display) 
 
             if kera.gameover:
                 pygame.mixer.music.stop()
