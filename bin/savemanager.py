@@ -31,7 +31,7 @@ class gameEvent:
     useNumber: int
     callback: object
 
-
+SAVECANCELPROCEDURE = "SM_ERR_CANCEL"
     
 
 class save:
@@ -48,7 +48,8 @@ class save:
         # wiem że to troche lenistwo że wyświetlam to za pomocą osiągnieć
         # informacja o zapisywaniu gry
         import bin.achievements as ach
-        if ach.achievement.screen != None: _zapAch = ach.achievement("Zapisuję grę...")
+        if ach.achievement.screen != None: 
+            _zapAch = ach.achievement("Zapisuję grę...")
 
 
         # naprawa folderu jakby co
@@ -334,6 +335,8 @@ class save:
                 match _choice:
                     case None:
                         pygame.quit()
+                        global SAVECANCELPROCEDURE
+                        self.set("ERROR", SAVECANCELPROCEDURE)
                     case False:
                         self.erase()
                     case True:
@@ -341,7 +344,7 @@ class save:
                         # TODO: funkcja naprawiająca i sprawdzająca poprawność danych może kiedyś
                         
                 
-            self.save(notMakingSure=True)
+            # self.save(notMakingSure=True)
                 
                 
                 

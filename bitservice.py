@@ -301,6 +301,9 @@ async def main(gameSettings: dict):
         
         # Inicjalizacja menadżera savów
         save = saveManager.get(saveTime=GS['autoSavetime'] * 60)
+        if save.getSafe("ERROR", default=False) != False:
+            GameOn = False
+            
         
         # usuwanie devmoda
         save.set("devmode", False)
@@ -322,7 +325,8 @@ async def main(gameSettings: dict):
         # game.client.clientGroup.empty()
         game.client.startTask(screen=display)
         
-        game.client.restore()
+        if GameOn:
+            game.client.restore()
         
         # osiągniecie za włączenie gry :3
         achievement.pointHere('firstJob')
