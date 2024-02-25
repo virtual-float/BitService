@@ -301,9 +301,6 @@ async def main(gameSettings: dict):
         
         # Inicjalizacja menadżera savów
         save = saveManager.get(saveTime=GS['autoSavetime'] * 60)
-        if save.getSafe("ERROR", default=False) != False:
-            GameOn = False
-            
         
         # usuwanie devmoda
         save.set("devmode", False)
@@ -325,8 +322,7 @@ async def main(gameSettings: dict):
         # game.client.clientGroup.empty()
         game.client.startTask(screen=display)
         
-        if GameOn:
-            game.client.restore()
+        game.client.restore()
         
         # osiągniecie za włączenie gry :3
         achievement.pointHere('firstJob')
@@ -334,6 +330,11 @@ async def main(gameSettings: dict):
         # funkcja ułatwiająca
         async def waitForOther():
             await asyncio.sleep(0.00002)
+        
+        paused : bool = False
+
+        pygame.mixer.music.load('./bin/audio/gameplay_theme.wav')
+        pygame.mixer.music.play(-1, 0)
 
         while GameOn:
             await waitForOther()
@@ -368,7 +369,10 @@ async def main(gameSettings: dict):
 
     
             # obliczanie elementów gry
-            if pauseScreenOb.getState(): 
+            if pauseScreenOb.getState():
+                if not paused:
+                    pygame.mixer.music.pause()
+                    paused = True
                 # obsługa zdarzeń z eventHandlera z menu pauzy
                 _temp = pauseScreenOb.eventHandler(GS['devmode'], EVENTS, save)
                 # obsługa opcji
@@ -383,7 +387,9 @@ async def main(gameSettings: dict):
                     continue
             else:
                 # obsługa obliczeń w grze
-                
+                if paused:
+                    pygame.mixer.music.unpause()
+                    paused = False
                 
                 # chmurki
                 if CloudRect0.x < -Cloud0.get_width():
@@ -426,6 +432,8 @@ async def main(gameSettings: dict):
             game.client.clientEffectGroup.draw(display)
 
             if kera.gameover:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.unload()
                 display.blit(GameoverScreenSurface, (0, 0))
             else:
                 # Progress bar
@@ -475,7 +483,9 @@ async def main(gameSettings: dict):
             kera.update()
 
             GameClock.tick(15)
-            
+
+        pygame.mixer.music.stop()
+        pygame.mixer.music.unload()
         pygame.quit()
 
 
