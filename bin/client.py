@@ -524,7 +524,7 @@ class client(pygame.sprite.Sprite):
         
         # pozycja
         if pos == None:
-            self.pos = Vector2(0,4*70+ 4 * random.randint(0,8))
+            self.pos = Vector2(-100,4*70+ 4 * random.randint(0,8))
         else:
             if isinstance(pos, Vector2): self.pos = pos
             else: self.pos = Vector2(pos)
