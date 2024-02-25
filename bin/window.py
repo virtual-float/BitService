@@ -728,11 +728,15 @@ class window():
     # aktualne okno
     # nie chciało mi się męczyć z prywatnymi szczerze więc to jest publiczne, jeden raz tego uzywam
     # a by to wymagało wiele dodatkowych linijek kodu
+    # UWAGA: nie zawsze pokazuje aktualne okno! Używaj ostrożnie, jest to raczej "cache" bardziej niż
+    # wartość do pobrania
     lastFocusedWindow = None
     
     # eventy gracza
     events = None
     
+    # Okno "nasłuchiwane" by poruszać nim
+    listeningToMove = None
     
     # link do okna
     screen: pygame.surface.Surface = None
@@ -793,6 +797,10 @@ class window():
             
             # obsługa naciśniecia
             if any(_pres):
+                # usuwanie poruszania oknami
+                if not _pres[0]:
+                    cls.listeningToMove = None
+                
                 # oblicz pozycje kursora ze skalą
                 _pos = (
                     pygame.mouse.get_pos()[0] * (cls.screen.get_size()[0] / pygame.display.get_surface().get_size()[0]),
@@ -828,7 +836,12 @@ class window():
                     cls.__focusedElement.focused = False
                     cls.__focusedElement.focusEnd(cls.__focusedElement, cls.events, cls)
                     cls.__focusedElement = None
-            
+            else:
+                # usuwaj zaobowiązania
+                
+                # poruszanie oknami
+                cls.listeningToMove = None
+                
             # klasyczne spanko
             await asyncio.sleep(0.02)
             
@@ -1125,7 +1138,27 @@ class window():
                         previousFocused.focused = False
                         previousFocused.focusEnd(sprite, window.events, self)
                     
-                #TODO: tu opcjonalnie można by zaimplementować poruszanie oknami
+                if(pressed[0]):
+                    async def __clickListener():
+                        print(window.listeningToMove == self.__name, window.listeningToMove, self.__name )
+                        while window.checkWindow(self.__name) and window.listeningToMove == self.__name:
+                            _pos = pygame.mouse.get_pos()
+                            _r = (_pos[0] - self.storage['oldMousePos'][0],
+                                  _pos[1] - self.storage['oldMousePos'][1])
+                            
+                            self.setPosition(
+                                (self.getPosition()[0] + _r[0],
+                                self.getPosition()[1] + _r[1])
+                            )
+                            
+                            self.storage['oldMousePos'] = pygame.mouse.get_pos()
+                            await asyncio.sleep(0.05)
+                            
+                    
+                    if not window.listeningToMove == self.__name:
+                        window.listeningToMove = self.__name
+                        self.storage['oldMousePos'] = pygame.mouse.get_pos()
+                        asyncio.create_task(__clickListener(), name=f"windowClickMover_{self.__name}")
                 
                 return None
         except Exception as ex:
