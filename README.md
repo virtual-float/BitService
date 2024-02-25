@@ -1,16 +1,22 @@
 # BitService
 ## O grze
-Gra jest w typie kategorii: Informatyka, Symulacja, 2D, PixelArt
+__BitService__ to gra, w której jako pracownik w firmie _Bits & Services_ o imieniu __Kera__ musisz stawić czoło wyzwaniom zadanym przez klientów. 
+Posiadasz wskaźnik "pożyteczności", która określa poziom twojej użyteczności w tej firmie. Za każdą dobrą odpowiedź na pytania,
+wzrasta ten licznik, a przeciwnym razie, jeżeli została podana nieprawidłowa odpowiedź - licznik się obniża. 
+Jeżeli twój licznik spadnie do poniżej 10% pożyteczności, zostajesz wyrzucony z firmy - koniec gry. 
+Twoim celem tu jest na odpowiedzenie na jak najwięcej zadań i pytań poprawnie, aby podtrzymać poziom pożyteczności w firmie!
 
-__BitService__ Jest grą, w której wcielasz się w rolę pracownika o imieniu _Kera_ w firmie __Bits & Services__ i masz za 
-zadanie rozwiązać zadania przydzielonych tobie przez innych pracowników oraz szefa firmy.
+## O zadaniach
+Zadania są w kategorii _sieci_, _bramki logiczne_ oraz _operatory bitowe_!
 
-Musisz stanąć w czoło wyzwaniom takimi jak: 
-    _obliczanie adresów podsieci_, 
-    _obliczanie zadań z operatorami bitowymi_, 
-    _obliczanie ilości hostów w podsieci/sieci_ 
-i wiele więcej!!
+## Uruchomienie gry
+Do uruchomienia gry są niezbędne wymagania takie jak:
+1. Wersja __Python 3.12.X__ _(X symbolizuje dowolną końcówkę wersji)_
 
-Jako pracownik musisz starać się, żeby zadania były rozwiązane przez ciebie w 100% poprawne. W przypadku,
-gdy dane zadanie zostanie błędnie rozwiązane - zwiększa się licznik błędnych udzielonych odpowiedzi.
-Im większa wartość licznika - tym większa szansa na zostanie zwolnionym z pracy przez szefa.
+2. Zainstalowane moduły _(Moduły wymagane można zainstalować z pliku `requirements.txt`)_:
+    * __Jak zainstalować?__
+        Należy wejść w konsolę poleceń, i wpisać tą linijkę do konsoli `pip install -r requirements.txt`.
+        Ta linijka sprawia, że zainstaluje wszelkie moduły niezbędne dla tej gry oraz przypisane do nich wersje.
+
+Jeżeli zostały zainstalowane wymagane moduły oraz jest zainstalowana odpowiednia wersja Python,
+to tylko już wystarczy odpalić plik __bitservice.py__!
