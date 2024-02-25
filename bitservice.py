@@ -25,6 +25,10 @@ GS: dict
 # GameOn
 GameOn : bool = False
 
+# Stałe
+MAX_USEFULNESS_COUNT : int = 10
+MAX_TIRENESS_COUNT : int = 35
+
 # gameClock (np do przesyłania fpsów)
 GameClock: pygame.time.Clock | None = None
 
@@ -109,14 +113,25 @@ class Menu:
         pass
 
 
-# Funkcja, która zwróci ilość barów dla progress baru
-def generateBars(repStatus: int):
-    if repStatus > 0 and repStatus <= 10:
-        for i in range(0, repStatus, 1):
-            if i == repStatus - 1 and repStatus < 10: # 10 - max
+# Funkcja, która zwróci ilość barów dla wskaźnika użyteczności
+def generate_use_bars(current_amount: int):
+    if current_amount > 0 and current_amount <= MAX_USEFULNESS_COUNT:
+        for i in range(0, current_amount, 1):
+            if i == current_amount - 1 and current_amount < MAX_USEFULNESS_COUNT: # 10 - max
                 yield pygame.image.load('bin/images/bar_head.png'), pygame.image.load('bin/images/bar_head.png').get_rect()
                 break
             yield pygame.image.load('bin/images/bar_body.png'), pygame.image.load('bin/images/bar_body.png').get_rect()
+    else:
+        return ''
+
+# Funkcja, która zwróci ilość barów dla wskaźnika zmęczenia
+def generate_tire_bars(current_amount: int):
+    if current_amount >= 0 and current_amount <= MAX_TIRENESS_COUNT:
+        for i in range(0, current_amount, 1):
+            if i == current_amount - 1 and current_amount < MAX_TIRENESS_COUNT: # 35 - max
+                yield pygame.image.load('bin/images/bar_head_l.png'), pygame.image.load('bin/images/bar_head_l.png').get_rect()
+                break
+            yield pygame.image.load('bin/images/bar_body_l.png'), pygame.image.load('bin/images/bar_body_l.png').get_rect()
     else:
         return ''
 
@@ -159,14 +174,20 @@ class Player:
         # Logika dla ratio level
         _s = saveManager.get(alwaysNew=False)
         
-        if _s.getSafe('player.ratiolevel', default=0) >= 10:
-            _s.set('player.ratiolevel', 10)
+        if _s.getSafe('player.ratiolevel', default=0) >= MAX_USEFULNESS_COUNT:
+            _s.set('player.ratiolevel', MAX_USEFULNESS_COUNT)
         elif _s.getSafe('player.ratiolevel', default=0) <= 0:
             _s.set('player.ratiolevel', 0)
             self.gameover = True
+        
+        if _s.getSafe('player.tirenesslevel', default=0) >= MAX_TIRENESS_COUNT:
+            _s.set('player.tirenesslevel', MAX_TIRENESS_COUNT)
+        elif _s.getSafe('player.tirenesslevel', default=0) <= 0:
+            _s.set('player.tirenesslevel', 0)
 
         # Logika emotek
         _ratio = _s.getSafe('player.ratiolevel', default=0)
+        _tratio = _s.getSafe('player.tirenesslevel', default=0)
         
         if _ratio <= 0:
             self.current_img = self.emote_cry
@@ -176,6 +197,12 @@ class Player:
             self.current_img = self.emote_idle
         elif _ratio > 7 and _ratio <= 10:
             self.current_img = self.emote_happy
+        
+        if _tratio >= MAX_TIRENESS_COUNT // 2:
+            decr_chance = rand.randint(1, 100)
+            if decr_chance == 10:
+                _s.set('player.ratiolevel', _s.getSafe('player.ratiolevel', default=1) - 1)
+
 
         # Logika w przypadku game over
         if self.gameover:
@@ -198,6 +225,8 @@ class Player:
 
 
 async def main(gameSettings: dict):
+    
+
     global GS, GameOn, GameClock
     # messagebox.showinfo('Informacja', 'uruchomiono pomyślnie')
 
@@ -252,12 +281,21 @@ async def main(gameSettings: dict):
         Background = scaleImage('bin/images/background.png', RENDER_SCALE).convert_alpha()
 
         # Dla gry
-        ProgressBar = pygame.image.load('bin/images/progress_bar.png').convert_alpha()
-        ProgressBarRect = ProgressBar.get_rect()
-        pb_x = (GS['ApplicationSize'][0] + ProgressBar.get_width()) // 2
-        pb_y = GS['ApplicationSize'][1] // 2 + (8 * ProgressBar.get_height())
-        ProgressBarRect.x = pb_x
-        ProgressBarRect.y = pb_y
+        UsefulnessBar = pygame.image.load('bin/images/usefulness_bar.png').convert_alpha()
+        UsefulnessBarRect = UsefulnessBar.get_rect()
+        ub_x = (GS['ApplicationSize'][0] + UsefulnessBar.get_width()) // 2
+        ub_y = GS['ApplicationSize'][1] // 2 + (8 * UsefulnessBar.get_height())
+        UsefulnessBarRect.x = ub_x
+        UsefulnessBarRect.y = ub_y
+        #
+        TirenessBar = pygame.image.load('bin/images/tireness_bar.png').convert_alpha()
+        TirenessBarRect = TirenessBar.get_rect()
+        tb_x = (GS['ApplicationSize'][0] + UsefulnessBar.get_width()) // 2 - (TirenessBar.get_width() - UsefulnessBar.get_width())
+        tb_y = GS['ApplicationSize'][1] // 2 + (9 * UsefulnessBar.get_height()) + 10
+        TirenessBarRect.x = tb_x
+        TirenessBarRect.y = tb_y
+
+
 
         # Objekt
         # Biurko z rzeczami od razu
@@ -339,6 +377,7 @@ async def main(gameSettings: dict):
         paused : bool = False
 
         pygame.mixer.music.load('./bin/audio/gameplay_theme.wav')
+        pygame.mixer.music.set_volume(GS['soundMusic'])
         pygame.mixer.music.play(-1, 0)
 
         while GameOn:
@@ -364,10 +403,10 @@ async def main(gameSettings: dict):
                                 if not kera.gameover:
                                     pauseScreenOb.toggle()
                             # WYŁĄCZNIE DLA TESTU TO CO PONIŻEJ
-                            case pygame.K_LEFT:
-                                save.set('player.ratiolevel', save.getSafe('player.ratiolevel', default=0)-1)
-                            case pygame.K_RIGHT:
-                                save.set('player.ratiolevel', save.getSafe('player.ratiolevel', default=0)+1)
+                            # case pygame.K_LEFT:
+                            #     save.set('player.ratiolevel', save.getSafe('player.ratiolevel', default=0)-1)
+                            # case pygame.K_RIGHT:
+                            #     save.set('player.ratiolevel', save.getSafe('player.ratiolevel', default=0)+1)
                             case pygame.K_UP:
                                 if not game.window.checkWindow("gate_gui"):
                                     pass
@@ -442,18 +481,33 @@ async def main(gameSettings: dict):
                 display.blit(GameoverScreenSurface, (0, 0))
             else:
                 # Progress bar
-                display.blit(ProgressBar, (ProgressBarRect.x, ProgressBarRect.y))
+                display.blit(UsefulnessBar, (UsefulnessBarRect.x, UsefulnessBarRect.y))
+                display.blit(TirenessBar, (TirenessBarRect.x, TirenessBarRect.y))
 
                 # Layout
-                bars_t = generateBars(save.getSafe('player.ratiolevel', default=0))
+                ub_bars = generate_use_bars(save.getSafe('player.ratiolevel', default=0))
+                tb_bars = generate_tire_bars(save.getSafe('player.tirenesslevel', default=0))
+
                 
-                if not isinstance(bars_t, str):
+                if not isinstance(ub_bars, str):
                     # temp
                     temp_x = 0
 
-                    # Render barów dla progress bar
-                    for bar in list(bars_t):
-                        bar[1].x, bar[1].y = (pb_x + 2) + temp_x, (pb_y + 2)
+                    # Render barów dla wskaźnika 
+                    for bar in list(ub_bars):
+                        bar[1].x, bar[1].y = (ub_x + 2) + temp_x, (ub_y + 2)
+
+                        temp_x += bar[0].get_width()
+
+                        display.blit(bar[0], (bar[1].x, bar[1].y))
+                
+                if not isinstance(tb_bars, str):
+                    # temp
+                    temp_x = 0
+
+                    # Render barów dla wskaźnika 
+                    for bar in list(tb_bars):
+                        bar[1].x, bar[1].y = (tb_x + 2) + temp_x, (tb_y + 2)
 
                         temp_x += bar[0].get_width()
 
