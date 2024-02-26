@@ -280,7 +280,7 @@ class settings:
         self.__soundAll.trace_add('write', useUpd(self.__scaleInfoAllSound, self.__scaleAllSound, self.__soundAll))
         
         def __handleSoundAll(*args):
-            self.__newSettings['soundAll'] = self.__soundAll.get()
+            self.__newSettings['soundAll'] = self.__soundAll.get() / 100
             self.__checkSave()
         
         self.__soundAll.trace_add('write', __handleSoundAll)
@@ -311,7 +311,7 @@ class settings:
         self.__soundMusic.trace_add('write', useUpd(self.__scaleInfoMusicSound, self.__scaleMusicSound, self.__soundMusic))
         
         def __handleSoundMusic(*args):
-            self.__newSettings['soundMusic'] = self.__soundMusic.get()
+            self.__newSettings['soundMusic'] = self.__soundMusic.get() / 100
             self.__checkSave()
         
         self.__soundMusic.trace_add('write', __handleSoundMusic)
@@ -342,7 +342,7 @@ class settings:
         self.__soundEffect.trace_add('write', useUpd(self.__scaleInfoEffectSound, self.__scaleEffectSound, self.__soundEffect))
         
         def __handleSoundEffect(*args):
-            self.__newSettings['soundEffect'] = self.__soundEffect.get()
+            self.__newSettings['soundEffect'] = self.__soundEffect.get() / 100
             self.__checkSave()
         
         self.__soundEffect.trace_add('write', __handleSoundEffect)
@@ -374,7 +374,7 @@ class settings:
         self.__soundDialogue.trace_add('write', useUpd(self.__scaleInfoDialogueSound, self.__scaleDialogueSound, self.__soundDialogue))
         
         def __handleSoundEffect(*args):
-            self.__newSettings['soundDialogue'] = self.__soundDialogue.get()
+            self.__newSettings['soundDialogue'] = self.__soundDialogue.get() / 100
             self.__checkSave()
         
         self.__soundDialogue.trace_add('write', __handleSoundEffect)

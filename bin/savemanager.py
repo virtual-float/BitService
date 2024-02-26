@@ -365,7 +365,7 @@ class save:
                 
                 match _choice:
                     case None:
-                        pygame.quit()
+                        # pygame.quit()
                         global SAVECANCELPROCEDURE
                         self.set("ERROR", SAVECANCELPROCEDURE)
                     case False:
