@@ -80,7 +80,7 @@ class Menu:
         ).place(x=15, y=150)
 
         AchievementsButton = Button(
-            text='OSIĄGNIĘCIA',
+            text='Osiągnięcia',
             width=20,
             height=2,
             command=lambda: self.openAchievements()
@@ -110,6 +110,7 @@ class Menu:
         self.handle.destroy()
 
     def openAchievements(self) -> None:
+        # TODO: Okno z osiągnięciami
         pass
 
 
@@ -168,6 +169,7 @@ class Player:
         self.current_img = self.emote_idle
 
         self.gameover : bool = False
+        self.tireness : bool = False
 
     # Metoda, która będzie sprawdzała 'logiki' dla gracza
     def update(self) -> None:
@@ -189,19 +191,19 @@ class Player:
         _ratio = _s.getSafe('player.ratiolevel', default=0)
         _tratio = _s.getSafe('player.tirenesslevel', default=0)
         
-        if _ratio <= 0:
-            self.current_img = self.emote_cry
-        elif _ratio > 0 and _ratio <= 4:
-            self.current_img = self.emote_sad
-        elif _ratio > 4 and _ratio <= 7:
-            self.current_img = self.emote_idle
-        elif _ratio > 7 and _ratio <= 10:
-            self.current_img = self.emote_happy
+        if _ratio <= 0:                   self.current_img = self.emote_cry
+        elif _ratio > 0 and _ratio <= 4:  self.current_img = self.emote_sad
+        elif _ratio > 4 and _ratio <= 7:  self.current_img = self.emote_idle
+        elif _ratio > 7 and _ratio <= 10: self.current_img = self.emote_happy
         
         if _tratio >= MAX_TIRENESS_COUNT // 2:
+            self.tireness = True
             decr_chance = rand.randint(1, 100)
             if decr_chance == 10:
                 _s.set('player.ratiolevel', _s.getSafe('player.ratiolevel', default=1) - 1)
+                print('Trafiono na 10%. ZMNIEJSZONO POZIOM UŻYTECZNOŚCI!')
+        else:
+            self.tireness = False
 
 
         # Logika w przypadku game over
@@ -318,15 +320,28 @@ async def main(gameSettings: dict):
         GameClock = pygame.time.Clock()
         giveClock(GameClock)
 
-
         # Gameover
         GameoverScreenSurface = pygame.surface.Surface((GS['ApplicationSize'][0], GS['ApplicationSize'][1]), pygame.SRCALPHA, 32)
         GameoverScreenSurface.fill((0, 0, 0, 95))
-        GameOverImage = scaleImage('bin/images/game_over.png', 4).convert_alpha()
+        GameOverImage = scaleImage('bin/images/game_over.png', RENDER_SCALE).convert_alpha()
 
         # Informacje o grze [game over]
         FontRender = pygame.font.Font(None, 28)
+        FontRender = pygame.font.Font(None, 31)
         InformationLabel = FontRender.render('Zostałeś wyrzucony z Bits & Services :( !!!', False, (255, 255, 255))
+
+        # Warning sign
+        # TODO: Ustawić dobrze pozycję notyfikacji
+        WarningSign = scaleImage('bin/images/warning_sign.png', RENDER_SCALE // 2).convert_alpha()
+        WarningSignRect = WarningSign.get_rect()
+        WarningMessage = FontRender.render('WYSOKI POZIOM ZMĘCZENIA', False, (255, 255, 255))
+        WarningMessageRect = WarningMessage.get_rect()
+        #
+        WarningSignRect.x = GS['ApplicationSize'][0] - round(WarningMessage.get_width() * 1.5) - 32
+        WarningSignRect.y = WarningMessage.get_height() + 15
+        #
+        WarningMessageRect.x = WarningSignRect.x + 8
+        WarningMessageRect.y = WarningSignRect.y
 
         # ...
         GameoverScreenSurface.blit(GameOverImage, (GS['ApplicationSize'][0] // 2 - GameOverImage.get_width() // 2, GS['ApplicationSize'][1] // 2 - GameOverImage.get_height()))
@@ -473,7 +488,11 @@ async def main(gameSettings: dict):
             game.client.clientGroup.draw(display)
             
             # renderowanie efektów dla klientów
-            game.client.clientEffectGroup.draw(display) 
+            game.client.clientEffectGroup.draw(display)
+
+            if kera.tireness:
+                display.blit(WarningSign, (WarningSignRect.x, WarningSignRect.y))
+                display.blit(WarningMessage, (WarningMessageRect.x, WarningMessageRect.y))
 
             if kera.gameover:
                 pygame.mixer.music.stop()

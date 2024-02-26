@@ -2,17 +2,17 @@
     {
         "QUESTION": "Oblicz adres rozgłoszeniowy",
         "Q_DATA": "127.0.0.1 /24",
-        "ANSWER": "7F.0.1.0"
+        "ANSWER": "127.0.1.0"
     },
     {
         "QUESTION": "Oblicz adres rozgłoszeniowy",
         "Q_DATA": "127.0.0.1 /25",
-        "ANSWER": "7F.0.0.80"
+        "ANSWER": "127.0.0.128"
     },
     {
         "QUESTION": "Jak będzie wyglądała maska ze\nskróconego zapisu \\25?",
         "Q_DATA": "",
-        "ANSWER": "FF.FF.FF.80"
+        "ANSWER": "255.255.255.128"
     },
     {
         "QUESTION": "Ile będzie można stworzyć hostów\nw podanej sieci oraz masce?",
