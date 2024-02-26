@@ -136,6 +136,9 @@ def generate_tire_bars(current_amount: int):
     else:
         return ''
 
+#
+# DODAĆ FUNKCJONALNOŚĆ DO PRZYCISKU COFFEE
+#
 
 # Klasa gracza
 class Player:
@@ -346,8 +349,6 @@ async def main(gameSettings: dict):
         # ...
         GameoverScreenSurface.blit(GameOverImage, (GS['ApplicationSize'][0] // 2 - GameOverImage.get_width() // 2, GS['ApplicationSize'][1] // 2 - GameOverImage.get_height()))
         GameoverScreenSurface.blit(InformationLabel, (GS['ApplicationSize'][0] // 2 - GameOverImage.get_width() // 2 + 32, GS['ApplicationSize'][1] // 2 + (GameOverImage.get_height() // 2)))
-
-        
         
         # Obiekt pauseScreen służący do stopowania gry
         pauseScreenOb = pauseScreen(display)
