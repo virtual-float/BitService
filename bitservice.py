@@ -256,7 +256,7 @@ async def main(gameSettings: dict):
         # Dla gry
         UsefulnessBar = pygame.image.load('bin/images/usefulness_bar.png').convert_alpha()
         UsefulnessBarRect = UsefulnessBar.get_rect()
-        ub_x = (GS['ApplicationSize'][0] + UsefulnessBar.get_width()) // 3 + 32
+        ub_x = (GS['ApplicationSize'][0] + UsefulnessBar.get_width()) // 3 + 86
         ub_y = GS['ApplicationSize'][1] // 2 + (18 * UsefulnessBar.get_height())
         UsefulnessBarRect.x = ub_x
         UsefulnessBarRect.y = ub_y
@@ -289,7 +289,7 @@ async def main(gameSettings: dict):
         GameOverImage = scaleImage('bin/images/game_over.png', RENDER_SCALE).convert_alpha()
 
         # Informacje o grze [game over]
-        FontRender = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 28)
+        FontRender = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 22)
         FontRenderSmall = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 18)
         InformationLabel = FontRender.render('ZOSTAŁEŚ WYRZUCONY Z FIRMY BITS & SERVICE', True, (255, 255, 255))
         IndexLabel = FontRenderSmall.render('WSKAŹNIK POŻYTECZNOŚCI', True, (250, 250, 250))
