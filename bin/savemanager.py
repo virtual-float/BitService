@@ -38,7 +38,7 @@ class save:
     currentSave = None
     
     '''Save gry'''
-    def save(self, notMakingSure:bool=False) -> bool:
+    def save(self, notMakingSure:bool=False, showInfo:bool=True) -> bool:
         '''Ręczne zapisywanie stanu gry\n
             --------------\n
             Argumenty:\n
@@ -48,8 +48,10 @@ class save:
         # wiem że to troche lenistwo że wyświetlam to za pomocą osiągnieć
         # informacja o zapisywaniu gry
         import bin.achievements as ach
-        if ach.achievement.screen != None: 
-            _zapAch = ach.achievement("Zapisuję grę...")
+        if ach.achievement.screen != None and showInfo: 
+            try:
+                _zapAch = ach.achievement("Zapisuję grę...")
+            except: pass
 
 
         # naprawa folderu jakby co
@@ -79,10 +81,12 @@ class save:
         _info = fc.updateJSON(self.__fileSave, self.__save)
         
         # informacja o końcu zapisu gry (i usunięcie jakby co informacji o zapisywaniu)
-        if ach.achievement.screen != None:
-            ach.achievement.achievementShown.remove(_zapAch)
-            del(_zapAch)
-            if ach.achievement.screen != None: ach.achievement("Gra zapisana!")
+        if ach.achievement.screen != None and showInfo:
+            try:
+                ach.achievement.achievementShown.remove(_zapAch)
+                del(_zapAch)
+                if ach.achievement.screen != None: ach.achievement("Gra zapisana!")
+            except: pass
         
         # zwrócenie stanu czy się udało
         return _info
