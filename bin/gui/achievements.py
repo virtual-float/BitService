@@ -30,6 +30,7 @@ class achievementsGui:
             self.__me.destroy()
         else:
             _s.save()
+            ach.achievement.achievementShown.clear()
             _l = 0
             for achName, achData in self.__achievementsData.items():
                 _saveData = _s.getSafe(f"achievements.{achName}", default={
