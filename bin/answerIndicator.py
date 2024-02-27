@@ -52,10 +52,10 @@ class answerIndicator(pygame.sprite.Sprite):
         self.image.convert_alpha()
         
         self.image.blit(
-            pygame.font.SysFont("Franklin Gothic", 23).render("POPRAWNA ODPOWIEDŹ" if status else "NIEPOPRAWNA ODPOWIEDŹ", True, (
-                (20, 240, 20) if status else (240, 20, 20)
+            pygame.font.SysFont("Ink Free", 22).render("poprawna odpowiedź" if status else "niepoprawna odpowiedź",True, (
+                (20,240,20) if status else (240,20,20)
             )),
-            (60, 17)
+            (60, 15)
         )
         
         
