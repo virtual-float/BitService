@@ -25,7 +25,7 @@ class achievementsGui:
         
         self.__achievementsData = readJSON("./bin/achievements.json", True)
         
-        _s = sm.save(saveToCurrent=False)
+        _s = sm.save(saveToCurrent=False, tasks=False)
         if _s.getSafe("ERROR", default=False) != False:
             self.__me.destroy()
         else:

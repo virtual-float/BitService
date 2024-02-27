@@ -301,7 +301,7 @@ class save:
                         
             
         
-    def __init__(self, file:str="./data/save.json", pattern:str="./bin/savePattern.json", saveTime:int=10, saveToCurrent:bool=True):
+    def __init__(self, file:str="./data/save.json", pattern:str="./bin/savePattern.json", saveTime:int=10, saveToCurrent:bool=True, tasks:bool=True):
         self.__fileSave, self.__patternSave, self.__saveTime = file, pattern, saveTime
         
         self.__events = []
@@ -407,14 +407,15 @@ class save:
         })
         
         # autozapis
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.__autoSave(), name="saveManager")
+        if tasks:
+            loop = asyncio.get_event_loop()
+            loop.create_task(self.__autoSave(), name="saveManager")
         
         # zegar gry
-        loop.create_task(self.__addSec(), name="saveManagerSec")
-        loop.create_task(self.__gameClock(), name="gameClock")
-        loop.create_task(self.__eventManager(), name="eventManager")
-        
+            loop.create_task(self.__addSec(), name="saveManagerSec")
+            loop.create_task(self.__gameClock(), name="gameClock")
+            loop.create_task(self.__eventManager(), name="eventManager")
+            
         if saveToCurrent:
             save.currentSave = self
             
@@ -443,9 +444,9 @@ class save:
         
         
         
-def get(file="./data/save.json", pattern="./bin/savePattern.json", saveTime:int=10, alwaysNew:bool=True) -> save:
+def get(file="./data/save.json", pattern="./bin/savePattern.json", saveTime:int=10, alwaysNew:bool=True, *args, **kwargs) -> save:
     if not alwaysNew and save.currentSave != None:
         return save.currentSave
     else:
-        return save(file,pattern, saveTime=saveTime)     
+        return save(file,pattern, saveTime=saveTime, *args, **kwargs)     
     
