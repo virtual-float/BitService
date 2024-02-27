@@ -15,10 +15,10 @@
     "time":{
         "totalSec": 0,
 
-        "hour": 8,
+        "hour": 0,
         "minute": 0,
         "second": 0,
-        "day": 1
+        "day": 0
 
     },
     "characters": [],
@@ -27,9 +27,8 @@
     "clientQueue":[],
     "player":{
         "type": "player",
-        "nickname": "kera",
-        "ratiolevel": 10,
-        "tirenesslevel": 0,
+        "nickname": "Kera",
+        "ratiolevel": 35,
         "appearance":{
 
         }

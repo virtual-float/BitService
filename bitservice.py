@@ -27,8 +27,7 @@ GS: dict
 GameOn : bool = False
 
 # Stałe
-MAX_USEFULNESS_COUNT : int = 10
-MAX_TIRENESS_COUNT : int = 35
+MAX_USEFULNESS_COUNT : int = 35
 
 # gameClock (np do przesyłania fpsów)
 GameClock: pygame.time.Clock | None = None
@@ -114,27 +113,12 @@ class Menu:
 def generate_use_bars(current_amount: int):
     if current_amount > 0 and current_amount <= MAX_USEFULNESS_COUNT:
         for i in range(0, current_amount, 1):
-            if i == current_amount - 1 and current_amount < MAX_USEFULNESS_COUNT: # 10 - max
+            if i == current_amount - 1 and current_amount < MAX_USEFULNESS_COUNT: # 35 - max
                 yield pygame.image.load('bin/images/bar_head.png'), pygame.image.load('bin/images/bar_head.png').get_rect()
                 break
             yield pygame.image.load('bin/images/bar_body.png'), pygame.image.load('bin/images/bar_body.png').get_rect()
     else:
         return ''
-
-# Funkcja, która zwróci ilość barów dla wskaźnika zmęczenia
-def generate_tire_bars(current_amount: int):
-    if current_amount >= 0 and current_amount <= MAX_TIRENESS_COUNT:
-        for i in range(0, current_amount, 1):
-            if i == current_amount - 1 and current_amount < MAX_TIRENESS_COUNT: # 35 - max
-                yield pygame.image.load('bin/images/bar_head_l.png'), pygame.image.load('bin/images/bar_head_l.png').get_rect()
-                break
-            yield pygame.image.load('bin/images/bar_body_l.png'), pygame.image.load('bin/images/bar_body_l.png').get_rect()
-    else:
-        return ''
-
-#
-# DODAĆ FUNKCJONALNOŚĆ DO PRZYCISKU COFFEE
-#
 
 # Klasa gracza
 class Player:
@@ -181,29 +165,13 @@ class Player:
             _s.set('player.ratiolevel', 0)
             self.gameover = True
         
-        if _s.getSafe('player.tirenesslevel', default=0) >= MAX_TIRENESS_COUNT:
-            _s.set('player.tirenesslevel', MAX_TIRENESS_COUNT)
-        elif _s.getSafe('player.tirenesslevel', default=0) <= 0:
-            _s.set('player.tirenesslevel', 0)
-
         # Logika emotek
         _ratio = _s.getSafe('player.ratiolevel', default=0)
-        _tratio = _s.getSafe('player.tirenesslevel', default=0)
         
         if _ratio <= 0:                   self.current_img = self.emote_cry
-        elif _ratio > 0 and _ratio <= 4:  self.current_img = self.emote_sad
-        elif _ratio > 4 and _ratio <= 7:  self.current_img = self.emote_idle
-        elif _ratio > 7 and _ratio <= 10: self.current_img = self.emote_happy
-        
-        if _tratio >= MAX_TIRENESS_COUNT // 2:
-            self.tireness = True
-            decr_chance = rand.randint(1, 100)
-            if decr_chance == 10:
-                _s.set('player.ratiolevel', _s.getSafe('player.ratiolevel', default=1) - 1)
-                print('Trafiono na 10%. ZMNIEJSZONO POZIOM UŻYTECZNOŚCI!')
-        else:
-            self.tireness = False
-
+        elif _ratio > 0 and _ratio <= 10:  self.current_img = self.emote_sad
+        elif _ratio > 10 and _ratio <= 20:  self.current_img = self.emote_idle
+        elif _ratio > 20 and _ratio <= 35: self.current_img = self.emote_happy
 
         # Logika w przypadku game over
         if self.gameover:
@@ -282,21 +250,14 @@ async def main(gameSettings: dict):
         # Tło gry
         Background = scaleImage('bin/images/background.png', RENDER_SCALE).convert_alpha()
 
+
         # Dla gry
         UsefulnessBar = pygame.image.load('bin/images/usefulness_bar.png').convert_alpha()
         UsefulnessBarRect = UsefulnessBar.get_rect()
-        ub_x = (GS['ApplicationSize'][0] + UsefulnessBar.get_width()) // 2
-        ub_y = GS['ApplicationSize'][1] // 2 + (8 * UsefulnessBar.get_height())
+        ub_x = (GS['ApplicationSize'][0] + UsefulnessBar.get_width()) // 3 + 32
+        ub_y = GS['ApplicationSize'][1] // 2 + (18 * UsefulnessBar.get_height())
         UsefulnessBarRect.x = ub_x
         UsefulnessBarRect.y = ub_y
-        #
-        TirenessBar = pygame.image.load('bin/images/tireness_bar.png').convert_alpha()
-        TirenessBarRect = TirenessBar.get_rect()
-        tb_x = (GS['ApplicationSize'][0] + UsefulnessBar.get_width()) // 2 - (TirenessBar.get_width() - UsefulnessBar.get_width())
-        tb_y = GS['ApplicationSize'][1] // 2 + (9 * UsefulnessBar.get_height()) + 10
-        TirenessBarRect.x = tb_x
-        TirenessBarRect.y = tb_y
-
 
 
         # Objekt
@@ -326,9 +287,10 @@ async def main(gameSettings: dict):
         GameOverImage = scaleImage('bin/images/game_over.png', RENDER_SCALE).convert_alpha()
 
         # Informacje o grze [game over]
-        FontRender = pygame.font.Font(None, 28)
-        FontRender = pygame.font.Font(None, 31)
-        InformationLabel = FontRender.render('Zostałeś wyrzucony z Bits & Services :( !!!', False, (255, 255, 255))
+        FontRender = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 28)
+        FontRenderSmall = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 18)
+        InformationLabel = FontRender.render('ZOSTAŁEŚ WYRZUCONY Z FIRMY BITS & SERVICE', True, (255, 255, 255))
+        IndexLabel = FontRenderSmall.render('WSKAŹNIK POŻYTECZNOŚCI', True, (250, 250, 250))
 
         # Warning sign
         # TODO: Ustawić dobrze pozycję notyfikacji
@@ -489,10 +451,6 @@ async def main(gameSettings: dict):
             # renderowanie efektów dla klientów
             game.client.clientEffectGroup.draw(display)
 
-            if kera.tireness:
-                display.blit(WarningSign, (WarningSignRect.x, WarningSignRect.y))
-                display.blit(WarningMessage, (WarningMessageRect.x, WarningMessageRect.y))
-
             if kera.gameover:
                 pygame.mixer.music.stop()
                 pygame.mixer.music.unload()
@@ -500,12 +458,10 @@ async def main(gameSettings: dict):
             else:
                 # Progress bar
                 display.blit(UsefulnessBar, (UsefulnessBarRect.x, UsefulnessBarRect.y))
-                display.blit(TirenessBar, (TirenessBarRect.x, TirenessBarRect.y))
+                display.blit(IndexLabel, (UsefulnessBarRect.x, UsefulnessBarRect.y - 28))
 
                 # Layout
                 ub_bars = generate_use_bars(save.getSafe('player.ratiolevel', default=0))
-                tb_bars = generate_tire_bars(save.getSafe('player.tirenesslevel', default=0))
-
                 
                 if not isinstance(ub_bars, str):
                     # temp
@@ -518,22 +474,6 @@ async def main(gameSettings: dict):
                         temp_x += bar[0].get_width()
 
                         display.blit(bar[0], (bar[1].x, bar[1].y))
-                
-                if not isinstance(tb_bars, str):
-                    # temp
-                    temp_x = 0
-
-                    # Render barów dla wskaźnika 
-                    for bar in list(tb_bars):
-                        bar[1].x, bar[1].y = (tb_x + 2) + temp_x, (tb_y + 2)
-
-                        temp_x += bar[0].get_width()
-
-                        display.blit(bar[0], (bar[1].x, bar[1].y))
-                    
-
-            
-        
                 
             # renderowanie okna
             window.window.draw(display)
