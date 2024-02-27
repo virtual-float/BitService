@@ -81,7 +81,7 @@ def generate_gate(newQuestion: dict, client):
             wn.windowElement(scaleImage(newQuestion['Q_DATA'],3), cords=(300,55)),
             _t := wn.windowTextBox(cords=(40, 180), xsize=40, name="textBox").
             setRegex("^[0-9\.]*$").setReturnListener(handler),
-            wn.windowText(fontName="MEDIUM_TAHOMA", text="SPRAWDZ", cords=(190, 235), color=(240, 240, 240))
+            wn.windowText(fontName="MEDIUM_TAHOMA", text="SPRAWDZ", cords=(187, 235), color=(240, 240, 240))
             .addClickListener(handler)
             
             
