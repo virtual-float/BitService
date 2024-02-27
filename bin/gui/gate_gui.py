@@ -77,11 +77,11 @@ def generate_gate(newQuestion: dict, client):
         name="gate_gui",
         size=(500,300),
         body=wn.windowBody(
-            wn.windowText(fontName="MEDIUM_COMICSANS", text="Problem z bramkami!", cords=(60,0), color=(233,233,233)),
+            wn.windowText(fontName="MEDIUM_TAHOMA", text="Problem z bramkami!", cords=(60,0), color=(233,233,233)),
             wn.windowElement(scaleImage(newQuestion['Q_DATA'],3), cords=(300,55)),
             _t := wn.windowTextBox(cords=(40, 180), xsize=40, name="textBox").
             setRegex("^[0-9\.]*$").setReturnListener(handler),
-            wn.windowText(fontName="MEDIUM_CONSOLAS", text="SPRAWDZ", cords=(190, 240), color=(240, 240, 240))
+            wn.windowText(fontName="MEDIUM_TAHOMA", text="SPRAWDZ", cords=(190, 235), color=(240, 240, 240))
             .addClickListener(handler)
             
             
@@ -94,7 +94,7 @@ def generate_gate(newQuestion: dict, client):
     # zrobienie napisu z pytaniem
     for id, element in enumerate(text):
         window.getBody().add(
-            wn.windowText(fontName="VERYSMALL_COMICSANS", text=element, cords=(10,70+(20*id)), color=(233,233,233))
+            wn.windowText(fontName="VERYSMALL_TAHOMA", text=element, cords=(10,70+(20*id)), color=(233,233,233))
             )
         
     
