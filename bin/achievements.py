@@ -53,7 +53,7 @@ class achievement:
                        "point": "inGame",
                        "type": "onceGained",
                        "gainDate": time.time_ns(),
-                       "gainVersion": 10
+                       "gainVersion": 100
                    })
             
             print(cls.__achievementData[achievementName])

@@ -285,7 +285,7 @@ class settings:
         
         self.__soundAll.trace_add('write', __handleSoundAll)
         
-        self.__soundAll.set(self.__previousSettings['soundAll'])
+        self.__soundAll.set(self.__previousSettings['soundAll'] * 100)
         
 
         # dźwięk muzyki      
@@ -316,7 +316,7 @@ class settings:
         
         self.__soundMusic.trace_add('write', __handleSoundMusic)
         
-        self.__soundMusic.set(self.__previousSettings['soundMusic'])
+        self.__soundMusic.set(self.__previousSettings['soundMusic'] * 100)
  
  
         # dźwięk efektów     
@@ -347,7 +347,7 @@ class settings:
         
         self.__soundEffect.trace_add('write', __handleSoundEffect)
         
-        self.__soundEffect.set(self.__previousSettings['soundEffect'])       
+        self.__soundEffect.set(self.__previousSettings['soundEffect'] * 100)       
         
         
 
@@ -379,7 +379,7 @@ class settings:
         
         self.__soundDialogue.trace_add('write', __handleSoundEffect)
         
-        self.__soundDialogue.set(self.__previousSettings['soundDialogue'])       
+        self.__soundDialogue.set(self.__previousSettings['soundDialogue'] * 100)       
 
         # -------------------
         # konto

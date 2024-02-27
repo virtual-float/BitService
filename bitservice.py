@@ -17,7 +17,8 @@ from bin.devmode import devModeSprites, giveClock
 
 # gui
 from bin.gui.settings import settings as settingsGui
-from bin.gui.gate_gui import generate_gate
+# from bin.gui.gate_gui import generate_gate
+from bin.gui.achievements import achievementsGui
 
 # Game Setting
 GS: dict
@@ -83,7 +84,7 @@ class Menu:
             text='Osiągnięcia',
             width=20,
             height=2,
-            command=lambda: self.openAchievements()
+            command=lambda: achievementsGui(self.handle)
         ).place(x=15, y=200)
 
         settings = Button(
@@ -108,11 +109,6 @@ class Menu:
             GS = readJSON('./bin/settings.json')
             self.status = 1
         self.handle.destroy()
-
-    def openAchievements(self) -> None:
-        # TODO: Okno z osiągnięciami
-        pass
-
 
 # Funkcja, która zwróci ilość barów dla wskaźnika użyteczności
 def generate_use_bars(current_amount: int):
@@ -394,7 +390,7 @@ async def main(gameSettings: dict):
 
         if GameOn:
             pygame.mixer.music.load('./bin/audio/gameplay_theme.wav')
-            pygame.mixer.music.set_volume(GS['soundMusic'])
+            pygame.mixer.music.set_volume(GS['soundMusic'] * GS['soundAll'])
             pygame.mixer.music.play(-1, 0)
 
         while GameOn:
