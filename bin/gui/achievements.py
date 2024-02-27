@@ -23,6 +23,7 @@ class achievementsGui:
         self.__me.focus()
         self.__me.grab_set()
         
+        # dane o osiągnieciach + save
         self.__achievementsData = readJSON("./bin/achievements.json", True)
         
         _s = sm.save(saveToCurrent=False, tasks=False)
@@ -31,11 +32,14 @@ class achievementsGui:
         else:
             _s.save(showInfo=False)
             _l = 0
+            
+            # wczytaj osiągniecia
             for achName, achData in self.__achievementsData.items():
                 _saveData = _s.getSafe(f"achievements.{achName}", default={
                     "gain": False
                 })
                 
+                # wczytaj date i wersje
                 if _saveData['gain']:
                     _ze = round(_saveData['gainDate']/1000 / 1000000)
                     _tObj = datetime.datetime.fromtimestamp(_ze)
@@ -50,6 +54,8 @@ class achievementsGui:
                     gainDate = "??"
                     gainVersion = "??"          
                 
+                
+                # podstawowa rama
                 _c = tk.Frame(
                     master=self.__me,
                     height=100,
