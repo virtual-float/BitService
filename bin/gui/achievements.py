@@ -29,6 +29,7 @@ class achievementsGui:
         if _s.getSafe("ERROR", default=False) != False:
             self.__me.destroy()
         else:
+            _s.save()
             _l = 0
             for achName, achData in self.__achievementsData.items():
                 _saveData = _s.getSafe(f"achievements.{achName}", default={
