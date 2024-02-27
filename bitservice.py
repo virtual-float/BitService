@@ -244,9 +244,6 @@ async def main(gameSettings: dict):
         # usuwanie starych tasków z gry
         # save.kill()
         # achievement.kill()
-        
-        for task in asyncio.all_tasks():
-            if task.get_name() != "Task-1": task.cancel()
     
         # usuwanie devmoda
         
@@ -263,6 +260,10 @@ async def main(gameSettings: dict):
         # jeżeli status wyjściowy wynosi 0 (exit) to niech wyjdzie z gry
         if menu.status == 0:
             break
+        
+        # usuwanie poprzednich tasków
+        for task in asyncio.all_tasks():
+            if task.get_name() != "Task-1": task.cancel()
 
         # Stwórz display gry
         pygame.init()
