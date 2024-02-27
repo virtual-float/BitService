@@ -86,9 +86,9 @@ def generate_gate(newQuestion: dict, client):
         name="net_gui",
         size=(500,300),
         body=wn.windowBody(
-            wn.windowText(fontName="MEDIUM_COMICSANS", text="Sieci playtime", cords=(30,0), color=(233,233,233)),
-            wn.windowText(fontName="VERYSMALL_COMICSANS", text="Dane:", cords=(10,102), color=(233,233,233)),
-            wn.windowText(fontName="VERYSMALL_COMICSANS", text=newQuestion['Q_DATA'], cords=(15,125), color=(233,233,233)),
+            wn.windowText(fontName="MEDIUM_TAHOMA", text="Sieci playtime", cords=(30,0), color=(233,233,233)),
+            wn.windowText(fontName="VERYSMALL_TAHOMA", text="Dane:", cords=(10,113), color=(233,233,233)),
+            wn.windowText(fontName="VERYSMALL_TAHOMA", text=newQuestion['Q_DATA'], cords=(15,134), color=(233,233,233)),
             
             
         )
@@ -105,7 +105,7 @@ def generate_gate(newQuestion: dict, client):
         window.getBody().add(
         _t := wn.windowTextBox(cords=(40, 180), xsize=40, name="textBox").
         setRegex("^[0-9\.]*$").setReturnListener(handler),
-        wn.windowText(fontName="MEDIUM_CONSOLAS", text="SPRAWDZ", cords=(190, 240), color=(240, 240, 240))
+        wn.windowText(fontName="MEDIUM_CONSOLAS", text="SPRAWDZ", cords=(187, 235), color=(240, 240, 240))
         .addClickListener(handler)
         )
         window.addObjectToListen(_t)

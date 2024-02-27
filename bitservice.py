@@ -14,6 +14,7 @@ import bin.window as window
 import bin.savemanager as saveManager
 import bin.util as game
 from bin.devmode import devModeSprites, giveClock
+from bin.answerIndicator import answerIndicator
 
 # gui
 from bin.gui.settings import settings as settingsGui
@@ -193,7 +194,7 @@ class Player:
 
 
 
-
+        
 async def main(gameSettings: dict):
     
 
@@ -475,6 +476,9 @@ async def main(gameSettings: dict):
                         temp_x += bar[0].get_width()
 
                         display.blit(bar[0], (bar[1].x, bar[1].y))
+                
+            # renderowanie powiadomień o poprawnej odpowiedzi
+            answerIndicator.indicatorGroup.draw(display)
                 
             # renderowanie okna
             window.window.draw(display)
