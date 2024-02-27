@@ -18,6 +18,7 @@ import bin.achievements as ah
 import bin.fonts as fn
 import bin.util as game
 import bin.pausescreen as ps
+from bin.answerIndicator import answerIndicator
 
 # guis
 import bin.gui.gate_gui as gi
@@ -431,6 +432,9 @@ class client(pygame.sprite.Sprite):
         self.imageForJson = 'disappointedLeft'
         self.save()      
         
+        # indicator
+        answerIndicator(status=False)
+        
     def correctAnswer(self) -> None:
         '''Przekaż że gracz udzielił poprawnej odpowiedzi'''
         
@@ -440,6 +444,9 @@ class client(pygame.sprite.Sprite):
         self.setGraphics('happyLeft')
         self.imageForJson = 'happyLeft'
         self.save()            
+        
+        # indicator
+        answerIndicator()
                 
                 
     @classmethod
