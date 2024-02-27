@@ -190,7 +190,8 @@ class Player:
                 delattr(self, 'new_dest_y')
                 GameOn = False
             
-        
+
+
 
 
 async def main(gameSettings: dict):
