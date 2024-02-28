@@ -283,7 +283,7 @@ class save:
 
     async def __gameClock(self):
         while True:
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.075)
             if ps.pauseScreen.object.getState(): continue
             # second
             self.set('time.second', self.get('time.second')+1)
