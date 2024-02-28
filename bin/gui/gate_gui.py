@@ -81,7 +81,7 @@ def generate_gate(newQuestion: dict, client):
         body=wn.windowBody(
             wn.windowText(fontName="MEDIUM_TAHOMA", text="PROBLEM Z BRAMKAMI", cords=(60,0), color=(233,233,233)),
             wn.windowElement(scaleImage(newQuestion['Q_DATA'],3), cords=(300,55)),
-            _t := wn.windowTextBox(cords=(40, 180), xsize=40, name="textBox").
+            _t := wn.windowTextBox(cords=(((500//2) - (40 * 4)) // 2 + 4, 180), xsize=40, name="textBox").
             setRegex("^[0-9\.]*$").setReturnListener(handler),
             wn.windowText(fontName="MEDIUM_TAHOMA", text="ZATWIERDŹ", cords=(187, 235), color=(240, 240, 240))
             .addClickListener(handler)
