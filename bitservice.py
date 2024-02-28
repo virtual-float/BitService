@@ -251,7 +251,7 @@ async def main(gameSettings: dict):
 
         FontRender = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 22)
         FontRenderSmall = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 18)
-        FontBitRender = pygame.font.Font(os.getcwd() + '\\bin\\vgafixe.FON', 24)
+        FontBitRender = pygame.font.Font(os.getcwd() + '\\bin\\vgafixe.FON', 30)
 
         # Inicjalizacja menadżera savów
         save = saveManager.get(saveTime=GS['autoSavetime'] * 60)
@@ -301,8 +301,8 @@ async def main(gameSettings: dict):
             rClouds.append(Clouds[i].get_rect())
         #
         rClouds[0].y = GS['ApplicationSize'][1] // 2 - Clouds[0].get_height()
-        rClouds[1].y = GS['ApplicationSize'][1] // 2 - Clouds[1].get_height() + 48
-        rClouds[2].y = GS['ApplicationSize'][1] // 2 - Clouds[2].get_height() + 16
+        rClouds[1].y = GS['ApplicationSize'][1] // 2 - Clouds[1].get_height() - 48
+        rClouds[2].y = GS['ApplicationSize'][1] // 2 - Clouds[2].get_height() - 16
 
 
         # Zmienne gry
@@ -318,7 +318,7 @@ async def main(gameSettings: dict):
 
         # Informacje o grze [game over]
         InformationLabel = FontRender.render('ZOSTAŁEŚ WYRZUCONY Z FIRMY BITS & SERVICE', True, (255, 255, 255))
-        IndexLabel = FontRenderSmall.render('WSKAŹNIK POŻYTECZNOŚCI', True, (250, 250, 250))
+        IndexLabel = FontRenderSmall.render('REPUTACJA', True, (250, 250, 250))
 
         # ...
         GameoverScreenSurface.blit(GameOverImage, (GS['ApplicationSize'][0] // 2 - GameOverImage.get_width() // 2, GS['ApplicationSize'][1] // 2 - GameOverImage.get_height()))
@@ -369,11 +369,6 @@ async def main(gameSettings: dict):
             await waitForOther()
             # obsługa eventów 
 
-            answers : list = [
-                save.getSafe('player.correct_ans', default=0),
-                save.getSafe('player.incorrect_ans', default=0)
-            ]
-            
             # wyłączanie gdy już wcześniej ktoś włączył ekran pauzy i nagle jakimś cudem ma mniej (przeciwko bugom)
             if pauseScreenOb.getState() and kera.gameover:
                 pauseScreenOb.toggle(forceState=False)
@@ -451,10 +446,17 @@ async def main(gameSettings: dict):
 
             # Stats
             display.blit(Board, (rBoard.x, rBoard.y))
-            CorrectAnswersLabel = FontBitRender.render('POPRAWNYCH ODPOWIEDZI: {}'.format(str(answers[0])), True, (250, 250, 250))
-            IncorrectAnswersLabel = FontBitRender.render('NIEPOPRAWNYCH ODPOWIEDZI: {}'.format(str(answers[1])), True, (250, 250, 250))
-            display.blit(CorrectAnswersLabel, (rBoard.x + 15, (rBoard.y * -1) + 25))
-            display.blit(IncorrectAnswersLabel, (rBoard.x + 15, (rBoard.y * -1) + 75))
+            CorrectAnswersLabel = FontBitRender.render('POPRAWNYCH ODPOWIEDZI: {}'.format(str(save.getSafe('player.correct_ans', default=0))), True, (250, 250, 250))
+            IncorrectAnswersLabel = FontBitRender.render('NIEPOPRAWNYCH ODPOWIEDZI: {}'.format(str(save.getSafe('player.incorrect_ans', default=0))), True, (250, 250, 250))
+            TimeLabel = FontBitRender.render('Dzien {}, {}:{}:{}'.format(
+                save.getSafe('time.day', default=0) if save.getSafe('time.day', default=0) >= 10 else "0" + str(save.getSafe('time.day', default=0)),
+                save.getSafe('time.hour', default=0) if save.getSafe('time.hour', default=0) >= 10 else "0" + str(save.getSafe('time.hour', default=0)),
+                save.getSafe('time.minute', default=0) if save.getSafe('time.minute', default=0) >= 10 else "0" + str(save.getSafe('time.minute', default=0)),
+                save.getSafe('time.second', default=0) if save.getSafe('time.second', default=0) >= 10 else "0" + str(save.getSafe('time.second', default=0))
+                ), True, (250, 250, 250))
+            display.blit(CorrectAnswersLabel, (rBoard.x + 15, (rBoard.y * -1) - 30))
+            display.blit(IncorrectAnswersLabel, (rBoard.x + 15, (rBoard.y * -1) - 5))
+            display.blit(TimeLabel, (rBoard.x + 15, (rBoard.y * -1) + 20))
             
             # Renderowanie gracza
             display.blit(kera.current_img, (kera.rect.x, kera.rect.y))

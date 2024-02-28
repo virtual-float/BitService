@@ -59,7 +59,7 @@ class answerIndicator(pygame.sprite.Sprite):
         )
         self.image.blit(
             pygame.font.SysFont(getcwd() + '\\bin\\franklin_gothic.TTF', COMMON_FONT_SZ, bold=True).render("ODPOWIEDŹ", True, 
-            (250, 250, 250)), 
+                (250, 250, 250)), 
             (COMMON_X, 24)
         )
         

@@ -12,28 +12,29 @@ import pygame
 
 from os import getcwd
 
+FONT_FAMILY : str = 'Comic Sans MS'
 
 # COMIC SANS
 def getfonts():
     pygame.font.init()
     return {
     # comic sans
-    "BIG_COMICSANS" : pygame.font.SysFont('Comic Sans MS', 70),
-    "MEDIUM_COMICSANS": pygame.font.SysFont('Comic Sans MS', 40),
-    "SMALL_COMICSANS": pygame.font.SysFont('Comic Sans MS', 30),
-    "SMALLER_COMICSANS": pygame.font.SysFont('Comic Sans MS', 25),
-    "VERYSMALLLANG_COMICSANS": pygame.font.SysFont('Comic Sans MS', 21),
-    "VERYSMALL_COMICSANS": pygame.font.SysFont('Comic Sans MS', 20),
-    "TINY_COMICSANS": pygame.font.SysFont('Comic Sans MS', 18),
-    "TINER_COMICSANS": pygame.font.SysFont('Comic Sans MS', 16),
-    "MORETINER_COMICSANS": pygame.font.SysFont('Comic Sans MS', 14),
-    "TINYTINY_COMICSANS": pygame.font.SysFont('Comic Sans MS', 12),
-    "KINDATINY_COMICSANS": pygame.font.SysFont('Comic Sans MS', 10),
-    "ULTRATINY_COMICSANS": pygame.font.SysFont('Comic Sans MS', 8),
+    "BIG_COMICSANS" : pygame.font.SysFont(FONT_FAMILY, 70),
+    "MEDIUM_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 40),
+    "SMALL_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 30),
+    "SMALLER_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 25),
+    "VERYSMALLLANG_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 21),
+    "VERYSMALL_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 20),
+    "TINY_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 18),
+    "TINER_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 16),
+    "MORETINER_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 14),
+    "TINYTINY_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 12),
+    "KINDATINY_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 10),
+    "ULTRATINY_COMICSANS": pygame.font.SysFont(FONT_FAMILY, 8),
 
     # THOMA
     "MEDIUM_TAHOMA": pygame.font.SysFont('Tahoma', 40),
-    "VERYSMALL_TAHOMA": pygame.font.SysFont('Comic Sans MS', 20),
+    "VERYSMALL_TAHOMA": pygame.font.SysFont('Tahoma', 20),
 
     # CONSOLAS
     "BIG_CONSOLAS": pygame.font.SysFont("consolas", 70),
