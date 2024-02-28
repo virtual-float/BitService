@@ -17,6 +17,7 @@ from dataclasses import dataclass
 # importy wewnętrzne
 import bin.function as fc
 import bin.window as wn
+import bin.pausescreen as ps
 
 @dataclass
 class eventTimeStamp:
@@ -283,6 +284,7 @@ class save:
     async def __gameClock(self):
         while True:
             await asyncio.sleep(0.1)
+            if ps.pauseScreen.object.getState(): continue
             # second
             self.set('time.second', self.get('time.second')+1)
             if self.get('time.second') > 60:
