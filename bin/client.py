@@ -492,7 +492,7 @@ class client(pygame.sprite.Sprite):
             
             self.__nickname = f"{_firstName} {_surname}"
             
-            print(self.__nickname)
+            # print(self.__nickname)
             
         else:
             self.__nickname = forceName
@@ -568,7 +568,7 @@ class clientTextEffect(clientEffect):
                 pygame.mouse.get_pos()[1] * (client.screen.get_size()[1] / pygame.display.get_surface().get_size()[1])
             )
             
-            print(_pos)
+            #print(_pos)
             
             if (not self.client.rect.collidepoint(_pos)) or ps.pauseScreen.object.getState():
                 self.client.stateName = False
