@@ -107,10 +107,33 @@ class pauseScreen():
 
     def eventHandler(self, DEVMODE: bool, EVENTS: list, save: dict) -> bool:
         for E in EVENTS:
-            if not (E.type == pygame.KEYDOWN or E.type == pygame.MOUSEBUTTONDOWN): continue
+            if not (E.type == pygame.KEYDOWN or E.type == pygame.MOUSEBUTTONDOWN or E.type == pygame.MOUSEMOTION): continue
             
-            if E.type == pygame.MOUSEBUTTONDOWN:
-            # obsługa myszki
+            # poruszanie myszką
+            if E.type == pygame.MOUSEMOTION:
+
+                _pos = (
+                    E.pos[0] * (self.__screenSize[0] / pygame.display.get_surface().get_size()[0]),
+                    E.pos[1] * (self.__screenSize[1] / pygame.display.get_surface().get_size()[1])
+                    )
+
+                if self.__returnRect.collidepoint(_pos):
+                    self.__cursorPosition = 0
+                # zapis gry
+                elif self.__saveRect.collidepoint(_pos):
+                    self.__cursorPosition = 1
+                # wyjście do menu
+                elif self.__menuExitRect.collidepoint(_pos):
+                    self.__cursorPosition = 2
+                # wyjście z gry
+                elif self.__gameExitRect.collidepoint(_pos):
+                    self.__cursorPosition = 3
+                # devmode
+                elif devmode and self.__devmodeRect.collidepoint(_pos):
+                    self.__cursorPosition = 4
+            
+            elif E.type == pygame.MOUSEBUTTONDOWN:
+            # obsługa myszki (kliknięcia)
                 # obsługiwanie tylko lewego przycisku
                 if E.button == 1:
                     
