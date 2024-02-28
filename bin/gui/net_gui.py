@@ -71,13 +71,13 @@ def generate_gate(newQuestion: dict, client):
         _s = sm.get(alwaysNew=False)
         print(kwargs['optionType'], kwargs['me'].getBody().getWindow().storage['correct'], kwargs['optionType'] == kwargs['me'].getBody().getWindow().storage['correct'])
         if kwargs['optionType'] == kwargs['me'].getBody().getWindow().storage['correct']:
-            _s.set("player.ratiolevel",
-                _s.get('player.ratiolevel')+1)
+            _s.set("player.ratiolevel", _s.get('player.ratiolevel') + 1)
+            _s.set('player.correct_ans', _s.get('player.correct_ans') + 1)
             client.correctAnswer()
             kwargs['me'].getBody().getWindow().kill()
         else:
-            _s.set("player.ratiolevel",
-                _s.get('player.ratiolevel')-1)
+            _s.set("player.ratiolevel", _s.get('player.ratiolevel') - 1)
+            _s.set('player.incorrect_ans', _s.get('player.incorrect_ans') + 1)
             client.wrongAnswer()
             kwargs['me'].getBody().getWindow().kill()
     
@@ -113,8 +113,8 @@ def generate_gate(newQuestion: dict, client):
     
     # zapisanie w storagu poprawnej odpowiedzi
     window.storage['correct'] = newQuestion['ANSWER']
-    print(newQuestion)
-    print(window.storage['correct'], newQuestion['ANSWER'])
+    #print(newQuestion)
+    #print(window.storage['correct'], newQuestion['ANSWER'])
     
     # zrobienie napisu z pytaniem
     for id, element in enumerate(text):
