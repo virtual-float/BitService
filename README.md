@@ -1,22 +1,22 @@
 # BitService
 ## O grze
-__BitService__ to gra, w której jako pracownik w firmie _Bits & Services_ o imieniu __Kera__ musisz stawić czoło wyzwaniom zadanym przez klientów. 
-Posiadasz wskaźnik "pożyteczności", która określa poziom twojej użyteczności w tej firmie. Za każdą dobrą odpowiedź na pytania,
-wzrasta ten licznik, a przeciwnym razie, jeżeli została podana nieprawidłowa odpowiedź - licznik się obniża. 
-Jeżeli twój licznik spadnie do poniżej 10% pożyteczności, zostajesz wyrzucony z firmy - koniec gry. 
-Twoim celem tu jest na odpowiedzenie na jak najwięcej zadań i pytań poprawnie, aby podtrzymać poziom pożyteczności w firmie!
+__BitService__ to gra, w której wcielasz się w rolę pracownika firmy _Bits & Service_ o imieniu Kera, który
+musi się zmierzyć z trudnymi pytaniami od klientów, które są kategorii typu: __sieci__, __operacje bitowe__ oraz __bramki logiczne__. Jako pracownik, posiadasz swoją reputację u klientów jak i firmy. Twoja reputacja spada z każdą niepoprawną udzieloną odpowiedzią, a rośnie przy poprawnej udzielonej odpowiedzi, w przypadku gdy twoja reputacja będzie naprawdę niska to zostajesz zwolniony z pracy. Twoim celem jest jak najdłuższe utrzymanie się w swoim stanowisku poprzez podtrzymywanie swojego bardzo dobrego wizerunku u klientów i firmy.
 
-## O zadaniach
-Zadania są w kategorii _sieci_, _bramki logiczne_ oraz _operatory bitowe_!
+Gra ta jest kategorii:
+* __ENDLESS__
+* __QUIZ__
+* __INFORMATYKA__
+
 
 ## Uruchomienie gry
 Do uruchomienia gry są niezbędne wymagania takie jak:
 1. Wersja __Python 3.12.X__ _(X symbolizuje dowolną końcówkę wersji)_
 
-2. Zainstalowane moduły _(Moduły wymagane można zainstalować z pliku `requirements.txt`)_:
+2. Zainstalowane moduły z _requirements.txt_ _(Moduły wymagane można zainstalować z pliku `requirements.txt`)_:
     * __Jak zainstalować?__
         Należy wejść w konsolę poleceń, i wpisać tą linijkę do konsoli `pip install -r requirements.txt`.
-        Ta linijka sprawia, że zainstaluje wszelkie moduły niezbędne dla tej gry oraz przypisane do nich wersje.
+        Ta linijka sprawia, że zainstaluje moduły o danych wersjach, które niezbędne są dla tej gry!
 
 Jeżeli zostały zainstalowane wymagane moduły oraz jest zainstalowana odpowiednia wersja Python,
 to tylko już wystarczy odpalić plik __bitservice.py__!

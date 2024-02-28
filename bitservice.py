@@ -317,7 +317,7 @@ async def main(gameSettings: dict):
         GameOverImage = scaleImage('bin/images/game_over.png', RENDER_SCALE).convert_alpha()
 
         # Informacje o grze [game over]
-        InformationLabel = FontRender.render('ZOSTAŁEŚ WYRZUCONY Z FIRMY BITS & SERVICE', True, (255, 255, 255))
+        InformationLabel = FontRender.render('ZOSTAŁEŚ ZWOLNIONY', True, (255, 255, 255))
         IndexLabel = FontRenderSmall.render('REPUTACJA', True, (250, 250, 250))
 
         # ...
@@ -483,7 +483,7 @@ async def main(gameSettings: dict):
 
             if kera.gameover:
                 pygame.mixer.music.stop()
-                pygame.mixer.music.unload()
+                pygame.mixer.music.unload()            
                 display.blit(GameoverScreenSurface, (0, 0))
             else:
                 # Progress bar
