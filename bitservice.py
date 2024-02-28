@@ -274,13 +274,21 @@ async def main(gameSettings: dict):
         StuffRect.x = GS['ApplicationSize'][0] // 2 + (Stuff.get_width() - 50)
         StuffRect.y = GS['ApplicationSize'][1] // 2 + (Stuff.get_height() // 12) - 32
 
-        # Chmury
-        Cloud0 = scaleImage('bin/images/cloud.png', RENDER_SCALE // RENDER_SCALE).convert_alpha()
-        Cloud1 = scaleImage('bin/images/cloud.png', RENDER_SCALE // 2).convert_alpha()
-        CloudRect0 = Cloud0.get_rect()
-        CloudRect1 = Cloud1.get_rect()
-        CloudRect0.y = GS['ApplicationSize'][1] // 2 - Cloud0.get_height()
-        CloudRect1.y = GS['ApplicationSize'][1] // 2 - Cloud1.get_height() + 48
+        # Chmury (gfx)
+        Clouds : list[pygame.Surface] = [
+            scaleImage('bin/images/cloud.png', RENDER_SCALE // RENDER_SCALE).convert_alpha(),
+            scaleImage('bin/images/cloud.png', RENDER_SCALE // 2).convert_alpha(),
+            scaleImage('bin/images/cloud.png', RENDER_SCALE // 2 + 1).convert_alpha(),
+        ]
+        # Chmury (orct)
+        rClouds : list  = []
+        for i in range(0, len(Clouds), 1):
+            rClouds.append(Clouds[i].get_rect())
+        #
+        rClouds[0].y = GS['ApplicationSize'][1] // 2 - Clouds[0].get_height()
+        rClouds[0].y = GS['ApplicationSize'][1] // 2 - Clouds[1].get_height() + 48
+        rClouds[0].y = GS['ApplicationSize'][1] // 2 - Clouds[2].get_height() + 16
+
 
         # Zmienne gry
         GameOn = True
@@ -404,26 +412,23 @@ async def main(gameSettings: dict):
                 if paused:
                     pygame.mixer.music.unpause()
                     paused = False
+
+                for i in range(0, len(rClouds), 1):
+                    if rClouds[i].x < -Clouds[0].get_width():
+                        rClouds[i].x = GS['ApplicationSize'][0] + 100
+                        rClouds[i].y = rand.randint(250, GS['ApplicationSize'][1] - 300)
                 
                 # chmurki
-                if CloudRect0.x < -Cloud0.get_width():
-                    CloudRect0.x = GS['ApplicationSize'][0] + 100
-                    CloudRect0.y = rand.randint(100, GS['ApplicationSize'][1] - 300)
-
-                if CloudRect1.x < -Cloud1.get_width():
-                    CloudRect1.x = GS['ApplicationSize'][0] + 100
-                    CloudRect1.y = rand.randint(100, GS['ApplicationSize'][1] - 300) 
-                    
-                CloudRect0.x -= 1
-                CloudRect1.x -= 3     
+                rClouds[0].x -= 1
+                rClouds[1].x -= 3
+                rClouds[2].x -= 2
                 
             # renderowanie gry
-
             display.fill((0, 0, 0))
 
             # Chmury
-            display.blit(Cloud0, (CloudRect0.x, CloudRect0.y))
-            display.blit(Cloud1, (CloudRect1.x, CloudRect1.y))
+            for i in range(0, len(Clouds), 1):
+                display.blit(Clouds[i], (rClouds[i]))
 
             # Tło "behind"
             display.blit(BackgroundBehind, (0, -64))
