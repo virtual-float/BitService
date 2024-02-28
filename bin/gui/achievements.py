@@ -80,8 +80,9 @@ class achievementsGui:
                     master=_c,
                     text=achData['shownNameLong'],
                     font='Helvetica 16 bold',
-                    state=tk.ACTIVE if _saveData['gain'] else tk.DISABLED
-                ).pack(side='top')
+                    state=tk.ACTIVE if _saveData['gain'] else tk.DISABLED,
+                    width=20
+                ).pack(side='top', anchor="center", expand=True)
                 
                 # opis
                 
@@ -90,7 +91,7 @@ class achievementsGui:
                     text=achData['description'],
                     font='Consolas 13',
                     state=tk.ACTIVE if _saveData['gain'] else tk.DISABLED
-                ).pack(side='top')
+                ).pack(side="top", expand=True)
 
                 # dodatkowe
                 
@@ -99,11 +100,11 @@ class achievementsGui:
                     master=_c,
                     text=f"Data: {gainDate}, wersja: {gainVersion}",
                     state=tk.ACTIVE if _saveData['gain'] else tk.DISABLED
-                ).pack(side='bottom')
+                ).pack(side='bottom', expand=True)
 
                 # reszta
 
-                _c.grid(column=0, row=_l)
+                _c.grid(column=0, row=_l, sticky="w")
                 
                 _l += 1
             

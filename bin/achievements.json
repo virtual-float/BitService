@@ -18,5 +18,25 @@
         "color": [255,255,255],
         "backgroundColor": [153,153,102],
         "shownNameLong": "jeden zero jeden dwa!"
+    },
+    "upsik": {
+        "type": "unlock",
+        "point": "inGame",
+        "image": "./bin/images/achievements-icon/achievement02.png",
+        "description": "brak opisu :(",
+        "shownName": "Upsik",
+        "color": [255,255,255],
+        "backgroundColor": [153,153,102],
+        "shownNameLong": "Upsik"
+    },
+    "bullsEye": {
+        "type": "unlock",
+        "point": "inGame",
+        "image": "./bin/images/achievements-icon/achievement03.png",
+        "description": "brak opisu :(",
+        "shownName": "Strzał w dziesiątke",
+        "color": [255,255,255],
+        "backgroundColor": [153,153,102],
+        "shownNameLong": "strzał w dziesiątke"
     }
 }

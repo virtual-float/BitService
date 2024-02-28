@@ -36,6 +36,7 @@ def generate_gate(newQuestion: dict, client):
             _s = sm.get(alwaysNew=False)
             _s.set("player.ratiolevel", _s.get('player.ratiolevel') + 1)
             _s.set('player.correct_ans', _s.get('player.correct_ans') + 1)
+            _s.set('player.correct_combo', _s.get('player.correct_combo') + 1)
             kwargs['me'].getBody().getWindow().kill()
             
             client.correctAnswer()
@@ -58,6 +59,7 @@ def generate_gate(newQuestion: dict, client):
             _s = sm.get(alwaysNew=False)
             _s.set("player.ratiolevel", _s.get('player.ratiolevel') - 1)
             _s.set('player.incorrect_ans', _s.get('player.incorrect_ans') + 1)
+            _s.set('player.correct_combo', 0)
             kwargs['me'].getBody().getWindow().kill()
             
             client.wrongAnswer()

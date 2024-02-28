@@ -373,6 +373,15 @@ async def main(gameSettings: dict):
             if pauseScreenOb.getState() and kera.gameover:
                 pauseScreenOb.toggle(forceState=False)
             
+            # sprawdzanie osiągnieć
+            if save.getSafe("player.incorrect_ans", default=0) > 6 and save.getSafe("player.incorrect_ans", default=0) * 2 > save.getSafe("player.correct_ans", default=0):
+                achievement.pointHere('upsik')
+            
+            if save.getSafe("player.correct_combo", default=0) > 10:
+                achievement.pointHere('bullsEye')
+            
+            
+            
             EVENTS = pygame.event.get()
             game.window.sendEvents(EVENTS)
             for e in EVENTS:
