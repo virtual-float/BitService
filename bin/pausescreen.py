@@ -5,17 +5,18 @@
 #################################
 
 # Tak, jest to klasa która musi mieć obiekt, ale mi sie wydaje to najłatwiejszy pomysł
+# z przyszłości: Nie, nie był, ale nie chce mi się tego pisać od nowa
 
 # importy
 import pygame
-import bin.fonts as fn
-import bin.savemanager as sm
-import bin.window as wn
+from pygame import Vector2
 
 # importy lokalne
 import bin.savemanager as sm
 import bin.achievements as ach
 import bin.devmode as devmode
+import bin.fonts as fn
+import bin.window as wn
 
 # klasa główna
 class pauseScreen():
@@ -106,58 +107,96 @@ class pauseScreen():
 
     def eventHandler(self, DEVMODE: bool, EVENTS: list, save: dict) -> bool:
         for E in EVENTS:
-            if not (E.type == pygame.KEYDOWN): continue
+            if not (E.type == pygame.KEYDOWN or E.type == pygame.MOUSEBUTTONDOWN): continue
             
-            match E.key:
-                # góra
-                case pygame.K_w | pygame.K_UP:
-                    self.__cursorPosition -= 1
+            if E.type == pygame.MOUSEBUTTONDOWN:
+            # obsługa myszki
+                # obsługiwanie tylko lewego przycisku
+                if E.button == 1:
                     
-                    if DEVMODE and self.__cursorPosition < 0:
-                        self.__cursorPosition = 4
-                    elif self.__cursorPosition < 0:
-                        self.__cursorPosition = 3   
-                        
-                # dół     
-                case pygame.K_s | pygame.K_DOWN:
-                    self.__cursorPosition += 1
+                    _pos = (
+                        E.pos[0] * (self.__screenSize[0] / pygame.display.get_surface().get_size()[0]),
+                        E.pos[1] * (self.__screenSize[1] / pygame.display.get_surface().get_size()[1])
+                        )
                     
-                    if not DEVMODE and self.__cursorPosition > 3:
-                        self.__cursorPosition = 0
-                    elif DEVMODE and self.__cursorPosition > 4:
-                        self.__cursorPosition = 0
+                    # print(self.__returnRect.collidepoint(E.pos), E.pos)
+                    
+                    # wyjście z menu pauzy
+                    if self.__returnRect.collidepoint(_pos):
+                        self.__state = 0
+                    # zapis gry
+                    elif self.__saveRect.collidepoint(_pos):
+                        save.save()
+                    # wyjście do menu
+                    elif self.__menuExitRect.collidepoint(_pos):
+                        return 1
+                    # wyjście z gry
+                    elif self.__gameExitRect.collidepoint(_pos):
+                        return 2
+                    # devmode
+                    elif devmode and self.__devmodeRect.collidepoint(_pos):
+                        _s = sm.get(alwaysNew=False)
+                        _s.set("everdevmode", True)
+                        _s.set("devmode", not _s.get("devmode", default=False))
                         
-                # zatwierdzanie enterem 
-                case pygame.K_RETURN:
-                    match self.__cursorPosition:
-                        # wyjście z menu pauzy
-                        case 0:
-                            self.__state = False
+                        if _s.get("devmode", default=False):
+                            ach.achievement("devmode ON")
+                            devmode.runDevMode()
+                        else:
+                            ach.achievement("devmode OFF")
+                    
+            # obsługa klawiszy
+            elif E.type == pygame.KEYDOWN:
+                match E.key:
+                    # góra
+                    case pygame.K_w | pygame.K_UP:
+                        self.__cursorPosition -= 1
                         
-                        # zapis gry
-                        case 1: save.save()
-                        # wyjście do menu gry
-                        case 2: return 1
-                        # wyjście z gry
-                        case 3: return 2
-                        # devmode
-                        case 4:
-                            _s = sm.get(alwaysNew=False)
-                            _s.set("everdevmode", True)
-                            _s.set("devmode", not _s.get("devmode", default=False))
+                        if DEVMODE and self.__cursorPosition < 0:
+                            self.__cursorPosition = 4
+                        elif self.__cursorPosition < 0:
+                            self.__cursorPosition = 3   
                             
-                            if _s.get("devmode", default=False):
-                                ach.achievement("devmode ON")
-                                devmode.runDevMode()
-                            else:
-                                ach.achievement("devmode OFF")
+                    # dół     
+                    case pygame.K_s | pygame.K_DOWN:
+                        self.__cursorPosition += 1
                         
-                        case _: 
-                            return 0
+                        if not DEVMODE and self.__cursorPosition > 3:
+                            self.__cursorPosition = 0
+                        elif DEVMODE and self.__cursorPosition > 4:
+                            self.__cursorPosition = 0
+                            
+                    # zatwierdzanie enterem 
+                    case pygame.K_RETURN:
+                        match self.__cursorPosition:
+                            # wyjście z menu pauzy
+                            case 0:
+                                self.__state = False
+                            
+                            # zapis gry
+                            case 1: save.save()
+                            # wyjście do menu gry
+                            case 2: return 1
+                            # wyjście z gry
+                            case 3: return 2
+                            # devmode
+                            case 4:
+                                _s = sm.get(alwaysNew=False)
+                                _s.set("everdevmode", True)
+                                _s.set("devmode", not _s.get("devmode", default=False))
+                                
+                                if _s.get("devmode", default=False):
+                                    ach.achievement("devmode ON")
+                                    devmode.runDevMode()
+                                else:
+                                    ach.achievement("devmode OFF")
+                            
+                            case _: 
+                                return 0
 
-                    
-                case _: 
-                    return 0
+                        
+                    case _: 
+                        return 0
         
     def __init__(self, screen: pygame.surface.Surface = pygame.display.get_surface()) -> None:
         '''Służy do rysowania stanu zastopowania gry\n
@@ -166,6 +205,8 @@ class pauseScreen():
         zwraca:\n
             - None\n
         '''
+        self.__screenSize = screen.get_size()
+        
         self.__state = False
         
         self.__image = pygame.Surface(screen.get_size()).convert_alpha()
@@ -177,3 +218,26 @@ class pauseScreen():
         self.__fonts = fn.getfonts()
         
         pauseScreen.object = self
+        
+        # recty
+        
+        # return Rect
+        self.__returnRect = self.__fonts['SMALL_COMICSANS'].render(f"Powróć do gry <-- ", False, (255,255,255,77)).get_rect()
+        self.__returnRect.topleft = (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30)
+ 
+        # save Rect
+        self.__saveRect = self.__fonts['SMALL_COMICSANS'].render(f"Zapisz grę <-- ", False, (255,255,255,77)).get_rect()
+        self.__saveRect.topleft = (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30 + 40)   
+        
+        # menu exit Rect
+        self.__menuExitRect = self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź do menu <-- ", False, (255,255,255,77)).get_rect()
+        self.__menuExitRect.topleft = (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30 + 80)        
+        
+        # game exit Rect
+        self.__gameExitRect = self.__fonts['SMALL_COMICSANS'].render(f"Wyjdź z gry <-- ", False, (255,255,255,77)).get_rect()
+        self.__gameExitRect.topleft = (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30 + 120)        
+        
+         # game exit Rect
+        self.__devmodeRect = self.__fonts['SMALL_COMICSANS'].render(f"Tryb dewelopera <-- ", False, (255,255,255,77)).get_rect()
+        self.__devmodeRect.topleft = (screen.get_size()[0] * 0.32, screen.get_size()[1] * 0.30 + 160)        
+        
