@@ -31,6 +31,7 @@
         "ratiolevel": 35,
         "correct_ans": 0,
         "incorrect_ans": 0,
+        "correct_combo": 0,
         "appearance":{
 
         }
