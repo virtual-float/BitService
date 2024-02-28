@@ -58,5 +58,5 @@
         "leftStep": "./bin/images/clients/client_left_step06.png",
         "rightStep": "./bin/images/clients/client_right_step06.png",
         "happy": "./bin/images/clients/client_happy06.png"  
-    },
+    }
 ]
