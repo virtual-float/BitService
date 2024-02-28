@@ -115,9 +115,9 @@ def generate_use_bars(current_amount: int):
     if current_amount > 0 and current_amount <= MAX_USEFULNESS_COUNT:
         for i in range(0, current_amount, 1):
             if i == current_amount - 1 and current_amount < MAX_USEFULNESS_COUNT: # 35 - max
-                yield pygame.image.load('bin/images/bar_head.png'), pygame.image.load('bin/images/bar_head.png').get_rect()
+                yield pygame.image.load('bin/images/reputation_progress_head.png'), pygame.image.load('bin/images/reputation_progress_head.png').get_rect()
                 break
-            yield pygame.image.load('bin/images/bar_body.png'), pygame.image.load('bin/images/bar_body.png').get_rect()
+            yield pygame.image.load('bin/images/reputation_progress_body.png'), pygame.image.load('bin/images/reputation_progress_body.png').get_rect()
     else:
         return ''
 
@@ -274,7 +274,7 @@ async def main(gameSettings: dict):
 
 
         # Dla gry
-        UsefulnessBar = pygame.image.load('bin/images/usefulness_bar.png').convert_alpha()
+        UsefulnessBar = pygame.image.load('bin/images/reputation_bar.png').convert_alpha()
         UsefulnessBarRect = UsefulnessBar.get_rect()
         ub_x = (GS['ApplicationSize'][0] + UsefulnessBar.get_width()) // 3 + 86
         ub_y = GS['ApplicationSize'][1] // 2 + (18 * UsefulnessBar.get_height())
