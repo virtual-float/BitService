@@ -153,7 +153,6 @@ class Player:
         self.current_img = self.emote_idle
 
         self.gameover : bool = False
-        self.tireness : bool = False
 
     # Metoda, która będzie sprawdzała 'logiki' dla gracza
     def update(self) -> None:
