@@ -1,0 +1,22 @@
+{
+    "firstJob": {
+        "type": "unlock",
+        "point": "inGame",
+        "image": "./bin/images/achievements-icon/achievement00.png",
+        "description": "brak opisu :(",
+        "shownName": "Pierwsza praca",
+        "color": [255,255,255],
+        "backgroundColor": [153,153,102],
+        "shownNameLong": "Pierwszy dzień pracy!"
+    },
+    "zeroTimesZero": {
+        "type": "unlock",
+        "point": "inGame",
+        "image": "./bin/images/achievements-icon/achievement01.png",
+        "description": "brak opisu :(",
+        "shownName": "jeden zero\njeden dwa!",
+        "color": [255,255,255],
+        "backgroundColor": [153,153,102],
+        "shownNameLong": "jeden zero jeden dwa!"
+    }
+}

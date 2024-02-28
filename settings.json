@@ -1,0 +1,21 @@
+{
+    "ApplicationName": "BitService",
+    "ApplicationVersion": "1.0.0v",
+    "ApplicationSize": [
+        1024,
+        600
+    ],
+    "ApplicationIcon": "bin/images/logo.png",
+    "renderSize": [
+        1024,
+        600
+    ],
+    "fullscreen": false,
+    "devmode": true,
+    "customCursor": false,
+    "autoSavetime": 1,
+    "soundAll": 1.0,
+    "soundMusic": 1.0,
+    "soundEffect": 1.0,
+    "soundDialogue": 1.0
+}

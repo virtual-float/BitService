@@ -1,0 +1,52 @@
+[
+    {
+        "QUESTION": "Oblicz adres rozgłoszeniowy",
+        "Q_DATA": "127.0.0.1 /24",
+        "ANSWER": "127.0.1.0"
+    },
+    {
+        "QUESTION": "Oblicz adres rozgłoszeniowy",
+        "Q_DATA": "127.0.0.1 /25",
+        "ANSWER": "127.0.0.128"
+    },
+    {
+        "QUESTION": "Jak będzie wyglądała maska ze\nskróconego zapisu \\25?",
+        "Q_DATA": "",
+        "ANSWER": "255.255.255.128"
+    },
+    {
+        "QUESTION": "Ile będzie można stworzyć hostów\nw podanej sieci oraz masce?",
+        "Q_DATA": "192.168.0.10 /27",
+        "ANSWER": "20"
+    },
+    {
+        "QUESTION": "Czy podany skrócony zapis maski jest poprawny?",
+        "Q_DATA": "192.168.0.1 /35",
+        "ANSWER": false
+    },
+    {
+        "QUESTION": "Czy taki adres jest poprawny?",
+        "Q_DATA": "192.168.16.256 /28",
+        "ANSWER": false
+    },
+    {
+        "QUESTION": "Czy adresy IPv4 są 128 bitowe?",
+        "Q_DATA": "",
+        "ANSWER": false
+    },
+    {
+        "QUESTION": "Czy adresy IPv6 są 128 bitowe?",
+        "Q_DATA": "",
+        "ANSWER": true
+    },
+    {
+        "QUESTION": "Czy ten podany adres IPv6 jest zapisany poprawnie?",
+        "Q_DATA": "2001:0db8:34f3::417a",
+        "ANSWER": true
+    },
+    {
+        "QUESTION": "Czy ten podany adres IPv6 jest zapisany poprawnie?",
+        "Q_DATA": "2001:0db8:342f3:418a:0aaa::1",
+        "ANSWER": false
+    }
+]
