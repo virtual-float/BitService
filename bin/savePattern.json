@@ -29,6 +29,8 @@
         "type": "player",
         "nickname": "Kera",
         "ratiolevel": 35,
+        "correct_ans": 0,
+        "incorrect_ans": 0,
         "appearance":{
 
         }

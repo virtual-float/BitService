@@ -249,12 +249,28 @@ async def main(gameSettings: dict):
         pygame.display.set_caption(GS['ApplicationName'])
         pygame.display.set_icon(pygame.image.load(GS['ApplicationIcon']))
 
+        FontRender = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 22)
+        FontRenderSmall = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 18)
+        FontBitRender = pygame.font.Font(os.getcwd() + '\\bin\\vgafixe.FON', 24)
+
+        # Inicjalizacja menadżera savów
+        save = saveManager.get(saveTime=GS['autoSavetime'] * 60)
+        # pozyskiwanie błędu ładowania sava
+        if save.getSafe("ERROR", default=False) != False:
+            GameOn = False
+
         # Tło za tłem gry
         BackgroundBehind = scaleImage('bin/images/background_behind.png', RENDER_SCALE).convert_alpha()
         # Tło gry
         Background = scaleImage('bin/images/background.png', RENDER_SCALE).convert_alpha()
         # Tło (emiter światła)
         BackgroundFilter = scaleImage('bin/images/background_filter.png', RENDER_SCALE).convert_alpha()
+
+        # Stats
+        Board = scaleImage('bin/images/stats_board.png', RENDER_SCALE).convert_alpha()
+        rBoard = Board.get_rect()
+        rBoard.x = GS['ApplicationSize'][0] - Board.get_width() - 16
+        rBoard.y = (GS['ApplicationSize'][1] // 6) * -1
 
 
         # Dla gry
@@ -285,8 +301,8 @@ async def main(gameSettings: dict):
             rClouds.append(Clouds[i].get_rect())
         #
         rClouds[0].y = GS['ApplicationSize'][1] // 2 - Clouds[0].get_height()
-        rClouds[0].y = GS['ApplicationSize'][1] // 2 - Clouds[1].get_height() + 48
-        rClouds[0].y = GS['ApplicationSize'][1] // 2 - Clouds[2].get_height() + 16
+        rClouds[1].y = GS['ApplicationSize'][1] // 2 - Clouds[1].get_height() + 48
+        rClouds[2].y = GS['ApplicationSize'][1] // 2 - Clouds[2].get_height() + 16
 
 
         # Zmienne gry
@@ -301,8 +317,6 @@ async def main(gameSettings: dict):
         GameOverImage = scaleImage('bin/images/game_over.png', RENDER_SCALE).convert_alpha()
 
         # Informacje o grze [game over]
-        FontRender = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 22)
-        FontRenderSmall = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 18)
         InformationLabel = FontRender.render('ZOSTAŁEŚ WYRZUCONY Z FIRMY BITS & SERVICE', True, (255, 255, 255))
         IndexLabel = FontRenderSmall.render('WSKAŹNIK POŻYTECZNOŚCI', True, (250, 250, 250))
 
@@ -312,12 +326,6 @@ async def main(gameSettings: dict):
         
         # Obiekt pauseScreen służący do stopowania gry
         pauseScreenOb = pauseScreen(display)
-        
-        # Inicjalizacja menadżera savów
-        save = saveManager.get(saveTime=GS['autoSavetime'] * 60)
-        # pozyskiwanie błędu ładowania sava
-        if save.getSafe("ERROR", default=False) != False:
-            GameOn = False
         
         # usuwanie devmoda
         save.set("devmode", False)
@@ -360,6 +368,11 @@ async def main(gameSettings: dict):
         while GameOn:
             await waitForOther()
             # obsługa eventów 
+
+            answers : list = [
+                save.getSafe('player.correct_ans', default=0),
+                save.getSafe('player.incorrect_ans', default=0)
+            ]
             
             # wyłączanie gdy już wcześniej ktoś włączył ekran pauzy i nagle jakimś cudem ma mniej (przeciwko bugom)
             if pauseScreenOb.getState() and kera.gameover:
@@ -435,6 +448,13 @@ async def main(gameSettings: dict):
             display.blit(Background, (0, 0))
             # Filter
             display.blit(BackgroundFilter, (0, 0))
+
+            # Stats
+            display.blit(Board, (rBoard.x, rBoard.y))
+            CorrectAnswersLabel = FontBitRender.render('POPRAWNYCH ODPOWIEDZI: {}'.format(str(answers[0])), True, (250, 250, 250))
+            IncorrectAnswersLabel = FontBitRender.render('NIEPOPRAWNYCH ODPOWIEDZI: {}'.format(str(answers[1])), True, (250, 250, 250))
+            display.blit(CorrectAnswersLabel, (rBoard.x + 15, (rBoard.y * -1) + 25))
+            display.blit(IncorrectAnswersLabel, (rBoard.x + 15, (rBoard.y * -1) + 75))
             
             # Renderowanie gracza
             display.blit(kera.current_img, (kera.rect.x, kera.rect.y))
