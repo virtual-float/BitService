@@ -10,6 +10,8 @@
 # importy i inicjacje
 import pygame
 
+from os import getcwd
+
 
 # COMIC SANS
 def getfonts():

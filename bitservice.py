@@ -238,6 +238,7 @@ async def main(gameSettings: dict):
         # Stwórz display gry
         pygame.init()
         pygame.font.init()
+        pygame.mixer.init()
         if GS['fullscreen']:
             displayFinal = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
         else:
@@ -249,8 +250,12 @@ async def main(gameSettings: dict):
         pygame.display.set_caption(GS['ApplicationName'])
         pygame.display.set_icon(pygame.image.load(GS['ApplicationIcon']))
 
+        # Tło za tłem gry
+        BackgroundBehind = scaleImage('bin/images/background_behind.png', RENDER_SCALE).convert_alpha()
         # Tło gry
         Background = scaleImage('bin/images/background.png', RENDER_SCALE).convert_alpha()
+        # Tło (emiter światła)
+        BackgroundFilter = scaleImage('bin/images/background_filter.png', RENDER_SCALE).convert_alpha()
 
 
         # Dla gry
@@ -293,19 +298,6 @@ async def main(gameSettings: dict):
         FontRenderSmall = pygame.font.Font(os.getcwd() + '\\bin\\franklin_gothic.TTF', 18)
         InformationLabel = FontRender.render('ZOSTAŁEŚ WYRZUCONY Z FIRMY BITS & SERVICE', True, (255, 255, 255))
         IndexLabel = FontRenderSmall.render('WSKAŹNIK POŻYTECZNOŚCI', True, (250, 250, 250))
-
-        # Warning sign
-        # TODO: Ustawić dobrze pozycję notyfikacji
-        WarningSign = scaleImage('bin/images/warning_sign.png', RENDER_SCALE // 2).convert_alpha()
-        WarningSignRect = WarningSign.get_rect()
-        WarningMessage = FontRender.render('WYSOKI POZIOM ZMĘCZENIA', False, (255, 255, 255))
-        WarningMessageRect = WarningMessage.get_rect()
-        #
-        WarningSignRect.x = GS['ApplicationSize'][0] - round(WarningMessage.get_width() * 1.5) - 32
-        WarningSignRect.y = WarningMessage.get_height() + 15
-        #
-        WarningMessageRect.x = WarningSignRect.x + 8
-        WarningMessageRect.y = WarningSignRect.y
 
         # ...
         GameoverScreenSurface.blit(GameOverImage, (GS['ApplicationSize'][0] // 2 - GameOverImage.get_width() // 2, GS['ApplicationSize'][1] // 2 - GameOverImage.get_height()))
@@ -425,20 +417,21 @@ async def main(gameSettings: dict):
                 CloudRect0.x -= 1
                 CloudRect1.x -= 3     
                 
-                
-                
-                
             # renderowanie gry
 
-            display.fill((98, 125, 206))
+            display.fill((0, 0, 0))
 
             # Chmury
             display.blit(Cloud0, (CloudRect0.x, CloudRect0.y))
             display.blit(Cloud1, (CloudRect1.x, CloudRect1.y))
 
-            # Budynek
+            # Tło "behind"
+            display.blit(BackgroundBehind, (0, -64))
+            # Siedziba główna
             display.blit(Background, (0, 0))
-
+            # Filter
+            display.blit(BackgroundFilter, (0, 0))
+            
             # Renderowanie gracza
             display.blit(kera.current_img, (kera.rect.x, kera.rect.y))
 
