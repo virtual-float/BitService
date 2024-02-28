@@ -189,7 +189,7 @@ class Player:
                 delattr(self, 'new_dest_x')
                 delattr(self, 'new_dest_y')
                 GameOn = False
-            
+
 
 
 
