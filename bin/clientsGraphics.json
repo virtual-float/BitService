@@ -31,7 +31,7 @@
     },
     {
         "name": "4",
-        "forGender": "m",
+        "forGender": "f",
         "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
         "idle": "./bin/images/clients/client_idle04.png",
         "disappointed": "./bin/images/clients/client_disappointed04.png",
@@ -41,7 +41,7 @@
     },
     {
         "name": "5",
-        "forGender": "f",
+        "forGender": "m",
         "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
         "idle": "./bin/images/clients/client_idle05.png",
         "disappointed": "./bin/images/clients/client_disappointed05.png",
@@ -58,15 +58,5 @@
         "leftStep": "./bin/images/clients/client_left_step06.png",
         "rightStep": "./bin/images/clients/client_right_step06.png",
         "happy": "./bin/images/clients/client_happy06.png"  
-    },
-    {
-        "name": "7",
-        "forGender": "m",
-        "__COMMENT": "nazwa nie gra roli, poprostu można se nazwać, płeć: m, f lub n gdy ma to ignorować",
-        "idle": "./bin/images/clients/client_idle07.png",
-        "disappointed": "./bin/images/clients/client_disappointed07.png",
-        "leftStep": "./bin/images/clients/client_left_step07.png",
-        "rightStep": "./bin/images/clients/client_right_step07.png",
-        "happy": "./bin/images/clients/client_happy07.png"  
     }
 ]
