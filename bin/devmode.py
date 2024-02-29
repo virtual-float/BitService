@@ -42,23 +42,25 @@ async def __loop():
     global s4
     
     while True:
-        # savemanager
-        _m = sm.get(alwaysNew=False)
-        
-        # aktulizacja danych
-        s1.image = fn.getfonts()['TINY_COMICSANS'].render(f"{len(asyncio.tasks.all_tasks())} tasks", True, (0,0,0)).convert_alpha()
-        
-        def _r(a,b):
-            return f"{a}, {b}"
-        s2.image = fn.getfonts()['KINDATINY_COMICSANS'].render(f"{functools.reduce(_r, [task.get_name() for task in asyncio.tasks.all_tasks()])}", True, (0,0,0)).convert_alpha()
-        
-        s3.image = fn.getfonts()['TINY_COMICSANS'].render(f"{round(clockRef.get_fps(),2)} FPS {clockRef.get_time()} MS", True, (0,0,0)).convert_alpha()
-        
-        s4.image = fn.getfonts()['TINY_COMICSANS'].render(f"mousePos: {pygame.mouse.get_pos()}, mousePressed: {pygame.mouse.get_pressed()}", True, (0,0,0)).convert_alpha()
+        try:
+            # savemanager
+            _m = sm.get(alwaysNew=False)
             
+            # aktulizacja danych
+            s1.image = fn.getfonts()['TINY_COMICSANS'].render(f"{len(asyncio.tasks.all_tasks())} tasks", True, (0,0,0)).convert_alpha()
+            
+            def _r(a,b):
+                return f"{a}, {b}"
+            s2.image = fn.getfonts()['KINDATINY_COMICSANS'].render(f"{functools.reduce(_r, [task.get_name() for task in asyncio.tasks.all_tasks()])}", True, (0,0,0)).convert_alpha()
+            
+            s3.image = fn.getfonts()['TINY_COMICSANS'].render(f"{round(clockRef.get_fps(),2)} FPS {clockRef.get_time()} MS", True, (0,0,0)).convert_alpha()
+            
+            s4.image = fn.getfonts()['TINY_COMICSANS'].render(f"mousePos: {pygame.mouse.get_pos()}, mousePressed: {pygame.mouse.get_pressed()}", True, (0,0,0)).convert_alpha()
+        except: pass
+         
         # sprawdzanie czy devmode nie został przerwany jeżeli tak, to przerywa taska    
         if not _m.get("devmode", default=False):
-            print("h")
+            # print("h")
             s1 = None
             s2 = None
             s3 = None
