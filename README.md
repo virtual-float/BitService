@@ -23,4 +23,4 @@ Do uruchomienia gry są niezbędne wymagania takie jak:
 Jeżeli zostały zainstalowane wymagane moduły oraz jest zainstalowana odpowiednia wersja Python,
 to tylko już wystarczy odpalić plik __bitservice.py__!
 
-Ewentualnie, można odpalić grę poprzez `cmd`. Poprzez polecenie `python scieszka_do_katalogu_gry/bitservice.py` lub `python3 scieszka_do_katalogu_gry/bitservice.py`
+Ewentualnie, można odpalić grę poprzez `cmd`. Dzięki poleceniu `python scieszka_do_katalogu_gry/bitservice.py` lub `python3 scieszka_do_katalogu_gry/bitservice.py`
