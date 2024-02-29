@@ -210,9 +210,9 @@ async def main(gameSettings: dict):
 
     beRunned = True
     while beRunned:
-        # usuwanie starych tasków z gry
-        # save.kill()
-        # achievement.kill()
+        # usuwanie poprzednich tasków
+        for task in asyncio.all_tasks():
+            if task.get_name() != "Task-1": task.cancel()
     
         # usuwanie devmoda
         
@@ -353,6 +353,9 @@ async def main(gameSettings: dict):
         
         # osiągniecie za włączenie gry :3
         achievement.pointHere('firstJob')
+        
+        # czyszczenie informacji o poprawnej i złej odpowiedzi
+        answerIndicator.indicatorGroup.empty()
         
         # funkcja ułatwiająca
         async def waitForOther():

@@ -89,7 +89,7 @@ class achievementsGui:
                 tk.Label(
                     master=_c,
                     text=achData['description'],
-                    font='Consolas 13',
+                    font='Consolas 8',
                     state=tk.ACTIVE if _saveData['gain'] else tk.DISABLED
                 ).pack(side="top", expand=True)
 
