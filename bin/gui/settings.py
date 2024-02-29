@@ -55,8 +55,8 @@ class settings:
         
     def __checkSave(self) -> None:
         # celem tej funkcji jest sprawdzanie czy cos się w savie zmieniło
-        print(self.__newSettings, self.__previousSettings)
-        print(self.__newSettings != self.__previousSettings)
+        #print(self.__newSettings, self.__previousSettings)
+        #print(self.__newSettings != self.__previousSettings)
         if self.__newSettings != self.__previousSettings:
             self.__hasSettingsChanged = True
             self.__menu.entryconfig('Zapisz', state=tk.ACTIVE)

@@ -3,6 +3,8 @@
 __BitService__ to gra, w której wcielasz się w rolę pracownika firmy _Bits & Service_ o imieniu Kera, który
 musi się zmierzyć z trudnymi pytaniami od klientów, które są kategorii typu: __sieci__, __operacje bitowe__ oraz __bramki logiczne__. Jako pracownik, posiadasz swoją reputację u klientów jak i firmy. Twoja reputacja spada z każdą niepoprawną udzieloną odpowiedzią, a rośnie przy poprawnej udzielonej odpowiedzi, w przypadku gdy twoja reputacja będzie naprawdę niska to zostajesz zwolniony z pracy. Twoim celem jest jak najdłuższe utrzymanie się w swoim stanowisku poprzez podtrzymywanie swojego bardzo dobrego wizerunku u klientów i firmy.
 
+W tej grze, również można odblokować 4 osiągnięcia.
+
 Gra ta jest kategorii:
 * __ENDLESS__
 * __QUIZ__

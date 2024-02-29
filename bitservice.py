@@ -356,7 +356,7 @@ async def main(gameSettings: dict):
         
         # funkcja ułatwiająca
         async def waitForOther():
-            await asyncio.sleep(0.00002)
+            await asyncio.sleep(2 / 100000)
         
         paused : bool = False
 
