@@ -220,6 +220,7 @@ class settings:
         ttk.Checkbutton(
             master=self.__graphics,
             text="niestandardowy kursor",
+            state=tk.DISABLED,
             variable=self.__customCursor
         ).grid(row=2, column=1, pady=10, sticky="w")
         
